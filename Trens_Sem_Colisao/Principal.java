@@ -947,9 +947,21 @@ public class Principal extends Application {
 
     // Array de strings contendo os caminhos para as imagens dos peixes
     String[] fishImages = {
-      "file:img/fish1.png",
-      "file:img/fish2.png",
-      "file:img/fish3.png"
+      "/img/fish1.png",
+      "/img/fish2.png",
+      "/img/fish3.png",
+      "/img/fish4.png",
+      "/img/fish5.png",
+      "/img/fish6.png",
+      "/img/fish7.png",
+      "/img/fish8.png",
+      "/img/fish9.png",
+      "/img/fish10.png",
+      "/img/fish11.png",
+      "/img/fish12.png",
+      "/img/fish13.png",
+      "/img/fish14.png",
+      "/img/fish15.png",
     };
 
     // Cria um ImageView para o peixe usando uma imagem aleatoria do array
