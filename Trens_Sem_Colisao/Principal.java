@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 13/03/2026
-* Ultima alteracao.: 22/03/2026
+* Ultima alteracao.: 23/03/2026
 * Nome.............: Principal.java
 * Funcao...........: Projeto da disciplina de Programacao Concorrente com
 * o objetivo de simular o percurso de dois trens por um caminho definido.
@@ -13,20 +13,21 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.animation.Animation; // Esse sera o import usado para as animacoes com JavaFx
+import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
+import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.concurrent.Task;
 import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -44,12 +45,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.PathElement;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.VLineTo;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -57,6 +60,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.animation.TranslateTransition;
+import javafx.scene.media.AudioClip;
 
 /* ***************************************************************
 * Classe: Principal
@@ -83,7 +88,7 @@ public class Principal extends Application {
   private VBox blueSliderVbox; 
   
   // Caixa para slider e label do trem vermelho
-  private VBox redSliderVbox; 
+  private VBox greenSliderVbox; 
   
   // Container de texto
   private VBox textContainer; 
@@ -95,7 +100,7 @@ public class Principal extends Application {
   private Slider blueSpeedSlider; 
   
   // Slider do trem vermelho
-  private Slider redSpeedSlider; 
+  private Slider greenSpeedSlider; 
   
   // Limites da tela
   private Rectangle2D screenBounds; 
@@ -126,7 +131,7 @@ public class Principal extends Application {
     *************************************************************** */
     Option(String title) {
       this.title = title;
-    } // fim do construtor Option
+    } // Fim do construtor Option
 
     /* *************************************************************** 
     * Metodo: getTitle 
@@ -149,15 +154,32 @@ public class Principal extends Application {
   ******************************************************************** */
   @Override
   public void start(Stage primaryStage) {
+
+    // Cria um AudioClip carregando o arquivo de audio localizado na pasta /sound.
+    AudioClip themeSound = new AudioClip(
+      // getResource() localiza o arquivo dentro do projeto 
+      // toExternalForm() converte o caminho para um formato que o JavaFX consegue usar.
+      getClass().getResource("/sound/theme.wav").toExternalForm()
+    );
     
+    // Define que o audio deve repetir infinitamente.
+    // AudioClip.INDEFINITE faz com que a musica toque em loop continuo.
+    themeSound.setCycleCount(AudioClip.INDEFINITE);
+    // Inicia a reproducao da musica tema do simulador.
+    themeSound.play();
+    
+    // Armazena a referência do Stage principal da aplicacao.
+    // Isso permite acessar ou modificar a janela principal em outros metodos da classe.
     this.primaryStage = primaryStage;
-    primaryStage.setTitle("Simulador de Trem");
+
+    // Define o titulo que aparecera na barra superior da janela da aplicacao.
+    primaryStage.setTitle("MAXTRAIN SIMULATOR");
 
     // Obtencao do tamanho da tela do usuario
     this.screenBounds = Screen.getPrimary().getVisualBounds();
 
     // Criacao do texto de instrucao
-    Text directionText = new Text("Selecione uma das direcoes para o trem:");
+    Text directionText = new Text("SELECIONE UMA DAS DIRECOES PARA O TREM:");
     directionText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
 
     // Inicializacao das propriedades de controle dos trens
@@ -242,28 +264,31 @@ public class Principal extends Application {
 
     // Criacoa da janela inicial de start
     Stage firstStage = new Stage();
-    firstStage.setTitle("Simulador de Trem");
+    firstStage.setTitle("MaxTrain Simulator");
 
     // Botao de iniciar
-    Button startButton = new Button("Start");  
+    Button startButton = new Button("START");  
 
     // Estilizacao do botao iniciar
     startButton.setStyle(
-           "-fx-background-color: #FFFFFF;"
-         + "-fx-text-fill: black;"
-         + "-fx-font-size: 20px;" 
-         + "-fx-padding: 10px 20px;"
-         + "-fx-font-weight: bold" 
-    ); 
+        "-fx-background-color: linear-gradient(to right, #00c6ff, #3590ff);"
+      + "-fx-text-fill: white;"
+      + "-fx-font-size: 26px;"
+      + "-fx-font-weight: bold;"
+      + "-fx-padding: 12px 28px;"
+      + "-fx-background-radius: 12px;"
+      + "-fx-border-radius: 12px;"
+      + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0.5, 0, 4);"
+    );
 
     // Container do botao start
-    HBox startHbox = new HBox(10);
+    HBox startHbox = new HBox(15);
     startHbox.setAlignment(Pos.BOTTOM_CENTER);
-    startHbox.setPadding(new Insets(0, 0, 20, 0));
+    startHbox.setPadding(new Insets(0, 0, 120, 0));
     startHbox.getChildren().add(startButton);
 
     // Criacao da cena inicial
-    Scene firstScene = new Scene(startHbox,700,400);
+    Scene firstScene = new Scene(startHbox,800,540);
 
     // Define a imagem de fundo da tela inicial e algumas configuracoes de posicionamento
     Image background = new Image("/img/startbackground.png");
@@ -360,7 +385,7 @@ public class Principal extends Application {
       // Reseta velocidade do trem azul
       this.blueSpeedSlider.setValue(DEFAULT_SPEED);
       // Reseta velocidade do trem Vermelho
-      this.redSpeedSlider.setValue(DEFAULT_SPEED);
+      this.greenSpeedSlider.setValue(DEFAULT_SPEED);
       // Remove pausa do trem 1
       this.pauseTrains1.set(false);
       // Remove pausa do trem 2
@@ -381,6 +406,7 @@ public class Principal extends Application {
     if (this.StageNew != null) {
       this.StageNew.close();
       this.vbox.getChildren().removeAll(
+        this.textContainer,
         this.hbox,
         this.resetButton
       );
@@ -417,6 +443,23 @@ public class Principal extends Application {
     // Criacao da cena da simulacao
     Scene scene = new Scene(root, 500, 900);
 
+    // Cria a area de agua utilizando um SVGPath para definir a forma da area de agua
+    SVGPath waterArea = new SVGPath();
+    
+    // Define o caminho SVG que representa a forma da area de agua. O comando "M" move o cursor para a posicao inicial, "L" desenha linhas, "V" desenha linhas verticais, "C" desenha curvas cubicas e "Z" fecha o caminho.
+    waterArea.setContent(
+      "M250.5 419L199 423.5L210.5 373V346.5L202.5 313.5L185.5 281V213L269.5 218.5L304 216.5L392 210.5L393.5 432.5L348 422L293.5 417L250.5 419Z"
+    );
+    
+    // Define a cor de preenchimento da area de agua
+    startFishSpawner(root, waterArea);
+    
+    // Adiciona a area de agua ao container principal da simulacao
+    startBubbleSpawner(root, waterArea);
+    
+    // Cria o container da animacao do aviao na tela
+    startAirplaneTraffic(root);
+
     // Criacao do slider do trem azul
     this.blueSpeedSlider = new Slider(0, 100, DEFAULT_SPEED); 
     this.blueSpeedSlider.setMinWidth(300);
@@ -430,13 +473,13 @@ public class Principal extends Application {
     );
 
     // Criacao do slider do trem verde
-    this.redSpeedSlider = new Slider(0, 100, DEFAULT_SPEED); 
-    this.redSpeedSlider.setMinWidth(300);
-    this.redSpeedSlider.setMaxWidth(300);
-    this.redSpeedSlider.setShowTickMarks(true);
-    this.redSpeedSlider.setShowTickLabels(true);
+    this.greenSpeedSlider = new Slider(0, 100, DEFAULT_SPEED); 
+    this.greenSpeedSlider.setMinWidth(300);
+    this.greenSpeedSlider.setMaxWidth(300);
+    this.greenSpeedSlider.setShowTickMarks(true);
+    this.greenSpeedSlider.setShowTickLabels(true);
     // Definicao do estilo do slider verde
-    this.redSpeedSlider.setStyle(
+    this.greenSpeedSlider.setStyle(
         "-fx-control-inner-background: #58BF3B;"
       + "-fx-background-color: transparent;"
     );
@@ -497,8 +540,8 @@ public class Principal extends Application {
     Text blueTrainLabel = new Text("Velocidade do Trem Azul");
     blueTrainLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
      
-    Text redTrainLabel = new Text("Velocidade do Trem Verde");
-    redTrainLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16)); 
+    Text greenTrainLabel = new Text("Velocidade do Trem Verde");
+    greenTrainLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16)); 
 
     // Container do slider azul
     this.blueSliderVbox = new VBox(10);
@@ -507,10 +550,10 @@ public class Principal extends Application {
     this.blueSliderVbox.getChildren().addAll(blueTrainLabel, this.blueSpeedSlider);
 
     // Contrainer do slider verde
-    this.redSliderVbox = new VBox(10);
-    this.redSliderVbox.setAlignment(Pos.CENTER);
-    this.redSliderVbox.setPadding(new Insets(10, 0, 0, 0));
-    this.redSliderVbox.getChildren().addAll(redTrainLabel, this.redSpeedSlider);
+    this.greenSliderVbox = new VBox(10);
+    this.greenSliderVbox.setAlignment(Pos.CENTER);
+    this.greenSliderVbox.setPadding(new Insets(10, 0, 0, 0));
+    this.greenSliderVbox.getChildren().addAll(greenTrainLabel, this.greenSpeedSlider);
 
     // Criacao do container horizontal que ira armazenar os controlles de velocidade
     this.hbox = new HBox(10);
@@ -519,7 +562,7 @@ public class Principal extends Application {
 
     // Adiciona os containers dos sliders ao HBox
     this.hbox.getChildren().add(this.blueSliderVbox);
-    this.hbox.getChildren().add(this.redSliderVbox);
+    this.hbox.getChildren().add(this.greenSliderVbox);
 
     // Adiciona o HBox e o botao reset ao painel principal
     this.vbox.getChildren().add(this.hbox);
@@ -527,7 +570,7 @@ public class Principal extends Application {
 
     // Criacao dos retangulos que representam os trens 
     Rectangle blueTrain = createRectangle(-200, -200, 90, 30, "/img/bluetrain.png");
-    Rectangle redTrain = createRectangle(-200, -200, 90, 30, "/img/redtrain.png");
+    Rectangle greenTrain = createRectangle(-200, -200, 90, 30, "/img/greentrain.png");
 
     // Criacao dos retangulos que representam os carros
     Rectangle carro1 = createRectangle(20, 20, 40, 80, "/img/car1.png");
@@ -571,7 +614,7 @@ public class Principal extends Application {
     ArrayList<Rectangle> carros = new ArrayList<Rectangle>();
 
     // Vetor que armazena as duracoes das animacoes de cada carro
-    Duration[] durations = new Duration[20];
+    Duration[] durations = new Duration[36];
 
     // Vetor auxiliar contendo todos os carros criados
     Rectangle[] carrosArray = {
@@ -585,7 +628,7 @@ public class Principal extends Application {
     };
 
     // Loop responsavel por adicionar os carros na lista e definir suas ruracoes
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 36; i++) {
       // Adiciona o carro na lista
       carros.add(carrosArray[i]);
       // Define a duracao da animacao
@@ -600,15 +643,15 @@ public class Principal extends Application {
 
     // Criacao do caminho que representa o trajeto de ida do trem
     Path pathIda = new Path(
-        new MoveTo(50, -50),
-        new VLineTo(100), 
-        new CubicCurveTo(50, 160, 100, 160, 100, 200),
-        new VLineTo(280), 
-        new CubicCurveTo(100, 340, 150, 320, 150, 400),
-        new VLineTo(500),
-        new CubicCurveTo(150, 560, 100, 560, 100, 600),
-        new VLineTo(680), 
-        new CubicCurveTo(100, 740, 50, 720, 50, 800),
+        new MoveTo(54, -50),
+        new VLineTo(20), 
+        new CubicCurveTo(50, 120, 58, 100, 100, 165),
+        new VLineTo(265), 
+        new CubicCurveTo(100, 280, 150, 320, 150, 410),
+        new VLineTo(450),
+        new CubicCurveTo(150, 530, 100, 560, 100, 600),
+        new VLineTo(657), 
+        new CubicCurveTo(100, 690, 50, 720, 50, 800),
         new VLineTo(950), 
         new MoveTo(50, 800)
     ); // Fim do pathIda
@@ -617,15 +660,14 @@ public class Principal extends Application {
     Path pathVolta = new Path(
         new MoveTo(50, 950),
         new VLineTo(800),
-        new CubicCurveTo(50, 720, 100, 740, 100, 680),
+        new CubicCurveTo(50, 720, 100, 690, 100, 657),
         new VLineTo(600),
-        new CubicCurveTo(100, 560, 150, 560, 150, 500),
-        new VLineTo(400),
-        new CubicCurveTo(150, 320, 100, 340, 100, 280),
-        new VLineTo(200),
-        new CubicCurveTo(100, 160, 50, 160, 50, 100),
-        new VLineTo(-50),
-        new MoveTo(50, -50)
+        new CubicCurveTo(100, 560, 150, 530, 150, 450),
+        new VLineTo(410),
+        new CubicCurveTo(150, 320, 100, 280, 100, 265),
+        new VLineTo(165),
+        new CubicCurveTo(58, 100, 50, 120, 54, 20),
+        new VLineTo(-50)
     ); // Fim do pathVolta
 
     // Criacao do caminho utilizado para o movimento dos carros
@@ -678,30 +720,30 @@ public class Principal extends Application {
     timeline.play();
 
     // Criacao de um novo caminho que sera o espelhamento do trajeto de ida
-    Path mirroredPathIda = new Path();
+    Path mirroGreenPathIda = new Path();
 
     // Percorre todos os elementos do caminho original
     for (PathElement element : pathIda.getElements()) {
       // Verifica se o elemento eh do tipo MoveTo
       if (element instanceof MoveTo) {
-        mirroredPathIda.getElements().add(new MoveTo(
+        mirroGreenPathIda.getElements().add(new MoveTo(
           2 * (100 - ((MoveTo) element).getX()) + ((MoveTo) element).getX(),
           ((MoveTo) element).getY()));
       } // Fim do if 
       // Verifica se o elemento eh do tipo LineTo
       else if (element instanceof LineTo) {
-        mirroredPathIda.getElements().add(new LineTo(
+        mirroGreenPathIda.getElements().add(new LineTo(
           2 * (100 - ((LineTo) element).getX()) + ((LineTo) element).getX(),
           ((LineTo) element).getY()));
       } // Fim do else if 
       // Verifica se o elemento eh do tipo VLineTo
       else if (element instanceof VLineTo) {
-        mirroredPathIda.getElements().add(new VLineTo(((VLineTo) element).getY()));
+        mirroGreenPathIda.getElements().add(new VLineTo(((VLineTo) element).getY()));
       }// Fim do else if
       // Verifica se o elemento eh do tipo CubicCurveTo
       else if (element instanceof CubicCurveTo) {
         CubicCurveTo cubicCurve = (CubicCurveTo) element;
-        mirroredPathIda.getElements().add(new CubicCurveTo(
+        mirroGreenPathIda.getElements().add(new CubicCurveTo(
           2 * (100 - cubicCurve.getControlX1()) + cubicCurve.getControlX1(),
           cubicCurve.getControlY1(),
           2 * (100 - cubicCurve.getControlX2()) + cubicCurve.getControlX2(),
@@ -712,30 +754,30 @@ public class Principal extends Application {
     } // Fim do for
 
     // Criacao do caminho espelhado do trajeto de volta 
-    Path mirroredPathVolta = new Path();
+    Path mirroGreenPathVolta = new Path();
 
     // Percorre os elementos do caminho original de volta
     for (PathElement element : pathVolta.getElements()) {
       // Verifica se o elemento eh do tipo MoveTo
       if (element instanceof MoveTo) {
-        mirroredPathVolta.getElements().add(new MoveTo(
+        mirroGreenPathVolta.getElements().add(new MoveTo(
           2 * (100 - ((MoveTo) element).getX()) + ((MoveTo) element).getX(),
           ((MoveTo) element).getY()));
       } // Fim do if
       // Verifica se o elemento eh do tipo LineTo
       else if (element instanceof LineTo) {
-        mirroredPathVolta.getElements().add(new LineTo(
+        mirroGreenPathVolta.getElements().add(new LineTo(
           2 * (100 - ((LineTo) element).getX()) + ((LineTo) element).getX(),
           ((LineTo) element).getY()));
       } // Fim do else if
       // Verifica se o elemento eh do tipo VLineTo
       else if (element instanceof VLineTo) {
-        mirroredPathVolta.getElements().add(new VLineTo(((VLineTo) element).getY()));
+        mirroGreenPathVolta.getElements().add(new VLineTo(((VLineTo) element).getY()));
       } // Fim do else if 
       // Verifica se o elemento eh do tipo CubicCurveTo
       else if (element instanceof CubicCurveTo) {
         CubicCurveTo cubicCurve = (CubicCurveTo) element;
-        mirroredPathVolta.getElements().add(new CubicCurveTo(
+        mirroGreenPathVolta.getElements().add(new CubicCurveTo(
           2 * (100 - cubicCurve.getControlX1()) + cubicCurve.getControlX1(),
           cubicCurve.getControlY1(),
           2 * (100 - cubicCurve.getControlX2()) + cubicCurve.getControlX2(),
@@ -746,20 +788,20 @@ public class Principal extends Application {
     } // Fim do for
 
     // Define cor e espessura do caminho de ida
-    pathIda.setStroke(Color.BLACK);
-    pathIda.setStrokeWidth(2);
+    pathIda.setStroke(Color.TRANSPARENT);
+    pathIda.setStrokeWidth(0);
 
     // Define cor e espessura do caminho espelhado
-    mirroredPathIda.setStroke(Color.BLACK);
-    mirroredPathIda.setStrokeWidth(2);
+    mirroGreenPathIda.setStroke(Color.TRANSPARENT);
+    mirroGreenPathIda.setStrokeWidth(0);
 
     // Adiciona os trilhos na tela
     root.getChildren().add(pathIda);
-    root.getChildren().add(mirroredPathIda);
+    root.getChildren().add(mirroGreenPathIda);
 
     // Adiciona os trens na tela
     root.getChildren().add(blueTrain);
-    root.getChildren().add(redTrain);
+    root.getChildren().add(greenTrain);
 
     // Criacao das animacoes de movimento dos trens
     PathTransition pathTransition1 = new PathTransition();
@@ -769,7 +811,7 @@ public class Principal extends Application {
     this.resetButton.setOnAction(e -> {
       // Redefine a velocidade dos sliders para o valor padrao
       this.blueSpeedSlider.setValue(DEFAULT_SPEED);
-      this.redSpeedSlider.setValue(DEFAULT_SPEED);
+      this.greenSpeedSlider.setValue(DEFAULT_SPEED);
 
       // Reinicia a animacao do trem azul
       pathTransition1.stop();
@@ -780,78 +822,78 @@ public class Principal extends Application {
       pathTransition2.play();
     }); // Fim do metodo resetButton.setOnAction
 
-    // propriedade utilizada para calcular a taxa de velocidade do trem azul
+    // Propriedade utilizada para calcular a taxa de velocidade do trem azul
     DoubleProperty dividedRateProperty = new SimpleDoubleProperty();
-    // vincula a velocidade do slider azul dividida por 30
+    // Vincula a velocidade do slider azul dividida por 30
     dividedRateProperty.bind(Bindings.divide(this.blueSpeedSlider.valueProperty(), 30.0));
-    // aplica a taxa de velocidade na animacao do trem azul
+    // Aplica a taxa de velocidade na animacao do trem azul
     pathTransition1.rateProperty().bind(dividedRateProperty);
-    // define qual objeto sera animado
+    // Define qual objeto sera animado
     pathTransition1.setNode(blueTrain);
-    // define a duracao da animacao
+    // Define a duracao da animacao
     pathTransition1.setDuration(Duration.seconds(4));
-    // define que a animacao executara apenas uma vez
+    // Define que a animacao executara apenas uma vez
     pathTransition1.setCycleCount(1);
-    // faz o trem rotacionar de acordo com a direcao do caminho
+    // Faz o trem rotacionar de acordo com a direcao do caminho
     pathTransition1.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-    // define interpolacao linear para movimento constante
+    // Define interpolacao linear para movimento constante
     pathTransition1.setInterpolator(Interpolator.LINEAR);
 
-    // propriedade utilizada para calcular a taxa de velocidade do trem vermelho
+    // Propriedade utilizada para calcular a taxa de velocidade do trem vermelho
     DoubleProperty dividedRateProperty2 = new SimpleDoubleProperty();
-    // vincula a velocidade do slider vermelho dividida por 30
-    dividedRateProperty2.bind(Bindings.divide(this.redSpeedSlider.valueProperty(), 30.0));
-    // aplica a taxa de velocidade na animacao do trem vermelho
+    // Vincula a velocidade do slider vermelho dividida por 30
+    dividedRateProperty2.bind(Bindings.divide(this.greenSpeedSlider.valueProperty(), 30.0));
+    // Aplica a taxa de velocidade na animacao do trem vermelho
     pathTransition2.rateProperty().bind(dividedRateProperty2);
-    // define qual objeto sera animado
-    pathTransition2.setNode(redTrain);
-    // define a duracao da animacao
+    // Define qual objeto sera animado
+    pathTransition2.setNode(greenTrain);
+    // Define a duracao da animacao
     pathTransition2.setDuration(Duration.seconds(4));
-    // define que a animacao executara apenas uma vez
+    // Define que a animacao executara apenas uma vez
     pathTransition2.setCycleCount(1);
-    // faz o trem rotacionar conforme a direcao do caminho
+    // Faz o trem rotacionar conforme a direcao do caminho
     pathTransition2.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-    // define interpolacao linear
+    // Define interpolacao linear
     pathTransition2.setInterpolator(Interpolator.LINEAR);
-    // quando a animacao do trem azul terminar ela reinicia
+    // Quando a animacao do trem azul terminar ela reinicia
     pathTransition1.setOnFinished(event -> {
       pathTransition1.play(); 
     }); // Fim do metodo pathTransition1.setOnFinished
 
-    // quando a animacao do trem vermelho terminar ela reinicia
+    // Quando a animacao do trem vermelho terminar ela reinicia
     pathTransition2.setOnFinished(event -> {
       pathTransition2.play(); 
     }); // Fim do metodo pathTransition2.setOnFinished
 
-    // define o caminho que cada trem ira seguir de acordo com a opcao selecionada
+    // Define o caminho que cada trem ira seguir de acordo com a opcao selecionada
     switch (message) {
-      // trens seguem na MESMA DIRECAO
+      // Trens seguem na MESMA DIRECAO
       case OP1:
         pathTransition1.setPath(pathIda);
         pathTransition1.play();
 
-        pathTransition2.setPath(mirroredPathIda);
+        pathTransition2.setPath(mirroGreenPathIda);
         pathTransition2.play();
         break;
-      // trens seguem na MESMA DIRECAO INVERSA
+      // Trens seguem na MESMA DIRECAO INVERSA
       case OP2:
         pathTransition1.setPath(pathVolta);
         pathTransition1.play();
 
-        pathTransition2.setPath(mirroredPathVolta);
+        pathTransition2.setPath(mirroGreenPathVolta);
         pathTransition2.play();
         break;
-      // trens seguem em DIRECOES OPOSTAS
+      // Trens seguem em DIRECOES OPOSTAS
       case OP3:
         pathTransition1.setPath(pathIda);
         pathTransition1.play();
 
-        pathTransition2.setPath(mirroredPathVolta);
+        pathTransition2.setPath(mirroGreenPathVolta);
         pathTransition2.play();
         break;
-      // trens seguem em DIRECOES OPOSTAS INVERSAS
+      // Trens seguem em DIRECOES OPOSTAS INVERSAS
       case OP4:
-        pathTransition1.setPath(mirroredPathIda);
+        pathTransition1.setPath(mirroGreenPathIda);
         pathTransition1.play();
 
         pathTransition2.setPath(pathVolta);
@@ -863,6 +905,430 @@ public class Principal extends Application {
   } // Fim do metodo openNewScreen
 
   /** ********************************************************************
+  * Metodo: randomPointInWater
+  * Funcao: Gera um ponto aleatorio dentro da area de agua
+  * Parametros: @param waterArea eh o caminho SVG que representa a area de agua
+  * Retorno: @return um array com as coordenadas (x, y) do ponto aleatorio dentro da area de agua
+  ********************************************************************* */
+  private double[] randomPointInWater(SVGPath waterArea) {
+
+    // Cria um objeto Random para gerar numeros aleatorios
+    Random random = new Random();
+
+    // Loop infinito que continua ate encontrar um ponto dentro da area de agua
+    while (true) {
+
+      // Gera coordenadas x e y aleatorias dentro dos limites aproximados da area de agua
+      double x = 150 + random.nextDouble() * 260;
+      double y = 200 + random.nextDouble() * 240;
+
+      // Verifica se o ponto gerado esta dentro da area de agua usando o metodo contains do SVGPath
+      if (waterArea.contains(x, y)) {
+        return new double[] {x, y};
+      } // Fim do if
+
+    } // Fim do while
+  
+  } // Fim do metodo randomPointInWater
+
+  /** ********************************************************************
+  * Metodo: spawnJumpingFish
+  * Funcao: Cria um peixe que salta da agua em uma posicao aleatoria dentro 
+  * da area de agua e executa uma animacao de salto, criando um efeito visual 
+  * de respingo e ondulacao na agua.
+  * Parametros: @param root e o container principal onde o peixe sera adicionado, 
+  * @param waterArea e o caminho SVG que representa a area de agua
+  * Retorno: @return void
+  ********************************************************************* */
+  private void spawnJumpingFish(Pane root, SVGPath waterArea) {
+
+    // Cria um objeto Random para selecionar uma imagem de peixe aleatoria
+    Random random = new Random();
+
+    // Array de strings contendo os caminhos para as imagens dos peixes
+    String[] fishImages = {
+      "file:img/fish1.png",
+      "file:img/fish2.png",
+      "file:img/fish3.png"
+    };
+
+    // Cria um ImageView para o peixe usando uma imagem aleatoria do array
+    ImageView fish = new ImageView(
+      // Seleciona uma imagem de peixe aleatoria usando o indice gerado pelo Random
+      new Image(fishImages[random.nextInt(fishImages.length)])
+    );
+
+    // Configura o tamanho do peixe para que ele se encaixe visualmente na cena
+    fish.setFitWidth(28);
+    // Configura a altura do peixe para manter a proporcao da imagem
+    fish.setPreserveRatio(true);
+
+    // Gera uma posicao aleatoria dentro da area de agua para o peixe usando o metodo randomPointInWater
+    double[] pos = randomPointInWater(waterArea);
+
+    // Define a posicao do peixe na cena usando as coordenadas geradas
+    fish.setLayoutX(pos[0]);
+    fish.setLayoutY(pos[1]);
+
+    // Adiciona o peixe ao container principal da cena para que ele seja exibido
+    root.getChildren().add(fish);
+
+    // Inicia a animacao de salto do peixe, que inclui um movimento de subida e descida, uma rotacao para simular o movimento do peixe no ar, e efeitos visuais de respingo e ondulacao na agua quando o peixe retorna para a agua
+    animateJumpFish(root, fish);
+  
+  } // Fim do metodo spawnJumpingFish
+
+  /** ********************************************************************
+  * Metodo: animateJumpFish
+  * Funcao: Executa a animacao de salto do peixe, que inclui um movimento
+  * de subida e descida, uma rotacao para simular o movimento do peixe no ar, 
+  * e efeitos visuais de respingo e ondulacao na agua quando o peixe retorna para a agua.
+  * Parametros: @param root eh o container principal onde os efeitos visuais serao adicionados,
+  * @param fish e o ImageView do peixe que sera animado
+  * Retorno: @return void
+  ********************************************************************* */
+  private void animateJumpFish(Pane root, ImageView fish) {
+
+    // Cria uma animacao de translacao para simular o movimento de salto do peixe
+    TranslateTransition jump = new TranslateTransition(
+      // Define a duracao da animacao de salto, que determina a velocidade do movimento do peixe
+      Duration.seconds(0.8),
+      // Define o objeto que sera animado, que neste caso eh o ImageView do peixe
+      fish
+    ); 
+
+    // Define o movimento vertical do salto, onde o peixe sobe 40 pixels e depois retorna para a posicao original, criando um efeito de subida e descida
+    jump.setByY(-40);
+    // Configura a animacao para que ela se inverta automaticamente, fazendo com que o peixe retorne para a posicao original apos subir, simulando o movimento de salto completo
+    jump.setAutoReverse(true);
+    // Define que a animacao de salto sera executada duas vezes, o que significa que o peixe subira e descera uma vez, criando um efeito visual mais fluido e natural
+    jump.setCycleCount(2);
+
+    // Cria uma animacao de rotacao para simular o movimento do peixe no ar durante o salto, onde o peixe gira levemente para um lado e depois para o outro, criando um efeito visual mais dinâmico e realista
+    RotateTransition wiggle = new RotateTransition(
+      Duration.seconds(0.2),
+      fish
+    );
+
+    // Define o angulo de rotacao para criar o efeito de movimento do peixe no ar, onde o peixe gira 25 graus para um lado e depois para o outro, simulando o movimento de oscilacao que os peixes fazem quando saltam da agua
+    wiggle.setByAngle(25);
+    // Configura a animacao de rotacao para que ela se inverta automaticamente, fazendo com que o peixe gire para um lado e depois para o outro, criando um efeito de oscilacao completa durante o salto
+    wiggle.setAutoReverse(true);
+    // Define que a animacao de rotacao sera executada 6 vezes, o que significa que o peixe fara 3 oscilacoes completas durante o salto, criando um efeito visual mais fluido e natural
+    wiggle.setCycleCount(6);
+
+    // Cria uma animacao paralela para combinar a animacao de salto e a animacao de rotacao, fazendo com que ambas sejam executadas ao mesmo tempo, criando um efeito visual mais complexo e realista do peixe saltando da agua
+    ParallelTransition animation = new ParallelTransition(
+      fish,
+      jump,
+      wiggle
+    );
+
+    // Define um evento que sera executado quando a animacao de salto e rotacao terminar, onde serao criados efeitos visuais de respingo e ondulacao na agua para simular o impacto do peixe retornando para a agua, e o peixe sera removido da cena para que ele nao fique visivel apos o salto
+    animation.setOnFinished(e -> {
+
+      // Cria os efeitos visuais de respingo e ondulacao na agua usando os metodos createSplash e createRipple, que adicionam elementos visuais ao container principal da cena para simular o impacto do peixe retornando para a agua, criando um efeito visual mais imersivo e realista
+      createSplash(root, fish.getLayoutX(), fish.getLayoutY());
+      // Cria o efeito de ondulacao na agua usando o metodo createRipple, que adiciona um circulo que se expande e desaparece para simular a ondulacao causada pelo impacto do peixe retornando para a agua
+      createRipple(root, fish.getLayoutX(), fish.getLayoutY());
+
+      // Remove o peixe da cena apos a animacao de salto e os efeitos visuais serem executados, garantindo que o peixe nao fique visivel na cena apos completar o salto
+      root.getChildren().remove(fish);
+    });
+
+    // Inicia a animacao de salto e rotacao do peixe
+    animation.play();
+  
+  } // Fim do metodo animateJumpFish
+
+  /** ********************************************************************
+  * Metodo: createSplash
+  * Funcao: Cria um efeito visual de respingo na agua quando o peixe retorna
+  * para a agua apos o salto, simulando o impacto do peixe na agua com pequenos
+  * circulos que se movem para fora do ponto de impacto e desaparecem gradualmente
+  * Parametros: @param root eh o container principal onde os elementos do respingo serao adicionados,
+  * @param x e a coordenada x do ponto de impacto do peixe retornando para a agua, @param y e a 
+  * coordenada y do ponto de impacto do peixe retornando para a agua
+  * Retorno: @return void
+  ********************************************************************* */
+  private void createSplash(Pane root, double x, double y) {
+
+    // Loop para criar multiplos circulos de respingo, onde cada circulo representa uma gota de agua que se move para fora do ponto de impacto, criando um efeito visual mais complexo e realista de respingo na agua
+    for (int i = 0; i < 4; i++) {
+
+      // Cria um circulo para representar uma gota de agua do respingo, onde cada circulo tem um tamanho pequeno e uma cor branca para simular a aparência de gotas de agua sendo lancadas para fora do ponto de impacto
+      Circle drop = new Circle(2, Color.WHITE);
+
+      // Define a posicao inicial do circulo de respingo no ponto de impacto do peixe retornando para a agua, garantindo que os circulos sejam criados exatamente onde o peixe toca a agua, criando um efeito visual mais preciso e realista
+      drop.setLayoutX(x);
+      drop.setLayoutY(y);
+
+      // Adiciona o circulo de respingo ao container principal da cena para que ele seja exibido, permitindo que os efeitos visuais do respingo sejam visiveis na cena quando o peixe retorna para a agua
+      root.getChildren().add(drop);
+
+      // Cria uma animacao de translacao para o circulo de respingo, onde cada circulo se move para fora do ponto de impacto em uma direcao aleatoria, simulando o movimento das gotas de agua sendo lancadas para fora do ponto de impacto do peixe retornando para a agua
+      TranslateTransition move = new TranslateTransition(
+        Duration.seconds(0.6),
+        drop
+      );
+
+      // Define o movimento do circulo de respingo para que ele se mova para fora do ponto de impacto em uma direcao aleatoria, onde a coordenada x e deslocada aleatoriamente para a esquerda ou direita, e a coordenada y e deslocada para cima, criando um efeito visual de gotas de agua sendo lancadas para fora do ponto de impacto do peixe retornando para a agua
+      move.setByX((Math.random() - 0.5) * 30);
+      move.setByY(-10 - Math.random() * 20);
+
+      // Cria uma animacao de fade para o circulo de respingo, onde cada circulo desaparece gradualmente enquanto se move para fora do ponto de impacto, simulando a dissipacao das gotas de agua no ar apos serem lancadas para fora do ponto de impacto do peixe retornando para a agua
+      FadeTransition fade = new FadeTransition(
+        Duration.seconds(0.6),
+        drop
+      );
+
+      // Define a animacao de fade para que o circulo de respingo comece com uma opacidade de 1 (totalmente visivel) e desapareca gradualmente para uma opacidade de 0 (totalmente invisivel), criando um efeito visual de dissipacao das gotas de agua no ar apos serem lancadas para fora do ponto de impacto do peixe retornando para a agua
+      fade.setFromValue(1);
+      fade.setToValue(0);
+
+      // Cria uma animacao paralela para combinar a animacao de movimento e a animacao de fade do circulo de respingo, fazendo com que ambas sejam executadas ao mesmo tempo, criando um efeito visual mais complexo e realista de gotas de agua sendo lancadas para fora do ponto de impacto do peixe retornando para a agua e dissipando no ar
+      ParallelTransition splash = new ParallelTransition(
+        drop,
+        move,
+        fade
+      );
+
+      // Define um evento que sera executado quando a animacao de movimento e fade do circulo de respingo terminar, onde o circulo de respingo sera removido da cena para garantir que ele nao fique visivel apos completar a animacao, mantendo a cena limpa e evitando que elementos visuais desnecessarios permanecam na cena
+      splash.setOnFinished(e -> root.getChildren().remove(drop));
+
+      // Inicia a animacao de movimento e fade do circulo de respingo
+      splash.play();
+    } // Fim do loop for
+  
+  } // Fim do metodo createSplash
+
+  /** ********************************************************************
+  * Metodo: createRipple
+  * Funcao: Cria um efeito visual de ondulacao na agua quando o peixe retorna
+  * para a agua apos o salto, simulando a ondulacao causada pelo impacto do peixe
+  * na agua com um circulo que se expande e desaparece gradualmente, criando 
+  * um efeito visual de ondulacao na agua
+  * Parametros: @param root eh o container principal onde o elemento da ondulacao sera adicionado,
+  * @param x e a coordenada x do ponto de impacto do peixe retornando para a agua, @param y e a 
+  * coordenada y do ponto de impacto do peixe retornando para a agua
+  * Retorno: @return void
+  ********************************************************************* */
+  private void createRipple(Pane root, double x, double y) {
+
+    // Cria um circulo para representar a ondulacao na agua, onde o circulo comeca com um tamanho pequeno e uma borda branca para simular a aparência de uma onda se formando na agua apos o impacto do peixe retornando para a agua
+    Circle ripple = new Circle(3);
+
+    // Define a posicao inicial do circulo de ondulacao no ponto de impacto do peixe retornando para a agua, garantindo que o circulo seja criado exatamente onde o peixe toca a agua, criando um efeito visual mais preciso e realista de uma onda se formando na agua apos o impacto do peixe retornando para a agua
+    ripple.setLayoutX(x);
+    ripple.setLayoutY(y);
+
+    // Configura a aparência do circulo de ondulacao para que ele tenha uma borda branca e um preenchimento transparente, criando um efeito visual de uma onda se formando na agua apos o impacto do peixe retornando para a agua
+    ripple.setStroke(Color.WHITE);
+    ripple.setFill(Color.TRANSPARENT);
+    ripple.setStrokeWidth(2);
+
+    // Adiciona o circulo de ondulacao ao container principal da cena para que ele seja exibido, permitindo que os efeitos visuais da onda se formando na agua sejam visiveis na cena quando o peixe retorna para a agua
+    root.getChildren().add(ripple);
+
+    // Cria uma animacao de escala para o circulo de ondulacao, onde o circulo se expande gradualmente a partir do ponto de impacto, simulando a formacao de uma onda na agua apos o impacto do peixe retornando para a agua
+    ScaleTransition expand = new ScaleTransition(
+      Duration.seconds(1.2),
+      ripple
+    );
+
+    // Define a animacao de escala para que o circulo de ondulacao comece com um tamanho original (1) e se expanda para um tamanho maior (6), criando um efeito visual de uma onda se formando na agua apos o impacto do peixe retornando para a agua
+    expand.setToX(6);
+    expand.setToY(6);
+
+    // Cria uma animacao de fade para o circulo de ondulacao, onde o circulo desaparece gradualmente enquanto se expande, simulando a dissipacao da onda na agua apos ser formada pelo impacto do peixe retornando para a agua
+    FadeTransition fade = new FadeTransition(
+      Duration.seconds(1.2),
+      ripple
+    );
+
+    // Define a animacao de fade para que o circulo de ondulacao comece com uma opacidade de 0.8 (quase totalmente visivel) e desapareca gradualmente para uma opacidade de 0 (totalmente invisivel), criando um efeito visual de dissipacao da onda na agua apos ser formada pelo impacto do peixe retornando para a agua
+    fade.setFromValue(0.8);
+    fade.setToValue(0);
+
+    // Cria uma animacao paralela para combinar a animacao de escala e a animacao de fade do circulo de ondulacao, fazendo com que ambas sejam executadas ao mesmo tempo, criando um efeito visual mais complexo e realista de uma onda se formando e dissipando na agua apos o impacto do peixe retornando para a agua
+    ParallelTransition rippleAnim = new ParallelTransition(
+      ripple,
+      expand,
+      fade
+    );
+
+    // Define um evento que sera executado quando a animacao de escala e fade do circulo de ondulacao terminar, onde o circulo de ondulacao sera removido da cena para garantir que ele nao fique visivel apos completar a animacao, mantendo a cena limpa e evitando que elementos visuais desnecessarios permanecam na cena
+    rippleAnim.setOnFinished(e -> root.getChildren().remove(ripple));
+
+    // Inicia a animacao de escala e fade do circulo de ondulacao
+    rippleAnim.play();
+  
+  } // Fim do metodo createRipple
+
+  /** ********************************************************************
+  * Metodo: spawnBubble
+  * Funcao: Cria uma bolha que surge da agua em uma posicao aleatoria dentro da 
+  * area de agua e executa uma animacao de subida e desaparecimento, simulando 
+  * o movimento de bolhas subindo na agua e desaparecendo gradualmente, 
+  * criando um efeito visual de bolhas subindo na agua
+  * Parametros: @param root e o container principal onde a bolha sera adicionada, 
+  * @param waterArea e o caminho SVG que representa a area de agua
+  * Retorno: @return void
+  ********************************************************************* */ 
+  private void spawnBubble(Pane root, SVGPath waterArea) {
+
+    // Gera uma posicao aleatoria dentro da area de agua para a bolha usando o metodo randomPointInWater, garantindo que as bolhas surjam em locais variados dentro da agua, criando um efeito visual mais dinâmico e realista de bolhas subindo na agua
+    double[] pos = randomPointInWater(waterArea);
+
+    // Cria um circulo para representar a bolha, onde a bolha tem um tamanho pequeno e uma cor branca para simular a aparência de uma bolha subindo na agua
+    Circle bubble = new Circle(2);
+    bubble.setLayoutX(pos[0]);
+    bubble.setLayoutY(pos[1]);
+    bubble.setFill(Color.WHITE);
+
+    // Adiciona a bolha ao container principal da cena para que ela seja exibida, permitindo que os efeitos visuais das bolhas subindo na agua sejam visiveis na cena
+    root.getChildren().add(bubble);
+
+    // Cria uma animacao de translacao para a bolha, onde a bolha se move para cima, simulando o movimento de bolhas subindo na agua
+    TranslateTransition rise = new TranslateTransition(
+      Duration.seconds(3),
+      bubble
+    );
+
+    // Define o movimento vertical da bolha para que ela suba 30 pixels, criando um efeito visual de bolhas subindo na agua
+    rise.setByY(-30);
+
+    // Cria uma animacao de fade para a bolha, onde a bolha desaparece gradualmente enquanto sobe, simulando o desaparecimento das bolhas na agua à medida que elas sobem e se dissipam
+    FadeTransition fade = new FadeTransition(
+      Duration.seconds(3),
+      bubble
+    );
+
+    // Define a animacao de fade para que a bolha comece com uma opacidade de 1 (totalmente visivel) e desapareca gradualmente para uma opacidade de 0 (totalmente invisivel), criando um efeito visual de bolhas desaparecendo na agua à medida que sobem e se dissipam
+    fade.setFromValue(1);
+    fade.setToValue(0);
+
+    // Cria uma animacao paralela para combinar a animacao de subida e a animacao de fade da bolha, fazendo com que ambas sejam executadas ao mesmo tempo, criando um efeito visual mais complexo e realista de bolhas subindo na agua e desaparecendo gradualmente
+    ParallelTransition animation = new ParallelTransition(
+      bubble,
+      rise,
+      fade
+    );
+
+    // Define um evento que sera executado quando a animacao de subida e fade da bolha terminar, onde a bolha sera removida da cena para garantir que ela nao fique visivel apos completar a animacao, mantendo a cena limpa e evitando que elementos visuais desnecessarios permanecam na cena
+    animation.setOnFinished(e -> root.getChildren().remove(bubble));
+
+    // Inicia a animacao de subida e fade da bolha
+    animation.play();
+  
+  } // Fim do metodo spawnBubble
+
+  /** ********************************************************************
+  * Metodo: startFishSpawner
+  * Funcao: Inicia o sistema de surgimento de peixes na simulacao. O metodo
+  * cria uma Timeline que dispara periodicamente a criacao de um novo peixe
+  * na tela a cada 4 segundos, onde cada peixe surge em uma posicao aleatoria 
+  * dentro da area de agua e executa uma animacao de salto, criando um 
+  * efeito visual de peixes saltando da agua
+  * Parametros: @param root eh o container principal onde os peixes 
+  * serao adicionados e animados durante a simulacao,
+  * @param waterArea eh o caminho SVG que representa a area de agua, 
+  * utilizado para gerar posicoes aleatorias para os peixes surgirem dentro da agua
+  * Retorno: @return void
+  ********************************************************************* */
+  private void startFishSpawner(Pane root, SVGPath waterArea) {
+
+    // Cria uma Timeline para controlar o surgimento dos peixes, onde a Timeline dispara um evento a cada 4 segundos para criar um novo peixe na tela, garantindo que os peixes surjam periodicamente durante a simulacao, criando um efeito visual de peixes saltando da agua de forma continua
+    Timeline fishSpawner = new Timeline(
+      new KeyFrame(Duration.seconds(4), e -> spawnJumpingFish(root, waterArea))
+    );
+
+    // Define que a Timeline executara indefinidamente, fazendo com que os peixes continuem surgindo na tela a cada 4 segundos durante toda a simulacao, criando um efeito visual de peixes saltando da agua de forma continua e dinâmica
+    fishSpawner.setCycleCount(Timeline.INDEFINITE);
+    fishSpawner.play();
+
+  } // Fim do metodo startFishSpawner
+
+  /** ********************************************************************
+  * Metodo: startBubbleSpawner
+  * Funcao: Inicia o sistema de surgimento de bolhas na simulacao. O metodo
+  * cria uma Timeline que dispara periodicamente a criacao de uma nova bolha
+  * na tela a cada 1.5 segundos, onde cada bolha surge em uma posicao aleatoria 
+  * dentro da area de agua e executa uma animacao de subida e desaparecimento, 
+  * criando um efeito visual de bolhas subindo na agua de forma continua e dinâmica
+  * Parametros: @param root eh o container principal onde as bolhas serao adicionadas 
+  * e animadas durante a simulacao,
+  * @param waterArea eh o caminho SVG que representa a area de agua, 
+  * utilizado para gerar posicoes aleatorias para as bolhas surgirem dentro da agua
+  * Retorno: @return void
+  ********************************************************************* */
+  private void startBubbleSpawner(Pane root, SVGPath waterArea) {
+
+    // Cria uma Timeline para controlar o surgimento das bolhas, onde a Timeline dispara um evento a cada 1.5 segundos para criar uma nova bolha na tela, garantindo que as bolhas surjam periodicamente durante a simulacao, criando um efeito visual de bolhas subindo na agua de forma continua
+    Timeline bubbleSpawner = new Timeline(
+      new KeyFrame(Duration.seconds(1.5), e -> spawnBubble(root, waterArea))
+    );
+
+    // Define que a Timeline executara indefinidamente, fazendo com que as bolhas continuem surgindo na tela a cada 1.5 segundos durante toda a simulacao, criando um efeito visual de bolhas subindo na agua de forma continua e dinâmica
+    bubbleSpawner.setCycleCount(Timeline.INDEFINITE);
+    bubbleSpawner.play();
+
+  } // Fim do metodo startBubbleSpawner
+
+  /** ********************************************************************
+  * Metodo: spawnAirplane
+  * Funcao: Cria um aviao na parte inferior da tela e executa uma animacao
+  * de subida ate sair completamente da tela, simulando trafego aereo.
+  * Parametros: @param root eh o Pane principal onde o aviao sera adicionado.
+  * Retorno: @return void
+  ********************************************************************* */
+  private void spawnAirplane(Pane root) {
+
+    // Cria o aviao fora da tela
+    Rectangle airplane = createRectangle(250, 1000, 80, 80, "/img/airplane.png");
+
+    // Adiciona na tela
+    root.getChildren().add(airplane);
+
+    // Garante que o aviao fique na frente de outros elementos
+    airplane.toFront();
+
+    // Animacao de voo
+    TranslateTransition fly = new TranslateTransition(Duration.seconds(8), airplane);
+    // Posicao inicial
+    fly.setFromY(0);
+    // Sobre ate sair da tela
+    fly.setToY(-1200);
+    fly.setInterpolator(Interpolator.LINEAR);
+
+    // Remove o aviao quando terminar
+    fly.setOnFinished(e -> root.getChildren().remove(airplane));
+
+    fly.play();
+  
+  }
+
+  /** ********************************************************************
+  * Metodo: startAirplaneTraffic
+  * Funcao: Inicia o sistema de trafego de avioes na simulacao. O metodo
+  * cria uma Timeline que dispara periodicamente a criacao de um novo
+  * aviao na tela a cada 15 segundos.
+  * Parametros: @param root eh o Pane principal onde os avioes serao
+  * adicionados e animados durante a simulacao.
+  * Retorno: @return void
+  ********************************************************************* */
+  private void startAirplaneTraffic(Pane root) {
+
+    Timeline airplaneSpawner = new Timeline(
+        new KeyFrame(Duration.seconds(15), e -> spawnAirplane(root))
+    );
+
+    airplaneSpawner.setCycleCount(Timeline.INDEFINITE);
+    airplaneSpawner.play();
+    
+  } // Fim do metodo startAirplaneTraffic
+
+  /** ********************************************************************
   * Metodo: main
   * Funcao: Metodo principal por iniciar a execucao do programa
   * Parametros: @param args representa os argumentos passados pela linha de comando.
@@ -871,4 +1337,4 @@ public class Principal extends Application {
   public static void main(String[] args) {
     launch(args);
   } // Fim do metodo main
-} // Fim da classe MainApp
+} // Fim da classe Principal
