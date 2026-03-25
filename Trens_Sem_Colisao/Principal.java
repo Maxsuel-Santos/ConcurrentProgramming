@@ -264,12 +264,13 @@ public class Principal extends Application {
     // Criacao da cena principal
     Scene scene = new Scene(this.vbox);
 
+    // Configuracao da janela principal da aplicacao
     primaryStage.setScene(scene);
     primaryStage.setResizable(false);
 
     // Criacoa da janela inicial de start
     Stage firstStage = new Stage();
-    firstStage.setTitle("MaxTrain Simulator");
+    firstStage.setTitle("MAXTRAIN SIMULATOR");
 
     // Botao de iniciar
     Button startButton = new Button("START");  
@@ -542,10 +543,10 @@ public class Principal extends Application {
     this.vbox.getChildren().add(this.textContainer);
 
     // Criacao dos textos dos sliders
-    Text blueTrainLabel = new Text("Velocidade do Trem Azul");
+    Text blueTrainLabel = new Text("VELOCIDADE DO TREM AZUL");
     blueTrainLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
      
-    Text greenTrainLabel = new Text("Velocidade do Trem Verde");
+    Text greenTrainLabel = new Text("VELOCIDADE DO TREM VERDE");
     greenTrainLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16)); 
 
     // Container do slider azul
