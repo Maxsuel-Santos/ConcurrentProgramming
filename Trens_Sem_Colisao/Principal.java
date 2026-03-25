@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 13/03/2026
-* Ultima alteracao.: 23/03/2026
+* Ultima alteracao.: 24/03/2026
 * Nome.............: Principal.java
 * Funcao...........: Projeto da disciplina de Programacao Concorrente com
 * o objetivo de simular o percurso de dois trens por um caminho definido.
