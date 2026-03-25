@@ -207,6 +207,11 @@ public class Principal extends Application {
     this.vbox.setAlignment(Pos.TOP_CENTER);
     this.vbox.getChildren().addAll(textContainer, buttonContainer);
 
+    // Estilizacao do container principal da tela
+    vbox.styleProperty().bind(Bindings.concat(
+        "-fx-background-color: linear-gradient(to bottom, #e0f7fa, #80deea);"
+    ));
+
     // Criacao dos containers de cada botao com imagem: Botao 1
     VBox buttonImage1 = new VBox(2);
     buttonImage1.setAlignment(Pos.CENTER);
@@ -726,6 +731,7 @@ public class Principal extends Application {
     for (PathElement element : pathIda.getElements()) {
       // Verifica se o elemento eh do tipo MoveTo
       if (element instanceof MoveTo) {
+        // Calcula a coordenada X espelhada e adiciona um novo MoveTo ao caminho espelhado
         mirroGreenPathIda.getElements().add(new MoveTo(
           2 * (100 - ((MoveTo) element).getX()) + ((MoveTo) element).getX(),
           ((MoveTo) element).getY()));
