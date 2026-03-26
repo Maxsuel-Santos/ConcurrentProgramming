@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 13/03/2026
-* Ultima alteracao.: 25/03/2026
+* Ultima alteracao.: 26/03/2026
 * Nome.............: Principal.java
 * Funcao...........: Classe principal responsavel por iniciar a aplicacao
 ************************************************************************ */
@@ -172,9 +172,7 @@ public class Principal extends Application {
     this.vbox.getChildren().addAll(textContainer, buttonContainer);
 
     // Estilizacao do container principal da tela
-    vbox.styleProperty().bind(Bindings.concat(
-        "-fx-background-color: linear-gradient(to bottom, #e0f7fa, #80deea);"
-    ));
+    vbox.getStyleClass().add("main-container");
 
     // Criacao dos containers de cada botao com imagem: Botao 1
     VBox buttonImage1 = new VBox(2);
@@ -228,27 +226,21 @@ public class Principal extends Application {
     // Criacao da cena principal
     Scene scene = new Scene(this.vbox);
 
+    scene.getStylesheets().add("css/style.css");
+
+    // Configuracao da janela principal da aplicacao
     primaryStage.setScene(scene);
     primaryStage.setResizable(false);
 
     // Criacoa da janela inicial de start
     Stage firstStage = new Stage();
-    firstStage.setTitle("MaxTrain Simulator");
+    firstStage.setTitle("MAXTRAIN SIMULATOR");
 
     // Botao de iniciar
     Button startButton = new Button("START");  
 
     // Estilizacao do botao iniciar
-    startButton.setStyle(
-        "-fx-background-color: linear-gradient(to right, #00c6ff, #3590ff);"
-      + "-fx-text-fill: white;"
-      + "-fx-font-size: 26px;"
-      + "-fx-font-weight: bold;"
-      + "-fx-padding: 12px 28px;"
-      + "-fx-background-radius: 12px;"
-      + "-fx-border-radius: 12px;"
-      + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0.5, 0, 4);"
-    );
+    startButton.getStyleClass().add("start-button");
 
     // Container do botao start
     HBox startHbox = new HBox(15);
@@ -258,6 +250,9 @@ public class Principal extends Application {
 
     // Criacao da cena inicial
     Scene firstScene = new Scene(startHbox,800,540);
+
+    // Adiciona o estilo css externo na cena
+    firstScene.getStylesheets().add("css/style.css");
 
     // Define a imagem de fundo da tela inicial e algumas configuracoes de posicionamento
     Image background = new Image("/img/startbackground.png");
@@ -339,13 +334,7 @@ public class Principal extends Application {
     Button button = new Button(text.getTitle());
 
     // Define o estilo visual do botao
-    button.setStyle(
-          "-fx-background-color: #000;"
-        + "-fx-text-fill: white;"
-        + "-fx-font-size: 16px;"
-        + "-fx-font-weight: bold;"
-      
-    );
+    button.getStyleClass().add("option-button");
 
     // Define o comportamento ao clicar o botao
     button.setOnAction(e -> {
@@ -436,10 +425,7 @@ public class Principal extends Application {
     this.blueSpeedSlider.setShowTickMarks(true);
     this.blueSpeedSlider.setShowTickLabels(true);
     // Definicao do slider do trem azul
-    this.blueSpeedSlider.setStyle(
-        "-fx-control-inner-background: #2196F3;"
-      + "-fx-background-color: transparent;"
-    );
+    blueSpeedSlider.getStyleClass().add("blue-speed-slider");
 
     // Criacao do slider do trem verde
     this.greenSpeedSlider = new Slider(0, 100, Constantes.DEFAULT_SPEED); 
@@ -448,11 +434,8 @@ public class Principal extends Application {
     this.greenSpeedSlider.setShowTickMarks(true);
     this.greenSpeedSlider.setShowTickLabels(true);
     // Definicao do estilo do slider verde
-    this.greenSpeedSlider.setStyle(
-        "-fx-control-inner-background: #58BF3B;"
-      + "-fx-background-color: transparent;"
-    );
-
+    greenSpeedSlider.getStyleClass().add("green-speed-slider");
+    
     // Carregamento da imagem de fundo da simulacao
     Image background = new Image("/img/background.png");
     
@@ -478,13 +461,8 @@ public class Principal extends Application {
     // Criacao do botao reset
     this.resetButton = new Button("RESET");
     // Definicao do estilo do botao reset
-    this.resetButton.setStyle(
-          "-fx-background-color: #F44336;"
-        + "-fx-text-fill: white;"
-        + "-fx-font-weight: bold;"
-        + "-fx-font-size: 16px;"
-    );
-
+    resetButton.getStyleClass().add("reset-button");
+    
     // Criacao do texto do painel de controle
     Text painelText = new Text("PAINEL DE CONTROLE");
     painelText.setFont(Font.font(
