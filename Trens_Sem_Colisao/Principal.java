@@ -2,15 +2,16 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 13/03/2026
-* Ultima alteracao.: 24/03/2026
+* Ultima alteracao.: 25/03/2026
 * Nome.............: Principal.java
-* Funcao...........: Projeto da disciplina de Programacao Concorrente com
-* o objetivo de simular o percurso de dois trens por um caminho definido.
+* Funcao...........: Classe principal responsavel por iniciar a aplicacao
 ************************************************************************ */
 
 // Importacoes necessarias
 import java.util.ArrayList;
 import java.util.Random;
+import util.Option;
+import util.Constantes;
 
 import javafx.animation.Animation; // Esse sera o import usado para as animacoes com JavaFx
 import javafx.animation.FadeTransition;
@@ -68,9 +69,6 @@ import javafx.scene.media.AudioClip;
 * Funcao: Classe principal responsavel por iniciar a aplicacao
 *************************************************************** */
 public class Principal extends Application {
-
-  // Velocidade padrao dos trens
-  private static final double DEFAULT_SPEED = 10; 
   
   // Janela principal
   private Stage primaryStage; 
@@ -110,40 +108,6 @@ public class Principal extends Application {
   
   // Propriedade booleana para pausar trens 2
   private BooleanProperty pauseTrains2;
-  
-  /* *************************************************************** 
-  * Enum: Option 
-  * Funcao: Representa as opcoes de direcao dos trens 
-  *************************************************************** */
-  private enum Option {
-    OP1("MESMA DIRECAO"),
-    OP2("MESMA DIRECAO INVERSA"),
-    OP3("DIRECAO OPOSTA"),
-    OP4("DIRECAO OPOSTA INVERSA");
-
-    private final String title;
-
-    /* *************************************************************** 
-    * Metodo: Option 
-    * Funcao: Construtor do enum Option 
-    * Parametros: @param title eh o texto da opcao 
-    * Retorno: nao possui retorno 
-    *************************************************************** */
-    Option(String title) {
-      this.title = title;
-    } // Fim do construtor Option
-
-    /* *************************************************************** 
-    * Metodo: getTitle 
-    * Funcao: Retorna o titulo da opcao 
-    * Parametros: nao possui parametros 
-    * Retorno: String contendo o titulo da opcao 
-    *************************************************************** */
-    public String getTitle() {
-      return title;
-    } // Fim do metodo getTitle
-  } // Fim do enum Option
-
   
   /** ********************************************************************
   * Metodo: start
@@ -264,13 +228,12 @@ public class Principal extends Application {
     // Criacao da cena principal
     Scene scene = new Scene(this.vbox);
 
-    // Configuracao da janela principal da aplicacao
     primaryStage.setScene(scene);
     primaryStage.setResizable(false);
 
     // Criacoa da janela inicial de start
     Stage firstStage = new Stage();
-    firstStage.setTitle("MAXTRAIN SIMULATOR");
+    firstStage.setTitle("MaxTrain Simulator");
 
     // Botao de iniciar
     Button startButton = new Button("START");  
@@ -389,9 +352,9 @@ public class Principal extends Application {
       // Abre a tela de simulacao com base na opcao
       openNewScreen(text);
       // Reseta velocidade do trem azul
-      this.blueSpeedSlider.setValue(DEFAULT_SPEED);
+      this.blueSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
       // Reseta velocidade do trem Vermelho
-      this.greenSpeedSlider.setValue(DEFAULT_SPEED);
+      this.greenSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
       // Remove pausa do trem 1
       this.pauseTrains1.set(false);
       // Remove pausa do trem 2
@@ -467,7 +430,7 @@ public class Principal extends Application {
     startAirplaneTraffic(root);
 
     // Criacao do slider do trem azul
-    this.blueSpeedSlider = new Slider(0, 100, DEFAULT_SPEED); 
+    this.blueSpeedSlider = new Slider(0, 100, Constantes.DEFAULT_SPEED); 
     this.blueSpeedSlider.setMinWidth(300);
     this.blueSpeedSlider.setMaxWidth(300);
     this.blueSpeedSlider.setShowTickMarks(true);
@@ -479,7 +442,7 @@ public class Principal extends Application {
     );
 
     // Criacao do slider do trem verde
-    this.greenSpeedSlider = new Slider(0, 100, DEFAULT_SPEED); 
+    this.greenSpeedSlider = new Slider(0, 100, Constantes.DEFAULT_SPEED); 
     this.greenSpeedSlider.setMinWidth(300);
     this.greenSpeedSlider.setMaxWidth(300);
     this.greenSpeedSlider.setShowTickMarks(true);
@@ -543,10 +506,10 @@ public class Principal extends Application {
     this.vbox.getChildren().add(this.textContainer);
 
     // Criacao dos textos dos sliders
-    Text blueTrainLabel = new Text("VELOCIDADE DO TREM AZUL");
+    Text blueTrainLabel = new Text("Velocidade do Trem Azul");
     blueTrainLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
      
-    Text greenTrainLabel = new Text("VELOCIDADE DO TREM VERDE");
+    Text greenTrainLabel = new Text("Velocidade do Trem Verde");
     greenTrainLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16)); 
 
     // Container do slider azul
@@ -624,13 +587,15 @@ public class Principal extends Application {
 
     // Vetor auxiliar contendo todos os carros criados
     Rectangle[] carrosArray = {
-        carro1, carro2, carro3, carro4, carro5,
-        carro6, carro7, carro8, carro9, carro10,
-        carro11, carro12, carro13, carro14, carro15,
-        carro16, carro17, carro18, carro19, carro20,
-        carro21, carro22, carro23, carro24, carro25,
-        carro26, carro27, carro28, carro29, carro30,
-        carro31, carro32, carro33, carro34, carro35, carro36
+        carro1, carro2, carro3, carro4, 
+        carro5, carro6, carro7, carro8, 
+        carro9, carro10, carro11, carro12, 
+        carro13, carro14, carro15, carro16, 
+        carro17, carro18, carro19, carro20,
+        carro21, carro22, carro23, carro24, 
+        carro25, carro26, carro27, carro28, 
+        carro29, carro30, carro31, carro32, 
+        carro33, carro34, carro35, carro36
     };
 
     // Loop responsavel por adicionar os carros na lista e definir suas ruracoes
@@ -817,8 +782,8 @@ public class Principal extends Application {
     // Define o comportamento do botao reset
     this.resetButton.setOnAction(e -> {
       // Redefine a velocidade dos sliders para o valor padrao
-      this.blueSpeedSlider.setValue(DEFAULT_SPEED);
-      this.greenSpeedSlider.setValue(DEFAULT_SPEED);
+      this.blueSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
+      this.greenSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
 
       // Reinicia a animacao do trem azul
       pathTransition1.stop();
