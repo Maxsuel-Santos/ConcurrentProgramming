@@ -7,20 +7,15 @@
 * Funcao...........: Classe principal responsavel por iniciar a aplicacao
 ************************************************************************ */
 
-// Importacoes necessarias
 import java.util.ArrayList;
 import java.util.Random;
 import util.Option;
 import util.Constantes;
 
-import javafx.animation.Animation; // Esse sera o import usado para as animacoes com JavaFx
-import javafx.animation.FadeTransition;
+import javafx.animation.Animation; 
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
-import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
-import javafx.animation.RotateTransition;
-import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
@@ -46,7 +41,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -61,7 +55,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.animation.TranslateTransition;
 import javafx.scene.media.AudioClip;
 
 public class Principal extends Application {
@@ -101,13 +94,6 @@ public class Principal extends Application {
   ******************************************************************** */
   @Override
   public void start(Stage primaryStage) {
-
-    AudioClip themeSound = new AudioClip(
-      getClass().getResource("/sound/theme.wav").toExternalForm()
-    );
-    
-    themeSound.setCycleCount(AudioClip.INDEFINITE);
-    themeSound.play();
     
     this.primaryStage = primaryStage;
 
@@ -330,12 +316,6 @@ public class Principal extends Application {
     waterArea.setContent(
       "M250.5 419L199 423.5L210.5 373V346.5L202.5 313.5L185.5 281V213L269.5 218.5L304 216.5L392 210.5L393.5 432.5L348 422L293.5 417L250.5 419Z"
     );
-    
-    startFishSpawner(root, waterArea);
-    
-    startBubbleSpawner(root, waterArea);
-    
-    startAirplaneTraffic(root);
 
     this.blueSpeedSlider = new Slider(0, 100, Constantes.DEFAULT_SPEED); 
     this.blueSpeedSlider.setMinWidth(300);
@@ -680,367 +660,7 @@ public class Principal extends Application {
     } 
   } 
 
-  /** ********************************************************************
-  * Metodo: randomPointInWater
-  * Funcao: Gera um ponto aleatorio dentro da area de agua
-  * Parametros: @param waterArea eh o caminho SVG que representa a area de agua
-  * Retorno: @return um array com as coordenadas (x, y) do ponto aleatorio dentro da area de agua
-  ********************************************************************* */
-  private double[] randomPointInWater(SVGPath waterArea) {
 
-    Random random = new Random();
-
-    while (true) {
-
-      double x = 150 + random.nextDouble() * 260;
-      double y = 200 + random.nextDouble() * 240;
-
-      if (waterArea.contains(x, y)) {
-        return new double[] {x, y};
-      } 
-
-    } 
-  
-  } 
-
-  /** ********************************************************************
-  * Metodo: spawnJumpingFish
-  * Funcao: Cria um peixe que salta da agua em uma posicao aleatoria dentro 
-  * da area de agua e executa uma animacao de salto, criando um efeito visual 
-  * de respingo e ondulacao na agua.
-  * Parametros: @param root e o container principal onde o peixe sera adicionado, 
-  * @param waterArea e o caminho SVG que representa a area de agua
-  * Retorno: @return void
-  ********************************************************************* */
-  private void spawnJumpingFish(Pane root, SVGPath waterArea) {
-
-    Random random = new Random();
-
-    String[] fishImages = {
-      "/img/fish1.png",
-      "/img/fish2.png",
-      "/img/fish3.png",
-      "/img/fish4.png",
-      "/img/fish5.png",
-      "/img/fish6.png",
-      "/img/fish7.png",
-      "/img/fish8.png",
-      "/img/fish9.png",
-      "/img/fish10.png",
-      "/img/fish11.png",
-      "/img/fish12.png",
-      "/img/fish13.png",
-      "/img/fish14.png",
-      "/img/fish15.png",
-    };
-
-    ImageView fish = new ImageView(
-      new Image(fishImages[random.nextInt(fishImages.length)])
-    );
-
-    fish.setFitWidth(28);
-    fish.setPreserveRatio(true);
-
-    double[] pos = randomPointInWater(waterArea);
-
-    fish.setLayoutX(pos[0]);
-    fish.setLayoutY(pos[1]);
-
-    root.getChildren().add(fish);
-
-    animateJumpFish(root, fish);
-  
-  } 
-
-  /** ********************************************************************
-  * Metodo: animateJumpFish
-  * Funcao: Executa a animacao de salto do peixe, que inclui um movimento
-  * de subida e descida, uma rotacao para simular o movimento do peixe no ar, 
-  * e efeitos visuais de respingo e ondulacao na agua quando o peixe retorna para a agua.
-  * Parametros: @param root eh o container principal onde os efeitos visuais serao adicionados,
-  * @param fish e o ImageView do peixe que sera animado
-  * Retorno: @return void
-  ********************************************************************* */
-  private void animateJumpFish(Pane root, ImageView fish) {
-
-    TranslateTransition jump = new TranslateTransition(
-      Duration.seconds(0.8),
-      fish
-    ); 
-
-    jump.setByY(-40);
-    jump.setAutoReverse(true);
-    jump.setCycleCount(2);
-
-    RotateTransition wiggle = new RotateTransition(
-      Duration.seconds(0.2),
-      fish
-    );
-
-    wiggle.setByAngle(25);
-    wiggle.setAutoReverse(true);
-    wiggle.setCycleCount(6);
-
-    ParallelTransition animation = new ParallelTransition(
-      fish,
-      jump,
-      wiggle
-    );
-
-    animation.setOnFinished(e -> {
-
-      createSplash(root, fish.getLayoutX(), fish.getLayoutY());
-      createRipple(root, fish.getLayoutX(), fish.getLayoutY());
-
-      root.getChildren().remove(fish);
-    });
-
-    animation.play();
-  
-  }
-
-  /** ********************************************************************
-  * Metodo: createSplash
-  * Funcao: Cria um efeito visual de respingo na agua quando o peixe retorna
-  * para a agua apos o salto, simulando o impacto do peixe na agua com pequenos
-  * circulos que se movem para fora do ponto de impacto e desaparecem gradualmente
-  * Parametros: @param root eh o container principal onde os elementos do respingo serao adicionados,
-  * @param x e a coordenada x do ponto de impacto do peixe retornando para a agua, @param y e a 
-  * coordenada y do ponto de impacto do peixe retornando para a agua
-  * Retorno: @return void
-  ********************************************************************* */
-  private void createSplash(Pane root, double x, double y) {
-
-    for (int i = 0; i < 4; i++) {
-
-      Circle drop = new Circle(2, Color.WHITE);
-
-      drop.setLayoutX(x);
-      drop.setLayoutY(y);
-
-      root.getChildren().add(drop);
-
-      TranslateTransition move = new TranslateTransition(
-        Duration.seconds(0.6),
-        drop
-      );
-
-      move.setByX((Math.random() - 0.5) * 30);
-      move.setByY(-10 - Math.random() * 20);
-
-      FadeTransition fade = new FadeTransition(
-        Duration.seconds(0.6),
-        drop
-      );
-
-      fade.setFromValue(1);
-      fade.setToValue(0);
-
-      ParallelTransition splash = new ParallelTransition(
-        drop,
-        move,
-        fade
-      );
-
-      splash.setOnFinished(e -> root.getChildren().remove(drop));
-
-      splash.play();
-    } 
-  } 
-
-  /** ********************************************************************
-  * Metodo: createRipple
-  * Funcao: Cria um efeito visual de ondulacao na agua quando o peixe retorna
-  * para a agua apos o salto, simulando a ondulacao causada pelo impacto do peixe
-  * na agua com um circulo que se expande e desaparece gradualmente, criando 
-  * um efeito visual de ondulacao na agua
-  * Parametros: @param root eh o container principal onde o elemento da ondulacao sera adicionado,
-  * @param x e a coordenada x do ponto de impacto do peixe retornando para a agua, @param y e a 
-  * coordenada y do ponto de impacto do peixe retornando para a agua
-  * Retorno: @return void
-  ********************************************************************* */
-  private void createRipple(Pane root, double x, double y) {
-
-    Circle ripple = new Circle(3);
-
-    ripple.setLayoutX(x);
-    ripple.setLayoutY(y);
-
-    ripple.setStroke(Color.WHITE);
-    ripple.setFill(Color.TRANSPARENT);
-    ripple.setStrokeWidth(2);
-
-    root.getChildren().add(ripple);
-
-    ScaleTransition expand = new ScaleTransition(
-      Duration.seconds(1.2),
-      ripple
-    );
-
-    expand.setToX(6);
-    expand.setToY(6);
-
-    FadeTransition fade = new FadeTransition(
-      Duration.seconds(1.2),
-      ripple
-    );
-
-    fade.setFromValue(0.8);
-    fade.setToValue(0);
-
-    ParallelTransition rippleAnim = new ParallelTransition(
-      ripple,
-      expand,
-      fade
-    );
-
-    rippleAnim.setOnFinished(e -> root.getChildren().remove(ripple));
-
-    rippleAnim.play();
-  
-  }
-
-  /** ********************************************************************
-  * Metodo: spawnBubble
-  * Funcao: Cria uma bolha que surge da agua em uma posicao aleatoria dentro da 
-  * area de agua e executa uma animacao de subida e desaparecimento, simulando 
-  * o movimento de bolhas subindo na agua e desaparecendo gradualmente, 
-  * criando um efeito visual de bolhas subindo na agua
-  * Parametros: @param root e o container principal onde a bolha sera adicionada, 
-  * @param waterArea e o caminho SVG que representa a area de agua
-  * Retorno: @return void
-  ********************************************************************* */ 
-  private void spawnBubble(Pane root, SVGPath waterArea) {
-
-    double[] pos = randomPointInWater(waterArea);
-
-    Circle bubble = new Circle(2);
-    bubble.setLayoutX(pos[0]);
-    bubble.setLayoutY(pos[1]);
-    bubble.setFill(Color.WHITE);
-
-    root.getChildren().add(bubble);
-
-    TranslateTransition rise = new TranslateTransition(
-      Duration.seconds(3),
-      bubble
-    );
-
-    rise.setByY(-30);
-
-    FadeTransition fade = new FadeTransition(
-      Duration.seconds(3),
-      bubble
-    );
-
-    fade.setFromValue(1);
-    fade.setToValue(0);
-
-    ParallelTransition animation = new ParallelTransition(
-      bubble,
-      rise,
-      fade
-    );
-
-    animation.setOnFinished(e -> root.getChildren().remove(bubble));
-
-    animation.play();
-  
-  }
-
-  /** ********************************************************************
-  * Metodo: startFishSpawner
-  * Funcao: Inicia o sistema de surgimento de peixes na simulacao. O metodo
-  * cria uma Timeline que dispara periodicamente a criacao de um novo peixe
-  * na tela a cada 4 segundos, onde cada peixe surge em uma posicao aleatoria 
-  * dentro da area de agua e executa uma animacao de salto, criando um 
-  * efeito visual de peixes saltando da agua
-  * Parametros: @param root eh o container principal onde os peixes 
-  * serao adicionados e animados durante a simulacao,
-  * @param waterArea eh o caminho SVG que representa a area de agua, 
-  * utilizado para gerar posicoes aleatorias para os peixes surgirem dentro da agua
-  * Retorno: @return void
-  ********************************************************************* */
-  private void startFishSpawner(Pane root, SVGPath waterArea) {
-
-    Timeline fishSpawner = new Timeline(
-      new KeyFrame(Duration.seconds(4), e -> spawnJumpingFish(root, waterArea))
-    );
-
-    fishSpawner.setCycleCount(Timeline.INDEFINITE);
-    fishSpawner.play();
-
-  }
-
-  /** ********************************************************************
-  * Metodo: startBubbleSpawner
-  * Funcao: Inicia o sistema de surgimento de bolhas na simulacao. O metodo
-  * cria uma Timeline que dispara periodicamente a criacao de uma nova bolha
-  * na tela a cada 1.5 segundos, onde cada bolha surge em uma posicao aleatoria 
-  * dentro da area de agua e executa uma animacao de subida e desaparecimento, 
-  * criando um efeito visual de bolhas subindo na agua de forma continua e dinâmica
-  * Parametros: @param root eh o container principal onde as bolhas serao adicionadas 
-  * e animadas durante a simulacao,
-  * @param waterArea eh o caminho SVG que representa a area de agua, 
-  * utilizado para gerar posicoes aleatorias para as bolhas surgirem dentro da agua
-  * Retorno: @return void
-  ********************************************************************* */
-  private void startBubbleSpawner(Pane root, SVGPath waterArea) {
-
-    Timeline bubbleSpawner = new Timeline(
-      new KeyFrame(Duration.seconds(1.5), e -> spawnBubble(root, waterArea))
-    );
-
-    bubbleSpawner.setCycleCount(Timeline.INDEFINITE);
-    bubbleSpawner.play();
-
-  }
-
-  /** ********************************************************************
-  * Metodo: spawnAirplane
-  * Funcao: Cria um aviao na parte inferior da tela e executa uma animacao
-  * de subida ate sair completamente da tela, simulando trafego aereo.
-  * Parametros: @param root eh o Pane principal onde o aviao sera adicionado.
-  * Retorno: @return void
-  ********************************************************************* */
-  private void spawnAirplane(Pane root) {
-
-    Rectangle airplane = createRectangle(250, 1000, 80, 80, "/img/airplane.png");
-
-    root.getChildren().add(airplane);
-
-    airplane.toFront();
-
-    TranslateTransition fly = new TranslateTransition(Duration.seconds(8), airplane);
-    fly.setFromY(0);
-    fly.setToY(-1200);
-    fly.setInterpolator(Interpolator.LINEAR);
-
-    fly.setOnFinished(e -> root.getChildren().remove(airplane));
-
-    fly.play();
-  
-  }
-
-  /** ********************************************************************
-  * Metodo: startAirplaneTraffic
-  * Funcao: Inicia o sistema de trafego de avioes na simulacao. O metodo
-  * cria uma Timeline que dispara periodicamente a criacao de um novo
-  * aviao na tela a cada 15 segundos.
-  * Parametros: @param root eh o Pane principal onde os avioes serao
-  * adicionados e animados durante a simulacao.
-  * Retorno: @return void
-  ********************************************************************* */
-  private void startAirplaneTraffic(Pane root) {
-
-    Timeline airplaneSpawner = new Timeline(
-        new KeyFrame(Duration.seconds(15), e -> spawnAirplane(root))
-    );
-
-    airplaneSpawner.setCycleCount(Timeline.INDEFINITE);
-    airplaneSpawner.play();
-    
-  } 
 
   /** ********************************************************************
   * Metodo: main
