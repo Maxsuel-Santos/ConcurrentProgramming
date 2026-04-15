@@ -55,7 +55,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.scene.media.AudioClip;
 
 public class Principal extends Application {
   
