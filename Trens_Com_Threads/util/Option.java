@@ -1,8 +1,8 @@
 /* *********************************************************************
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
-* Inicio...........: 25/03/2026
-* Ultima alteracao.: 25/03/2026
+* Inicio...........: 15/04/2026
+* Ultima alteracao.: 15/04/2026
 * Nome.............: Option.java
 * Funcao...........: Representa as opcoes de direcao dos trens
 ************************************************************************ */
@@ -30,7 +30,7 @@ public enum Option {
     *************************************************************** */
     Option(String title) {
       this.title = title;
-    } // Fim do construtor Option
+    }
 
     /* *************************************************************** 
     * Metodo: getTitle 
@@ -40,6 +40,6 @@ public enum Option {
     *************************************************************** */
     public String getTitle() {
       return title;
-    } // Fim do metodo getTitle
+    }
 
-} // Fim do enum Option   
+}

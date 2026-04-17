@@ -11,7 +11,7 @@
 
 .option-button {
     -fx-background-color: #000;
-    -fx-text-fill: white;
+    -fx-text-fill: #fff;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
@@ -35,4 +35,21 @@
 
 .main-container {
     -fx-background-color: linear-gradient(to bottom, #e0f7fa, #80deea);
+}
+
+.sync-button {
+    -fx-background-color: #000;
+    -fx-text-fill: #fff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 12px;
+    -fx-cursor: hand;
+}
+ 
+.sync-button:hover {
+    -fx-background-color: #222;
+}
+ 
+.sync-button:pressed {
+    -fx-background-color: #444;
 }

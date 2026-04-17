@@ -1,0 +1,204 @@
+/* *********************************************************************
+* Autor............: Maxsuel Aparecido Lima Santos
+* Matricula........: 202511587
+* Inicio...........: 15/04/2026
+* Ultima alteracao.: 15/04/2026
+* Nome.............: TremDaEsquerda.java
+* Funcao...........: Thread do trem azul. Gerencia a animacao via
+*                    PathTransition e invoca o algoritmo de exclusao
+*                    mutua ativo, monitorando a posicao Y real do trem
+*                    na cena para detectar entrada no trilho simples.
+************************************************************************ */
+
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.PathTransition;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.control.Slider;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
+
+/* ***************************************************************
+* Classe: TremDaEsquerda
+* Funcao: Thread do trem azul (id=0). Possui um PathTransition
+*         proprio e referencia para o algoritmo de exclusao mutua
+*         ativo (apenas um por vez pode estar definido).
+*************************************************************** */
+public class TremDaEsquerda extends Thread {
+
+  private PathTransition pathTransition1;
+  private Rectangle blueTrain;
+  private Slider blueSpeedSlider;
+  private VariavelDeTravamento exclusaomutua;
+  private EstritaAlternancia alternancia;
+  private DoubleProperty dividedRateProperty;
+  private boolean isPaused = false;
+  private SolucaoPeterson peterson;
+
+  /* ***************************************************************
+  * Metodo: TremDaEsquerda (construtor)
+  * Funcao: Inicializa o trem azul com o retangulo e slider recebidos
+  *         e configura o PathTransition.
+  * Parametros: @param blueTrain2        retangulo do trem azul
+  *             @param blueSpeedSlider2  slider de velocidade
+  * Retorno: nao possui
+  *************************************************************** */
+  public TremDaEsquerda(Rectangle blueTrain2, Slider blueSpeedSlider2) {
+    this.blueTrain = blueTrain2;
+    this.blueSpeedSlider = blueSpeedSlider2;
+    setupPathTransition();
+  } // fim do construtor
+
+  /* ***************************************************************
+  * Metodo: setupPathTransition
+  * Funcao: Configura o PathTransition com binding de velocidade ao
+  *         slider e listener para pausar automaticamente ao chegar
+  *         em zero e retomar quando o valor sobe novamente.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  private void setupPathTransition() {
+    pathTransition1 = new PathTransition();
+    dividedRateProperty = new SimpleDoubleProperty();
+    dividedRateProperty.bind(Bindings.divide(
+        this.blueSpeedSlider.valueProperty().add(0.1), 30.0));
+    pathTransition1.rateProperty().bind(dividedRateProperty);
+    pathTransition1.setNode(blueTrain);
+    pathTransition1.setDuration(Duration.seconds(4));
+    pathTransition1.setCycleCount(1);
+    pathTransition1.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+    pathTransition1.setInterpolator(Interpolator.LINEAR);
+    pathTransition1.setOnFinished(event ->
+        Platform.runLater(() -> pathTransition1.play()));
+
+    dividedRateProperty.addListener((observable, oldValue, newValue) -> {
+      if (newValue.doubleValue() <= 0.1) {
+        if (!isPaused && pathTransition1.getStatus() != Animation.Status.PAUSED) {
+          pathTransition1.rateProperty().unbind();
+          pathTransition1.pause();
+          isPaused = true;
+        }
+      } else {
+        if (isPaused && pathTransition1.getStatus() == Animation.Status.PAUSED) {
+          pathTransition1.play();
+          pathTransition1.rateProperty().bind(dividedRateProperty);
+          isPaused = false;
+        }
+      }
+    });
+  } // fim do metodo setupPathTransition
+
+  /* ***************************************************************
+  * Metodo: play
+  * Funcao: Inicia ou retoma a animacao do trem via FX thread.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  public void play() {
+    Platform.runLater(() -> {
+      if (pathTransition1 != null) pathTransition1.play();
+    });
+  } // fim do metodo play
+
+  /* ***************************************************************
+  * Metodo: stoptrain
+  * Funcao: Para a animacao do trem via FX thread.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  public void stoptrain() {
+    Platform.runLater(() -> {
+      if (pathTransition1 != null) pathTransition1.stop();
+    });
+  } // fim do metodo stoptrain
+
+  /* ***************************************************************
+  * Metodo: setPath
+  * Funcao: Define o caminho de animacao do trem antes de iniciar.
+  * Parametros: @param path caminho a seguir
+  * Retorno: void
+  *************************************************************** */
+  public void setPath(Path path) {
+    if (pathTransition1 != null) pathTransition1.setPath(path);
+  } // fim do metodo setPath
+
+  /* ***************************************************************
+  * Metodo: run
+  * Funcao: Loop principal da thread. Inicia a animacao e monitora
+  *         continuamente a posicao Y para acionar o algoritmo de
+  *         exclusao mutua ativo (apenas um por vez).
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  @Override
+  public void run() {
+    Platform.runLater(() -> {
+      if (pathTransition1 != null) pathTransition1.play();
+    });
+
+    while (true) {
+      // --- Solucao de Peterson ---
+      if (peterson != null) {
+        double y = blueTrain.localToScene(blueTrain.getBoundsInLocal()).getMinY();
+        if (y >= 50 && y <= 350) {
+          peterson.entrarRegiaoCritica(0, pathTransition1, blueTrain, dividedRateProperty);
+          peterson.sairRegiaoCritica(0);
+        } else if (y >= 450 && y <= 750) {
+          peterson.entrarRegiaoCritica2(0, pathTransition1, blueTrain, dividedRateProperty);
+          peterson.sairRegiaoCritica2(0);
+        } else {
+          try { Thread.sleep(100); } catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
+        }
+      } else {
+        try { Thread.sleep(100); } catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
+      }
+
+      // --- Variavel de Travamento ---
+      if (exclusaomutua != null) {
+        exclusaomutua.entrarRegiaoCritica(pathTransition1, blueTrain, dividedRateProperty);
+        try { Thread.sleep(100); } catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
+      }
+
+      // --- Estrita Alternancia ---
+      if (alternancia != null) {
+        alternancia.entrarRegiaoCritica(0, pathTransition1, blueTrain, dividedRateProperty);
+        try { Thread.sleep(100); } catch (InterruptedException e) { Thread.currentThread().interrupt(); break; }
+      }
+    } // fim do while
+  } // fim do metodo run
+
+  /* ***************************************************************
+  * Metodo: setExclusaoMutua
+  * Funcao: Define (ou remove com null) a variavel de travamento.
+  * Parametros: @param v instancia de VariavelDeTravamento ou null
+  * Retorno: void
+  *************************************************************** */
+  public void setExclusaoMutua(VariavelDeTravamento v) {
+    this.exclusaomutua = v;
+  } // fim do metodo setExclusaoMutua
+
+  /* ***************************************************************
+  * Metodo: setEstritaAlternancia
+  * Funcao: Define (ou remove com null) a estrita alternancia.
+  * Parametros: @param a instancia de EstritaAlternancia ou null
+  * Retorno: void
+  *************************************************************** */
+  public void setEstritaAlternancia(EstritaAlternancia a) {
+    this.alternancia = a;
+  } // fim do metodo setEstritaAlternancia
+
+  /* ***************************************************************
+  * Metodo: setSolucaoPeterson
+  * Funcao: Define (ou remove com null) a solucao de Peterson.
+  * Parametros: @param p instancia de SolucaoPeterson ou null
+  * Retorno: void
+  *************************************************************** */
+  public void setSolucaoPeterson(SolucaoPeterson p) {
+    this.peterson = p;
+  } // fim do metodo setSolucaoPeterson
+
+} // fim da classe TremDaEsquerda
