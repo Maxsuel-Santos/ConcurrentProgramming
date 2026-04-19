@@ -6,15 +6,14 @@
 * Nome.............: Constantes.java
 * Funcao...........: Representa as constantes utilizadas na aplicacao
 ************************************************************************ */
-
 package util;
-
 /* ***************************************************************
 * Classe: Constantes
 * Funcao: Representa as constantes utilizadas na aplicacao
 *************************************************************** */
 public class Constantes {
   
+  // Constante de velocidade padrão dos trens
   public static final double DEFAULT_SPEED = 10; 
 
-}
+} // Fim da classe Constantes
