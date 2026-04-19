@@ -15,31 +15,31 @@ package util;
 *************************************************************** */
 public enum Option {
     
-    OP1("MESMA DIRECAO"),
-    OP2("MESMA DIRECAO INVERSA"),
-    OP3("DIRECAO OPOSTA"),
-    OP4("DIRECAO OPOSTA INVERSA");
+  OP1("MESMA DIRECAO"),
+  OP2("MESMA DIRECAO INVERSA"),
+  OP3("DIRECAO OPOSTA"),
+  OP4("DIRECAO OPOSTA INVERSA");
 
-    private final String title;
+  private final String title;
 
-    /* *************************************************************** 
-    * Metodo: Option 
-    * Funcao: Construtor do enum Option 
-    * Parametros: @param title eh o texto da opcao 
-    * Retorno: nao possui retorno 
-    *************************************************************** */
-    Option(String title) {
-      this.title = title;
-    }
+  /* *************************************************************** 
+  * Metodo: Option 
+  * Funcao: Construtor do enum Option 
+  * Parametros: @param title eh o texto da opcao 
+  * Retorno: nao possui retorno 
+  *************************************************************** */
+  Option(String title) {
+    this.title = title;
+  }
 
-    /* *************************************************************** 
-    * Metodo: getTitle 
-    * Funcao: Retorna o titulo da opcao 
-    * Parametros: nao possui parametros 
-    * Retorno: String contendo o titulo da opcao 
-    *************************************************************** */
-    public String getTitle() {
-      return title;
-    }
+  /* *************************************************************** 
+  * Metodo: getTitle 
+  * Funcao: Retorna o titulo da opcao 
+  * Parametros: nao possui parametros 
+  * Retorno: String contendo o titulo da opcao 
+  *************************************************************** */
+  public String getTitle() {
+    return title;
+  }
 
-}
+} // Fim do enum Option
