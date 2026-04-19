@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 15/04/2026
+* Ultima alteracao.: 16/04/2026
 * Nome.............: SyncOption.java
 * Funcao...........: Representa as opcoes de sincronizacao/exclusao mutua
 ************************************************************************ */

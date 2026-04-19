@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 16/04/2026
+* Ultima alteracao.: 18/04/2026
 * Nome.............: Principal.java
 * Funcao...........: Classe principal responsavel por iniciar a aplicacao
 *                    e orquestrar a simulacao dos trens. Apresenta um
@@ -66,6 +66,11 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import sync.EstritaAlternancia;
+import sync.SolucaoPeterson;
+import sync.VariavelDeTravamento;
+import trains.TremDaDireita;
+import trains.TremDaEsquerda;
 
 public class Principal extends Application {
 
@@ -231,8 +236,7 @@ public class Principal extends Application {
   *             @param imagePath caminho da imagem.
   * Retorno: @return Rectangle preenchido com a imagem.
   ********************************************************************* */
-  private static Rectangle createRectangle(double x, double y, double width,
-      double height, String imagePath) {
+  private static Rectangle createRectangle(double x, double y, double width, double height, String imagePath) {
     Rectangle rectangle = new Rectangle(x, y, width, height);
     rectangle.setFill(new ImagePattern(new Image(imagePath)));
     return rectangle;
@@ -284,8 +288,13 @@ public class Principal extends Application {
   private void aplicarSincronizacao(SyncOption opt) {
 
     // Encerra algoritmos anteriores com seguranca
-    if (VT != null)       { VT.encerrarExclusaoMutua(); VT = null; }
-    if (EA != null)       { EA.encerrarExclusaoMutua(); EA = null; }
+    if (VT != null) { 
+      VT.encerrarExclusaoMutua(); VT = null; 
+    }
+    if (EA != null) { 
+      EA.encerrarExclusaoMutua(); 
+      EA = null; 
+    }
     if (peterson != null) {
       peterson.sairRegiaoCritica(0);  peterson.sairRegiaoCritica(1);
       peterson.sairRegiaoCritica2(0); peterson.sairRegiaoCritica2(1);
@@ -359,10 +368,18 @@ public class Principal extends Application {
     }
 
     switch (message) {
-      case OP1: this.StageNew.setTitle("MESMA DIRECAO");          break;
-      case OP2: this.StageNew.setTitle("MESMA DIRECAO INVERSA");  break;
-      case OP3: this.StageNew.setTitle("DIRECAO OPOSTA");         break;
-      case OP4: this.StageNew.setTitle("DIRECAO OPOSTA INVERSA"); break;
+      case OP1: 
+        this.StageNew.setTitle("MESMA DIRECAO");          
+        break;
+      case OP2: 
+        this.StageNew.setTitle("MESMA DIRECAO INVERSA");  
+        break;
+      case OP3: 
+        this.StageNew.setTitle("DIRECAO OPOSTA");         
+        break;
+      case OP4: 
+        this.StageNew.setTitle("DIRECAO OPOSTA INVERSA"); 
+        break;
       default: break;
     }
 

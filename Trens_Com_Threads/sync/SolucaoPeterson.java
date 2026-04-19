@@ -1,8 +1,9 @@
+package sync;
 /* *********************************************************************
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 15/04/2026
+* Ultima alteracao.: 18/04/2026
 * Nome.............: SolucaoPeterson.java
 * Funcao...........: Implementa exclusao mutua pelo algoritmo de Peterson.
 *                    Garante exclusao mutua sem inanicao para 2 processos
@@ -53,7 +54,9 @@ public class SolucaoPeterson {
 
       while (want[outra] && turn == outra) {
         if (pathtrans.getStatus() != Animation.Status.PAUSED) {
-          Platform.runLater(() -> { pathtrans.pause(); pathtrans.rateProperty().unbind(); });
+          Platform.runLater(() -> { 
+            pathtrans.pause(); pathtrans.rateProperty().unbind(); 
+          });
         }
       } // fim do while Peterson
 
@@ -62,7 +65,11 @@ public class SolucaoPeterson {
       while (true) {
         double y = train.localToScene(train.getBoundsInLocal()).getMinY();
         if (y >= 350 || y <= 50) break;
-        try { Thread.sleep(100); } catch (InterruptedException e) { Thread.currentThread().interrupt(); return; }
+        try { 
+          Thread.sleep(100); 
+        } catch (InterruptedException e) { 
+          Thread.currentThread().interrupt(); return; 
+        }
       }
     } // fim do if shouldStop
   } // fim do metodo entrarRegiaoCritica
@@ -78,7 +85,7 @@ public class SolucaoPeterson {
   * Retorno: void
   *************************************************************** */
   public void entrarRegiaoCritica2(int id, PathTransition pathtrans,
-      Rectangle train, DoubleProperty rate) {
+    Rectangle train, DoubleProperty rate) {
 
     if (!shouldStop) {
       int outra2 = 1 - id;
@@ -87,16 +94,25 @@ public class SolucaoPeterson {
 
       while (want2[outra2] && turn2 == outra2) {
         if (pathtrans.getStatus() != Animation.Status.PAUSED) {
-          Platform.runLater(() -> { pathtrans.pause(); pathtrans.rateProperty().unbind(); });
+          Platform.runLater(() -> { 
+            pathtrans.pause(); pathtrans.rateProperty().unbind(); 
+          });
         }
       } // fim do while Peterson2
 
-      Platform.runLater(() -> { pathtrans.play(); pathtrans.rateProperty().bind(rate); });
+      Platform.runLater(() -> { 
+        pathtrans.play(); pathtrans.rateProperty().bind(rate); 
+      });
 
       while (true) {
         double y = train.localToScene(train.getBoundsInLocal()).getMinY();
         if (y >= 750 || y <= 450) break;
-        try { Thread.sleep(100); } catch (InterruptedException e) { Thread.currentThread().interrupt(); return; }
+        try { 
+          Thread.sleep(100); 
+        } catch (InterruptedException e) { 
+          Thread.currentThread().interrupt(); 
+          return; 
+        }
       }
     } // fim do if shouldStop
   } // fim do metodo entrarRegiaoCritica2

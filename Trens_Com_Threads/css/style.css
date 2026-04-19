@@ -1,3 +1,12 @@
+/* *********************************************************************
+* Autor............: Maxsuel Aparecido Lima Santos
+* Matricula........: 202511587
+* Inicio...........: 15/04/2026
+* Ultima alteracao.: 18/04/2026
+* Nome.............: style.css
+* Funcao...........: Arquivo com as estilizações em CSS com JavaFx
+************************************************************************ */
+
 .start-button {
     -fx-background-color: linear-gradient(to right, #00c6ff, #3590ff);
     -fx-text-fill: white;
