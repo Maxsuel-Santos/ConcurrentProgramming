@@ -50,7 +50,7 @@ public class VariavelDeTravamento {
             pathtrans.pause();
             pathtrans.rateProperty().unbind();
           }
-        } // fim do while lock
+        } // Fim do while lock
         lock = 1;
         Platform.runLater(() -> { pathtrans.play(); pathtrans.rateProperty().bind(rate); });
         criticalRegion(train);
@@ -63,7 +63,7 @@ public class VariavelDeTravamento {
             pathtrans.pause();
             pathtrans.rateProperty().unbind();
           }
-        } // fim do while lock2
+        } // Fim do while lock2
         lock2 = 1;
         Platform.runLater(() -> { pathtrans.play(); pathtrans.rateProperty().bind(rate); });
         criticalRegion2(train);
@@ -78,8 +78,8 @@ public class VariavelDeTravamento {
           return; 
         }
       }
-    } // fim do while shouldStop
-  } // fim do metodo entrarRegiaoCritica
+    } // Fim do while shouldStop
+  } // Fim do metodo entrarRegiaoCritica
 
   /* ***************************************************************
   * Metodo: criticalRegion
@@ -91,7 +91,8 @@ public class VariavelDeTravamento {
   private void criticalRegion(Rectangle train) {
     while (true) {
       double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-      if (y >= 350 || y <= 50) break;
+      if (y >= 350 || y <= 50) 
+        break;
       try { 
         Thread.sleep(100); 
       } catch (InterruptedException e) { 
@@ -99,7 +100,7 @@ public class VariavelDeTravamento {
         return; 
       }
     }
-  } // fim do metodo criticalRegion
+  } // Fim do metodo criticalRegion
 
   private void nonCriticalRegion() { } // regiao nao critica
 
@@ -113,7 +114,8 @@ public class VariavelDeTravamento {
   private void criticalRegion2(Rectangle train) {
     while (true) {
       double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-      if (y >= 750 || y <= 450) break;
+      if (y >= 750 || y <= 450) 
+        break;
       try { 
         Thread.sleep(100); 
       } catch (InterruptedException e) { 
@@ -121,7 +123,7 @@ public class VariavelDeTravamento {
         return; 
       }
     }
-  } // fim do metodo criticalRegion2
+  } // Fim do metodo criticalRegion2
 
   private void nonCriticalRegion2() { } // regiao nao critica
 
@@ -134,6 +136,6 @@ public class VariavelDeTravamento {
   *************************************************************** */
   public void encerrarExclusaoMutua() {
     shouldStop = true;
-  } // fim do metodo encerrarExclusaoMutua
+  } // Fim do metodo encerrarExclusaoMutua
 
-} // fim da classe VariavelDeTravamento
+} // Fim da classe VariavelDeTravamento
