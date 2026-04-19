@@ -55,7 +55,7 @@ public class TremDaDireita extends Thread {
     this.greenTrain = greenTrain2;
     this.greenSpeedSlider = greenSpeedSlider2;
     setupPathTransition();
-  } // fim do construtor
+  } // Fim do construtor
 
   /* ***************************************************************
   * Metodo: setupPathTransition
@@ -94,7 +94,7 @@ public class TremDaDireita extends Thread {
         }
       }
     });
-  } // fim do metodo setupPathTransition
+  } // Fim do metodo setupPathTransition
 
   /* ***************************************************************
   * Metodo: play
@@ -104,9 +104,10 @@ public class TremDaDireita extends Thread {
   *************************************************************** */
   public void play() {
     Platform.runLater(() -> {
-      if (pathTransition2 != null) pathTransition2.play();
+      if (pathTransition2 != null) 
+        pathTransition2.play();
     });
-  } // fim do metodo play
+  } // Fim do metodo play
 
   /* ***************************************************************
   * Metodo: stoptrain
@@ -116,9 +117,10 @@ public class TremDaDireita extends Thread {
   *************************************************************** */
   public void stoptrain() {
     Platform.runLater(() -> {
-      if (pathTransition2 != null) pathTransition2.stop();
+      if (pathTransition2 != null) 
+        pathTransition2.stop();
     });
-  } // fim do metodo stoptrain
+  } // Fim do metodo stoptrain
 
   /* ***************************************************************
   * Metodo: setPath
@@ -127,8 +129,9 @@ public class TremDaDireita extends Thread {
   * Retorno: void
   *************************************************************** */
   public void setPath(Path path) {
-    if (pathTransition2 != null) pathTransition2.setPath(path);
-  } // fim do metodo setPath
+    if (pathTransition2 != null) 
+      pathTransition2.setPath(path);
+  } // Fim do metodo setPath
 
   /* ***************************************************************
   * Metodo: run
@@ -145,7 +148,7 @@ public class TremDaDireita extends Thread {
     });
 
     while (true) {
-      // --- Solucao de Peterson ---
+      // Solucao de Peterson
       if (peterson != null) {
         double y = greenTrain.localToScene(greenTrain.getBoundsInLocal()).getMinY();
         if (y >= 50 && y <= 350) {
@@ -171,7 +174,7 @@ public class TremDaDireita extends Thread {
         }
       }
 
-      // --- Variavel de Travamento ---
+      // Variavel de Travamento
       if (exclusaobasica != null) {
         exclusaobasica.entrarRegiaoCritica(pathTransition2, greenTrain, dividedRateProperty2);
         try { 
@@ -182,7 +185,7 @@ public class TremDaDireita extends Thread {
         }
       }
 
-      // --- Estrita Alternancia ---
+      // Estrita Alternancia
       if (alternancia != null) {
         alternancia.entrarRegiaoCritica(1, pathTransition2, greenTrain, dividedRateProperty2);
         try { 
@@ -192,8 +195,8 @@ public class TremDaDireita extends Thread {
           break; 
         }
       }
-    } // fim do while
-  } // fim do metodo run
+    } // Fim do while
+  } // Fim do metodo run
 
   /* ***************************************************************
   * Metodo: setExclusaoMutua
@@ -203,7 +206,7 @@ public class TremDaDireita extends Thread {
   *************************************************************** */
   public void setExclusaoMutua(VariavelDeTravamento v) {
     this.exclusaobasica = v;
-  } // fim do metodo setExclusaoMutua
+  } // Fim do metodo setExclusaoMutua
 
   /* ***************************************************************
   * Metodo: setEstritaAlternancia
@@ -213,7 +216,7 @@ public class TremDaDireita extends Thread {
   *************************************************************** */
   public void setEstritaAlternancia(EstritaAlternancia a) {
     this.alternancia = a;
-  } // fim do metodo setEstritaAlternancia
+  } // Fim do metodo setEstritaAlternancia
 
   /* ***************************************************************
   * Metodo: setSolucaoPeterson
@@ -223,6 +226,6 @@ public class TremDaDireita extends Thread {
   *************************************************************** */
   public void setSolucaoPeterson(SolucaoPeterson p) {
     this.peterson = p;
-  } // fim do metodo setSolucaoPeterson
+  } // Fim do metodo setSolucaoPeterson
 
-} // fim da classe TremDaDireita
+} // Fim da classe TremDaDireita
