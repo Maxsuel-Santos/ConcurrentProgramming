@@ -52,7 +52,7 @@ public class EstritaAlternancia {
             pathtrans.pause();
             pathtrans.rateProperty().unbind();
           }
-        } // fim do while turno
+        } // Fim do while turno
         Platform.runLater(() -> { pathtrans.play(); pathtrans.rateProperty().bind(rate); });
         criticalRegion(train);
         turno = (id + 1) % 2;
@@ -64,7 +64,7 @@ public class EstritaAlternancia {
             pathtrans.pause();
             pathtrans.rateProperty().unbind();
           }
-        } // fim do while turno2
+        } // Fim do while turno2
         Platform.runLater(() -> { pathtrans.play(); pathtrans.rateProperty().bind(rate); });
         criticalRegion2(train);
         turno2 = 1 - id;
@@ -78,8 +78,8 @@ public class EstritaAlternancia {
           return; 
         }
       }
-    } // fim do while shouldStop
-  } // fim do metodo entrarRegiaoCritica
+    } // Fim do while shouldStop
+  } // Fim do metodo entrarRegiaoCritica
 
   /* ***************************************************************
   * Metodo: criticalRegion
@@ -90,7 +90,8 @@ public class EstritaAlternancia {
   private void criticalRegion(Rectangle train) {
     while (true) {
       double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-      if (y >= 350 || y <= 50) break;
+      if (y >= 350 || y <= 50) 
+        break;
       try { 
         Thread.sleep(100); 
       } catch (InterruptedException e) { 
@@ -98,7 +99,7 @@ public class EstritaAlternancia {
         return; 
       }
     }
-  } // fim do metodo criticalRegion
+  } // Fim do metodo criticalRegion
 
   private void nonCriticalRegion() { } // regiao nao critica
 
@@ -111,7 +112,8 @@ public class EstritaAlternancia {
   private void criticalRegion2(Rectangle train) {
     while (true) {
       double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-      if (y >= 750 || y <= 450) break;
+      if (y >= 750 || y <= 450) 
+        break;
       try { 
         Thread.sleep(100); 
       } catch (InterruptedException e) { 
@@ -119,7 +121,7 @@ public class EstritaAlternancia {
         return; 
       }
     }
-  } // fim do metodo criticalRegion2
+  } // Fim do metodo criticalRegion2
 
   private void nonCriticalRegion2() { } // regiao nao critica
 
@@ -131,6 +133,6 @@ public class EstritaAlternancia {
   *************************************************************** */
   public void encerrarExclusaoMutua() {
     shouldStop = true;
-  } // fim do metodo encerrarExclusaoMutua
+  } // Fim do metodo encerrarExclusaoMutua
 
-} // fim da classe EstritaAlternancia
+} // Fim da classe EstritaAlternancia
