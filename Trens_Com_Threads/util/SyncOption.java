@@ -31,7 +31,7 @@ public enum SyncOption {
   *************************************************************** */
   SyncOption(String title) {
     this.title = title;
-  } // fim do construtor
+  } // Fim do construtor
 
   /* ***************************************************************
   * Metodo: getTitle
@@ -41,6 +41,6 @@ public enum SyncOption {
   *************************************************************** */
   public String getTitle() {
     return title;
-  } // fim do metodo getTitle
+  } // Fim do metodo getTitle
 
-} // fim do enum SyncOption
+} // Fim do enum SyncOption
