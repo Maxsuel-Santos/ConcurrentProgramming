@@ -3,7 +3,7 @@ package trains;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 18/04/2026
+* Ultima alteracao.: 24/04/2026
 * Nome.............: TremDaEsquerda.java
 * Funcao...........: Thread do trem azul. Gerencia a animacao via
 *                    PathTransition e invoca o algoritmo de exclusao
@@ -148,15 +148,19 @@ public class TremDaEsquerda extends Thread {
     });
 
     while (true) {
+      SolucaoPeterson p = peterson;
+      VariavelDeTravamento vt = exclusaomutua;
+      EstritaAlternancia ea = alternancia;
+      
       // Solucao de Peterson
-      if (peterson != null) {
+      if (p != null) {
         double y = blueTrain.localToScene(blueTrain.getBoundsInLocal()).getMinY();
         if (y >= 50 && y <= 350) {
-          peterson.entrarRegiaoCritica(0, pathTransition1, blueTrain, dividedRateProperty);
-          peterson.sairRegiaoCritica(0);
+          p.entrarRegiaoCritica(0, pathTransition1, blueTrain, dividedRateProperty);
+          p.sairRegiaoCritica(0);
         } else if (y >= 450 && y <= 750) {
-          peterson.entrarRegiaoCritica2(0, pathTransition1, blueTrain, dividedRateProperty);
-          peterson.sairRegiaoCritica2(0);
+          p.entrarRegiaoCritica2(0, pathTransition1, blueTrain, dividedRateProperty);
+          p.sairRegiaoCritica2(0);
         } else {
           try { 
             Thread.sleep(100); 
@@ -175,8 +179,8 @@ public class TremDaEsquerda extends Thread {
       }
 
       // Variavel de Travamento
-      if (exclusaomutua != null) {
-        exclusaomutua.entrarRegiaoCritica(pathTransition1, blueTrain, dividedRateProperty);
+      if (vt != null) {
+        vt.entrarRegiaoCritica(pathTransition1, blueTrain, dividedRateProperty);
         try { 
           Thread.sleep(100); 
         } catch (InterruptedException e) { 
@@ -186,8 +190,8 @@ public class TremDaEsquerda extends Thread {
       }
 
       // Estrita Alternancia
-      if (alternancia != null) {
-        alternancia.entrarRegiaoCritica(0, pathTransition1, blueTrain, dividedRateProperty);
+      if (ea != null) {
+        ea.entrarRegiaoCritica(0, pathTransition1, blueTrain, dividedRateProperty);
         try { 
           Thread.sleep(100); 
         } catch (InterruptedException e) { 
