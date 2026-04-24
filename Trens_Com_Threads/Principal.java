@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 18/04/2026
+* Ultima alteracao.: 24/04/2026
 * Nome.............: Principal.java
 * Funcao...........: Classe principal responsavel por iniciar a aplicacao
 *                    e orquestrar a simulacao dos trens. Apresenta um
@@ -30,8 +30,6 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -85,9 +83,7 @@ public class Principal extends Application {
   private Slider blueSpeedSlider;
   private Slider greenSpeedSlider;
   private Rectangle2D screenBounds;
-  private BooleanProperty pauseTrains1;
-  private BooleanProperty pauseTrains2;
-  
+
   // Threads dos trens
   private TremDaEsquerda Te;
   private TremDaDireita Td;
@@ -121,9 +117,6 @@ public class Principal extends Application {
     this.primaryStage = primaryStage;
     primaryStage.setTitle("MAXTRAIN SIMULATOR");
     this.screenBounds = Screen.getPrimary().getVisualBounds();
-
-    this.pauseTrains1 = new SimpleBooleanProperty(false);
-    this.pauseTrains2 = new SimpleBooleanProperty(false);
 
     Text directionText = new Text("SELECIONE UMA DAS DIRECOES PARA O TREM:");
     directionText.setFont(Font.font("Arial", FontWeight.BOLD, 18));
@@ -254,8 +247,6 @@ public class Principal extends Application {
       openNewScreen(text);
       this.blueSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
       this.greenSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
-      this.pauseTrains1.set(false);
-      this.pauseTrains2.set(false);
     });
     return button;
   } // Fim do metodo createStyledButton
@@ -302,13 +293,18 @@ public class Principal extends Application {
       peterson = null;
     }
 
-    // Remove referencias nas threads para parar o busy-wait
-    Te.setExclusaoMutua(null);
-    Te.setEstritaAlternancia(null);
-    Te.setSolucaoPeterson(null);
-    Td.setExclusaoMutua(null);
-    Td.setEstritaAlternancia(null);
-    Td.setSolucaoPeterson(null);
+    // Remove referencias nas threads para parar o busy-wait.
+    // Guarda de null necessaria: na primeira execucao os trens ainda nao existem.
+    if (Te != null) {
+      Te.setExclusaoMutua(null);
+      Te.setEstritaAlternancia(null);
+      Te.setSolucaoPeterson(null);
+    }
+    if (Td != null) {
+      Td.setExclusaoMutua(null);
+      Td.setEstritaAlternancia(null);
+      Td.setSolucaoPeterson(null);
+    }
 
     switch (opt) {
       case OP1:
