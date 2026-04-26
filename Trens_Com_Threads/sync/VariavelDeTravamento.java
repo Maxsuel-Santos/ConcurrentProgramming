@@ -3,12 +3,21 @@ package sync;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 18/04/2026
+* Ultima alteracao.: 26/04/2026
 * Nome.............: VariavelDeTravamento.java
 * Funcao...........: Implementa exclusao mutua pela variavel de travamento.
 *                    Usa um inteiro (lock) para bloquear o acesso ao trilho
 *                    simples: quando lock != 0 o recurso esta ocupado e o
 *                    segundo trem aguarda (busy-wait) com a animacao pausada.
+*
+*                    NOTA DIDATICA: Este algoritmo propositalmente demonstra
+*                    a limitacao da variavel de travamento simples. A sequencia
+*                    "while(lock!=0) ... lock=1" nao e atomica: duas threads
+*                    podem passar pelo while simultaneamente e ambas setarem
+*                    lock=1, violando a exclusao mutua. Em hardware real isso
+*                    seria corrigido com instrucoes atomicas (test-and-set).
+*                    Aqui o comportamento e mantido intencional para fins
+*                    pedagogicos da disciplina.
 ************************************************************************ */
 
 import javafx.application.Platform;
@@ -21,6 +30,9 @@ import javafx.scene.shape.Rectangle;
 * Classe: VariavelDeTravamento
 * Funcao: Exclusao mutua por variavel de travamento (lock inteiro).
 *         Dois locks independentes: um para cada trilho simples.
+*         NOTA: A verificacao + escrita do lock nao e atomica,
+*         o que pode causar violacao de exclusao mutua em cargas
+*         reais. Comportamento preservado para fins didaticos.
 *************************************************************** */
 public class VariavelDeTravamento {
 
@@ -71,11 +83,11 @@ public class VariavelDeTravamento {
         nonCriticalRegion2();
 
       } else {
-        try { 
-          Thread.sleep(100); 
-        } catch (InterruptedException e) { 
-          Thread.currentThread().interrupt(); 
-          return; 
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          return;
         }
       }
     } // Fim do while shouldStop
@@ -91,17 +103,23 @@ public class VariavelDeTravamento {
   private void criticalRegion(Rectangle train) {
     while (true) {
       double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-      if (y >= 350 || y <= 50) 
+      if (y >= 350 || y <= 50)
         break;
-      try { 
-        Thread.sleep(100); 
-      } catch (InterruptedException e) { 
-        Thread.currentThread().interrupt(); 
-        return; 
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        return;
       }
     }
   } // Fim do metodo criticalRegion
 
+  /* ***************************************************************
+  * Metodo: nonCriticalRegion
+  * Funcao: Representa a regiao nao critica apos o primeiro trilho.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
   private void nonCriticalRegion() { } // regiao nao critica
 
   /* ***************************************************************
@@ -114,17 +132,23 @@ public class VariavelDeTravamento {
   private void criticalRegion2(Rectangle train) {
     while (true) {
       double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-      if (y >= 750 || y <= 450) 
+      if (y >= 750 || y <= 450)
         break;
-      try { 
-        Thread.sleep(100); 
-      } catch (InterruptedException e) { 
-        Thread.currentThread().interrupt(); 
-        return; 
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        return;
       }
     }
   } // Fim do metodo criticalRegion2
 
+  /* ***************************************************************
+  * Metodo: nonCriticalRegion2
+  * Funcao: Representa a regiao nao critica apos o segundo trilho.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
   private void nonCriticalRegion2() { } // regiao nao critica
 
   /* ***************************************************************

@@ -3,7 +3,7 @@ package sync;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 18/04/2026
+* Ultima alteracao.: 26/04/2026
 * Nome.............: EstritaAlternancia.java
 * Funcao...........: Implementa exclusao mutua por estrita alternancia.
 *                    Os trens se revezam na entrada do trilho simples:
@@ -21,12 +21,13 @@ import javafx.scene.shape.Rectangle;
 * Classe: EstritaAlternancia
 * Funcao: Exclusao mutua por estrita alternancia.
 *         turno  controla o primeiro trilho simples (inicia id=0).
-*         turno2 controla o segundo trilho simples  (inicia id=1).
+*         turno2 controla o segundo trilho simples  (inicia id=0).
+*         Ambos iniciam com o trem azul para comportamento simetrico.
 *************************************************************** */
 public class EstritaAlternancia {
 
   private volatile int turno  = 0; // primeiro trilho: vez do trem azul (id=0)
-  private volatile int turno2 = 1; // segundo trilho:  vez do trem verde (id=1)
+  private volatile int turno2 = 0; // segundo trilho:  vez do trem azul (id=0) -- CORRECAO: era 1
   private volatile boolean shouldStop = false;
 
   /* ***************************************************************
@@ -71,11 +72,11 @@ public class EstritaAlternancia {
         nonCriticalRegion2();
 
       } else {
-        try { 
-          Thread.sleep(100); 
-        } catch (InterruptedException e) { 
-          Thread.currentThread().interrupt(); 
-          return; 
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          return;
         }
       }
     } // Fim do while shouldStop
@@ -90,17 +91,23 @@ public class EstritaAlternancia {
   private void criticalRegion(Rectangle train) {
     while (true) {
       double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-      if (y >= 350 || y <= 50) 
+      if (y >= 350 || y <= 50)
         break;
-      try { 
-        Thread.sleep(100); 
-      } catch (InterruptedException e) { 
-        Thread.currentThread().interrupt(); 
-        return; 
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        return;
       }
     }
   } // Fim do metodo criticalRegion
 
+  /* ***************************************************************
+  * Metodo: nonCriticalRegion
+  * Funcao: Representa a regiao nao critica apos o primeiro trilho.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
   private void nonCriticalRegion() { } // regiao nao critica
 
   /* ***************************************************************
@@ -112,17 +119,23 @@ public class EstritaAlternancia {
   private void criticalRegion2(Rectangle train) {
     while (true) {
       double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-      if (y >= 750 || y <= 450) 
+      if (y >= 750 || y <= 450)
         break;
-      try { 
-        Thread.sleep(100); 
-      } catch (InterruptedException e) { 
-        Thread.currentThread().interrupt(); 
-        return; 
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        return;
       }
     }
   } // Fim do metodo criticalRegion2
 
+  /* ***************************************************************
+  * Metodo: nonCriticalRegion2
+  * Funcao: Representa a regiao nao critica apos o segundo trilho.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
   private void nonCriticalRegion2() { } // regiao nao critica
 
   /* ***************************************************************

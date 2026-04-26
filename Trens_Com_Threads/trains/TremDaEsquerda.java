@@ -3,7 +3,7 @@ package trains;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 24/04/2026
+* Ultima alteracao.: 26/04/2026
 * Nome.............: TremDaEsquerda.java
 * Funcao...........: Thread do trem azul. Gerencia a animacao via
 *                    PathTransition e invoca o algoritmo de exclusao
@@ -37,7 +37,7 @@ public class TremDaEsquerda extends Thread {
   private PathTransition pathTransition1;
   private Rectangle blueTrain;
   private Slider blueSpeedSlider;
-  private VariavelDeTravamento exclusaomutua;
+  private VariavelDeTravamento exclusaoMutua;
   private EstritaAlternancia alternancia;
   private DoubleProperty dividedRateProperty;
   private boolean isPaused = false;
@@ -104,7 +104,7 @@ public class TremDaEsquerda extends Thread {
   *************************************************************** */
   public void play() {
     Platform.runLater(() -> {
-      if (pathTransition1 != null) 
+      if (pathTransition1 != null)
         pathTransition1.play();
     });
   } // Fim do metodo play
@@ -117,7 +117,7 @@ public class TremDaEsquerda extends Thread {
   *************************************************************** */
   public void stoptrain() {
     Platform.runLater(() -> {
-      if (pathTransition1 != null) 
+      if (pathTransition1 != null)
         pathTransition1.stop();
     });
   } // Fim do metodo stoptrain
@@ -129,7 +129,7 @@ public class TremDaEsquerda extends Thread {
   * Retorno: void
   *************************************************************** */
   public void setPath(Path path) {
-    if (pathTransition1 != null) 
+    if (pathTransition1 != null)
       pathTransition1.setPath(path);
   } // Fim do metodo setPath
 
@@ -148,12 +148,13 @@ public class TremDaEsquerda extends Thread {
     });
 
     while (true) {
-      SolucaoPeterson p = peterson;
-      VariavelDeTravamento vt = exclusaomutua;
-      EstritaAlternancia ea = alternancia;
-      
-      // Solucao de Peterson
+      SolucaoPeterson p   = peterson;
+      VariavelDeTravamento vt = exclusaoMutua;
+      EstritaAlternancia ea   = alternancia;
+
+      // Apenas um algoritmo pode estar ativo por vez (else if garante exclusividade)
       if (p != null) {
+        // Solucao de Peterson
         double y = blueTrain.localToScene(blueTrain.getBoundsInLocal()).getMinY();
         if (y >= 50 && y <= 350) {
           p.entrarRegiaoCritica(0, pathTransition1, blueTrain, dividedRateProperty);
@@ -162,41 +163,41 @@ public class TremDaEsquerda extends Thread {
           p.entrarRegiaoCritica2(0, pathTransition1, blueTrain, dividedRateProperty);
           p.sairRegiaoCritica2(0);
         } else {
-          try { 
-            Thread.sleep(100); 
-          } catch (InterruptedException e) { 
-            Thread.currentThread().interrupt(); 
-            break; 
+          try {
+            Thread.sleep(100);
+          } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            break;
           }
         }
-      } else {
-        try { 
-          Thread.sleep(100); 
-        } catch (InterruptedException e) { 
-          Thread.currentThread().interrupt(); 
-          break;
-         }
-      }
 
-      // Variavel de Travamento
-      if (vt != null) {
+      } else if (vt != null) {
+        // Variavel de Travamento
         vt.entrarRegiaoCritica(pathTransition1, blueTrain, dividedRateProperty);
-        try { 
-          Thread.sleep(100); 
-        } catch (InterruptedException e) { 
-          Thread.currentThread().interrupt(); 
-          break; 
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          break;
         }
-      }
 
-      // Estrita Alternancia
-      if (ea != null) {
+      } else if (ea != null) {
+        // Estrita Alternancia
         ea.entrarRegiaoCritica(0, pathTransition1, blueTrain, dividedRateProperty);
-        try { 
-          Thread.sleep(100); 
-        } catch (InterruptedException e) { 
-          Thread.currentThread().interrupt(); 
-          break; 
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          break;
+        }
+
+      } else {
+        // Nenhum algoritmo ativo (trens colidindo livremente)
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          break;
         }
       }
     } // Fim do while
@@ -209,7 +210,7 @@ public class TremDaEsquerda extends Thread {
   * Retorno: void
   *************************************************************** */
   public void setExclusaoMutua(VariavelDeTravamento v) {
-    this.exclusaomutua = v;
+    this.exclusaoMutua = v;
   } // Fim do metodo setExclusaoMutua
 
   /* ***************************************************************

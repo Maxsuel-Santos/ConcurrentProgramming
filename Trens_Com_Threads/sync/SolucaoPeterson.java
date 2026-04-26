@@ -3,7 +3,7 @@ package sync;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 18/04/2026
+* Ultima alteracao.: 26/04/2026
 * Nome.............: SolucaoPeterson.java
 * Funcao...........: Implementa exclusao mutua pelo algoritmo de Peterson.
 *                    Garante exclusao mutua sem inanicao para 2 processos
@@ -12,6 +12,7 @@ package sync;
 *                    trilhos simples da simulacao.
 ************************************************************************ */
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.application.Platform;
 import javafx.animation.Animation;
 import javafx.beans.property.DoubleProperty;
@@ -26,10 +27,13 @@ import javafx.scene.shape.Rectangle;
 *************************************************************** */
 public class SolucaoPeterson {
 
-  private boolean[] want  = new boolean[2]; // interesse no primeiro trilho simples
-  private volatile int turn;                // turno do primeiro trilho simples
-  private boolean[] want2 = new boolean[2]; // interesse no segundo trilho simples
-  private volatile int turn2;               // turno do segundo trilho simples
+  // (volatile em array protege apenas a referencia, nao os elementos)
+  private final AtomicBoolean[] want  = { new AtomicBoolean(false), new AtomicBoolean(false) };
+  private volatile int turn;
+
+  private final AtomicBoolean[] want2 = { new AtomicBoolean(false), new AtomicBoolean(false) };
+  private volatile int turn2;
+
   private volatile boolean shouldStop = false;
 
   /* ***************************************************************
@@ -45,17 +49,17 @@ public class SolucaoPeterson {
   * Retorno: void
   *************************************************************** */
   public void entrarRegiaoCritica(int id, PathTransition pathtrans,
-    Rectangle train, DoubleProperty rate) {
+      Rectangle train, DoubleProperty rate) {
 
     if (!shouldStop) {
       int outra = 1 - id;
-      want[id] = true;
+      want[id].set(true);
       turn = outra;
 
-      while (want[outra] && turn == outra) {
+      while (want[outra].get() && turn == outra) {
         if (pathtrans.getStatus() != Animation.Status.PAUSED) {
-          Platform.runLater(() -> { 
-            pathtrans.pause(); pathtrans.rateProperty().unbind(); 
+          Platform.runLater(() -> {
+            pathtrans.pause(); pathtrans.rateProperty().unbind();
           });
         }
       } // Fim do while Peterson
@@ -64,13 +68,13 @@ public class SolucaoPeterson {
 
       while (true) {
         double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-        if (y >= 350 || y <= 50) 
+        if (y >= 350 || y <= 50)
           break;
-        try { 
-          Thread.sleep(100); 
-        } catch (InterruptedException e) { 
-          Thread.currentThread().interrupt(); 
-          return; 
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          return;
         }
       }
     } // Fim do if shouldStop
@@ -87,34 +91,34 @@ public class SolucaoPeterson {
   * Retorno: void
   *************************************************************** */
   public void entrarRegiaoCritica2(int id, PathTransition pathtrans,
-    Rectangle train, DoubleProperty rate) {
+      Rectangle train, DoubleProperty rate) {
 
     if (!shouldStop) {
       int outra2 = 1 - id;
-      want2[id] = true;
+      want2[id].set(true);
       turn2 = outra2;
 
-      while (want2[outra2] && turn2 == outra2) {
+      while (want2[outra2].get() && turn2 == outra2) {
         if (pathtrans.getStatus() != Animation.Status.PAUSED) {
-          Platform.runLater(() -> { 
-            pathtrans.pause(); pathtrans.rateProperty().unbind(); 
+          Platform.runLater(() -> {
+            pathtrans.pause(); pathtrans.rateProperty().unbind();
           });
         }
       } // Fim do while Peterson2
 
-      Platform.runLater(() -> { 
-        pathtrans.play(); pathtrans.rateProperty().bind(rate); 
+      Platform.runLater(() -> {
+        pathtrans.play(); pathtrans.rateProperty().bind(rate);
       });
 
       while (true) {
         double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-        if (y >= 750 || y <= 450) 
+        if (y >= 750 || y <= 450)
           break;
-        try { 
-          Thread.sleep(100); 
-        } catch (InterruptedException e) { 
-          Thread.currentThread().interrupt(); 
-          return; 
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+          return;
         }
       }
     } // Fim do if shouldStop
@@ -127,7 +131,7 @@ public class SolucaoPeterson {
   * Retorno: void
   *************************************************************** */
   public void sairRegiaoCritica(int id) {
-    if (!shouldStop) want[id] = false;
+    if (!shouldStop) want[id].set(false);
   } // Fim do metodo sairRegiaoCritica
 
   /* ***************************************************************
@@ -137,7 +141,7 @@ public class SolucaoPeterson {
   * Retorno: void
   *************************************************************** */
   public void sairRegiaoCritica2(int id) {
-    if (!shouldStop) want2[id] = false;
+    if (!shouldStop) want2[id].set(false);
   } // Fim do metodo sairRegiaoCritica2
 
   /* ***************************************************************

@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 24/04/2026
+* Ultima alteracao.: 26/04/2026
 * Nome.............: Principal.java
 * Funcao...........: Classe principal responsavel por iniciar a aplicacao
 *                    e orquestrar a simulacao dos trens. Apresenta um
@@ -73,7 +73,7 @@ import trains.TremDaEsquerda;
 public class Principal extends Application {
 
   private Stage primaryStage;
-  private Stage StageNew;
+  private Stage stageNew;
   private HBox hbox;
   private VBox vbox;
   private VBox blueSliderVbox;
@@ -136,7 +136,7 @@ public class Principal extends Application {
 
     this.vbox = new VBox(10);
     this.vbox.setAlignment(Pos.TOP_CENTER);
-    this.vbox.getChildren().addAll(textContainer, buttonContainer);
+    this.vbox.getChildren().addAll(this.textContainer, buttonContainer);
     vbox.getStyleClass().add("main-container");
 
     VBox buttonImage1 = new VBox(2);
@@ -350,31 +350,31 @@ public class Principal extends Application {
 
     // Remove todos os elementos dinamicos adicionados na chamada anterior.
     // O syncContainer eh guardado como campo para que possa ser removido aqui.
-    if (this.StageNew != null) {
+    if (this.stageNew != null) {
       this.vbox.getChildren().removeAll(
         this.textContainer,
         this.hbox,
         this.syncContainer,
         this.resetButton);
     } else {
-      this.StageNew = new Stage();
-      this.StageNew.setResizable(false);
-      this.StageNew.setY(80);
-      this.StageNew.setX(this.screenBounds.getWidth() / 15);
+      this.stageNew = new Stage();
+      this.stageNew.setResizable(false);
+      this.stageNew.setY(80);
+      this.stageNew.setX(this.screenBounds.getWidth() / 15);
     }
 
     switch (message) {
       case OP1: 
-        this.StageNew.setTitle("MESMA DIRECAO");          
+        this.stageNew.setTitle("MESMA DIRECAO");          
         break;
       case OP2: 
-        this.StageNew.setTitle("MESMA DIRECAO INVERSA");  
+        this.stageNew.setTitle("MESMA DIRECAO INVERSA");  
         break;
       case OP3: 
-        this.StageNew.setTitle("DIRECAO OPOSTA");         
+        this.stageNew.setTitle("DIRECAO OPOSTA");         
         break;
       case OP4: 
-        this.StageNew.setTitle("DIRECAO OPOSTA INVERSA"); 
+        this.stageNew.setTitle("DIRECAO OPOSTA INVERSA"); 
         break;
       default: break;
     }
@@ -530,8 +530,8 @@ public class Principal extends Application {
       durations[i] = Duration.seconds(i % 6 == 0 ? 30 : 29);
     }
 
-    this.StageNew.setScene(scene);
-    this.StageNew.show();
+    this.stageNew.setScene(scene);
+    this.stageNew.show();
 
     // Caminhos dos trens com Path
     Path pathIda = new Path(
@@ -667,6 +667,8 @@ public class Principal extends Application {
   private void resetButtonAction() {
     this.blueSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
     this.greenSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
+    // Para e reinicia somente a animacao; o algoritmo de exclusao mutua
+    // continua ativo sem alteracao de estado.
     Te.stoptrain();
     Td.stoptrain();
     Te.play();
