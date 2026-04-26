@@ -66,12 +66,14 @@ public class SolucaoPeterson {
 
       Platform.runLater(() -> { pathtrans.play(); pathtrans.rateProperty().bind(rate); });
 
-      while (true) {
+      // Aguarda o trem sair do primeiro trilho simples.
+      // VLineTo do path: y = 165 ate y = 265. Margem de 10px absorve latencia.
+      while (!shouldStop) {
         double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-        if (y >= 350 || y <= 50)
+        if (y < 155 || y > 275)
           break;
         try {
-          Thread.sleep(100);
+          Thread.sleep(20);
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
           return;
@@ -110,12 +112,14 @@ public class SolucaoPeterson {
         pathtrans.play(); pathtrans.rateProperty().bind(rate);
       });
 
-      while (true) {
+      // Aguarda o trem sair do segundo trilho simples.
+      // VLineTo do path: y = 410 ate y = 450. Margem de 10px absorve latencia.
+      while (!shouldStop) {
         double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-        if (y >= 750 || y <= 450)
+        if (y < 400 || y > 460)
           break;
         try {
-          Thread.sleep(100);
+          Thread.sleep(20);
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
           return;
