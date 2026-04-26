@@ -27,7 +27,6 @@ import javafx.scene.shape.Rectangle;
 *************************************************************** */
 public class SolucaoPeterson {
 
-  // (volatile em array protege apenas a referencia, nao os elementos)
   private final AtomicBoolean[] want  = { new AtomicBoolean(false), new AtomicBoolean(false) };
   private volatile int turn;
 
@@ -59,7 +58,8 @@ public class SolucaoPeterson {
       while (want[outra].get() && turn == outra) {
         if (pathtrans.getStatus() != Animation.Status.PAUSED) {
           Platform.runLater(() -> {
-            pathtrans.pause(); pathtrans.rateProperty().unbind();
+            pathtrans.pause(); 
+            pathtrans.rateProperty().unbind();
           });
         }
       } // Fim do while Peterson
@@ -91,7 +91,7 @@ public class SolucaoPeterson {
   * Retorno: void
   *************************************************************** */
   public void entrarRegiaoCritica2(int id, PathTransition pathtrans,
-      Rectangle train, DoubleProperty rate) {
+    Rectangle train, DoubleProperty rate) {
 
     if (!shouldStop) {
       int outra2 = 1 - id;
@@ -127,21 +127,25 @@ public class SolucaoPeterson {
   /* ***************************************************************
   * Metodo: sairRegiaoCritica
   * Funcao: Libera o interesse no primeiro trilho simples.
-  * Parametros: @param id 0=trem azul, 1=trem verde
+  * Parametros: @param id 0 = trem azul, 1 = trem verde
   * Retorno: void
   *************************************************************** */
   public void sairRegiaoCritica(int id) {
-    if (!shouldStop) want[id].set(false);
+    if (!shouldStop){
+      want[id].set(false);
+    } 
   } // Fim do metodo sairRegiaoCritica
 
   /* ***************************************************************
   * Metodo: sairRegiaoCritica2
   * Funcao: Libera o interesse no segundo trilho simples.
-  * Parametros: @param id 0=trem azul, 1=trem verde
+  * Parametros: @param id 0 = trem azul, 1 = trem verde
   * Retorno: void
   *************************************************************** */
   public void sairRegiaoCritica2(int id) {
-    if (!shouldStop) want2[id].set(false);
+    if (!shouldStop) {
+      want2[id].set(false);
+    } 
   } // Fim do metodo sairRegiaoCritica2
 
   /* ***************************************************************

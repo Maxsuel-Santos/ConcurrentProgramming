@@ -39,15 +39,15 @@ public class TremDaDireita extends Thread {
   private Slider greenSpeedSlider;
   private VariavelDeTravamento exclusaoMutua;  
   private EstritaAlternancia alternancia;
+  private SolucaoPeterson peterson;
   private DoubleProperty dividedRateProperty2;
   private boolean isPaused = false;
-  private SolucaoPeterson peterson;
 
   /* ***************************************************************
   * Metodo: TremDaDireita (construtor)
   * Funcao: Inicializa o trem verde com o retangulo e slider recebidos
   *         e configura o PathTransition.
-  * Parametros: @param greenTrain2       retangulo do trem verde
+  * Parametros: @param greenTrain2 retangulo do trem verde
   *             @param greenSpeedSlider2 slider de velocidade
   * Retorno: nao possui
   *************************************************************** */
@@ -144,7 +144,9 @@ public class TremDaDireita extends Thread {
   @Override
   public void run() {
     Platform.runLater(() -> {
-      if (pathTransition2 != null) pathTransition2.play();
+      if (pathTransition2 != null) {
+        pathTransition2.play();
+      } 
     });
 
     while (true) {

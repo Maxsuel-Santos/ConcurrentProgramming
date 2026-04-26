@@ -313,6 +313,7 @@ public class Principal extends Application {
         break;
 
       case OP2:
+        // Variavel de Travamento 
         VT = new VariavelDeTravamento();
         resetButtonAction();
         Te.setExclusaoMutua(VT);
@@ -320,6 +321,7 @@ public class Principal extends Application {
         break;
 
       case OP3:
+        // Estrita Alternancia
         EA = new EstritaAlternancia();
         resetButtonAction();
         Te.setEstritaAlternancia(EA);
@@ -327,6 +329,7 @@ public class Principal extends Application {
         break;
 
       case OP4:
+        // Solucao de Peterson
         peterson = new SolucaoPeterson();
         resetButtonAction();
         Te.setSolucaoPeterson(peterson);
@@ -385,7 +388,8 @@ public class Principal extends Application {
     SVGPath waterArea = new SVGPath();
     // Caminho SVG dos peixes na imagem
     waterArea.setContent(
-        "M250.5 419L199 423.5L210.5 373V346.5L202.5 313.5L185.5 281V213L269.5 218.5L304 216.5L392 210.5L393.5 432.5L348 422L293.5 417L250.5 419Z");
+        "M250.5 419L199 423.5L210.5 373V346.5L202.5 313.5L185.5 281V213L269.5 218.5L304 216.5L392 210.5L393.5 432.5L348 422L293.5 417L250.5 419Z"
+    );
 
     // Define a cor de preenchimento da area de agua
     startFishSpawner(root, waterArea);

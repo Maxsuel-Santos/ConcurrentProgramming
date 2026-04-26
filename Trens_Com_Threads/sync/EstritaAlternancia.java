@@ -26,8 +26,8 @@ import javafx.scene.shape.Rectangle;
 *************************************************************** */
 public class EstritaAlternancia {
 
-  private volatile int turno  = 0; // primeiro trilho: vez do trem azul (id=0)
-  private volatile int turno2 = 0; // segundo trilho:  vez do trem azul (id=0) -- CORRECAO: era 1
+  private volatile int turno  = 0; // primeiro trilho: vez do trem azul (id = 0)
+  private volatile int turno2 = 0; // segundo trilho:  vez do trem azul (id = 0)
   private volatile boolean shouldStop = false;
 
   /* ***************************************************************

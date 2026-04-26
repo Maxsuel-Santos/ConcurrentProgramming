@@ -12,12 +12,14 @@ package sync;
 *
 *                    NOTA DIDATICA: Este algoritmo propositalmente demonstra
 *                    a limitacao da variavel de travamento simples. A sequencia
-*                    "while(lock!=0) ... lock=1" nao e atomica: duas threads
+*                    "while(lock != 0) ... lock = 1" nao eh atomica: duas threads
 *                    podem passar pelo while simultaneamente e ambas setarem
-*                    lock=1, violando a exclusao mutua. Em hardware real isso
+*                    lock = 1, violando a exclusao mutua. Em hardware real isso
 *                    seria corrigido com instrucoes atomicas (test-and-set).
-*                    Aqui o comportamento e mantido intencional para fins
-*                    pedagogicos da disciplina.
+*                    Aqui o comportamento eh mantido intencional para fins
+*                    pedagogicos da disciplina, mostrando a evolucao das 
+*                    solucoes dos algoritmos, sendo a Solucao de Peterson
+*                    a implementacao mais coerente para o problema com 2 processos.
 ************************************************************************ */
 
 import javafx.application.Platform;
@@ -30,7 +32,8 @@ import javafx.scene.shape.Rectangle;
 * Classe: VariavelDeTravamento
 * Funcao: Exclusao mutua por variavel de travamento (lock inteiro).
 *         Dois locks independentes: um para cada trilho simples.
-*         NOTA: A verificacao + escrita do lock nao e atomica,
+*         
+*         NOTA: A verificacao + escrita do lock nao eh atomica,
 *         o que pode causar violacao de exclusao mutua em cargas
 *         reais. Comportamento preservado para fins didaticos.
 *************************************************************** */
@@ -46,12 +49,11 @@ public class VariavelDeTravamento {
   *         trilho simples, aguarda o lock ficar livre, adquire-o,
   *         retoma a animacao, aguarda a travessia e libera o lock.
   * Parametros: @param pathtrans PathTransition do trem
-  *             @param train     retangulo do trem
-  *             @param rate      propriedade de taxa de velocidade
+  *             @param train retangulo do trem
+  *             @param rate propriedade de taxa de velocidade
   * Retorno: void
   *************************************************************** */
-  public void entrarRegiaoCritica(PathTransition pathtrans,
-      Rectangle train, DoubleProperty rate) {
+  public void entrarRegiaoCritica(PathTransition pathtrans, Rectangle train, DoubleProperty rate) {
 
     while (!shouldStop) {
       double y = train.localToScene(train.getBoundsInLocal()).getMinY();
@@ -63,6 +65,7 @@ public class VariavelDeTravamento {
             pathtrans.rateProperty().unbind();
           }
         } // Fim do while lock
+
         lock = 1;
         Platform.runLater(() -> { pathtrans.play(); pathtrans.rateProperty().bind(rate); });
         criticalRegion(train);
@@ -76,6 +79,7 @@ public class VariavelDeTravamento {
             pathtrans.rateProperty().unbind();
           }
         } // Fim do while lock2
+
         lock2 = 1;
         Platform.runLater(() -> { pathtrans.play(); pathtrans.rateProperty().bind(rate); });
         criticalRegion2(train);
