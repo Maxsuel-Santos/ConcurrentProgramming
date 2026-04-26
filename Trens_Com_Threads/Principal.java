@@ -130,9 +130,9 @@ public class Principal extends Application {
     buttonContainer.setAlignment(Pos.CENTER);
     buttonContainer.setPadding(new Insets(0, 20, 20, 20));
 
-    VBox textContainer = new VBox(directionText);
-    textContainer.setAlignment(Pos.CENTER);
-    textContainer.setPadding(new Insets(10, 0, 0, 0));
+    this.textContainer = new VBox(directionText);
+    this.textContainer.setAlignment(Pos.CENTER);
+    this.textContainer.setPadding(new Insets(10, 0, 0, 0));
 
     this.vbox = new VBox(10);
     this.vbox.setAlignment(Pos.TOP_CENTER);
