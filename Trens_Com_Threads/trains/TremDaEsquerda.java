@@ -155,11 +155,13 @@ public class TremDaEsquerda extends Thread {
       // Apenas um algoritmo pode estar ativo por vez (else if garante exclusividade)
       if (p != null) {
         // Solucao de Peterson
+        // Zona 1: trem se aproxima e atravessa y = 165 ate y = 265 (VLineTo do path)
+        // Zona 2: trem se aproxima e atravessa y = 410 ate y = 450 (VLineTo do path)
         double y = blueTrain.localToScene(blueTrain.getBoundsInLocal()).getMinY();
-        if (y >= 50 && y <= 350) {
+        if (y >= 100 && y <= 300) {
           p.entrarRegiaoCritica(0, pathTransition1, blueTrain, dividedRateProperty);
           p.sairRegiaoCritica(0);
-        } else if (y >= 450 && y <= 750) {
+        } else if (y >= 380 && y <= 480) {
           p.entrarRegiaoCritica2(0, pathTransition1, blueTrain, dividedRateProperty);
           p.sairRegiaoCritica2(0);
         } else {
