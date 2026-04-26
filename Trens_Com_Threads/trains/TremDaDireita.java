@@ -39,15 +39,15 @@ public class TremDaDireita extends Thread {
   private Slider greenSpeedSlider;
   private VariavelDeTravamento exclusaoMutua;  
   private EstritaAlternancia alternancia;
-  private SolucaoPeterson peterson;
   private DoubleProperty dividedRateProperty2;
   private boolean isPaused = false;
+  private SolucaoPeterson peterson;
 
   /* ***************************************************************
   * Metodo: TremDaDireita (construtor)
   * Funcao: Inicializa o trem verde com o retangulo e slider recebidos
   *         e configura o PathTransition.
-  * Parametros: @param greenTrain2 retangulo do trem verde
+  * Parametros: @param greenTrain2       retangulo do trem verde
   *             @param greenSpeedSlider2 slider de velocidade
   * Retorno: nao possui
   *************************************************************** */
@@ -144,9 +144,7 @@ public class TremDaDireita extends Thread {
   @Override
   public void run() {
     Platform.runLater(() -> {
-      if (pathTransition2 != null) {
-        pathTransition2.play();
-      } 
+      if (pathTransition2 != null) pathTransition2.play();
     });
 
     while (true) {
@@ -157,11 +155,13 @@ public class TremDaDireita extends Thread {
       // Apenas um algoritmo pode estar ativo por vez (else if garante exclusividade)
       if (p != null) {
         // Solucao de Peterson
+        // Zona 1: trem se aproxima e atravessa y=165 ate y=265 (VLineTo do path)
+        // Zona 2: trem se aproxima e atravessa y=410 ate y=450 (VLineTo do path)
         double y = greenTrain.localToScene(greenTrain.getBoundsInLocal()).getMinY();
-        if (y >= 50 && y <= 350) {
+        if (y >= 100 && y <= 300) {
           p.entrarRegiaoCritica(1, pathTransition2, greenTrain, dividedRateProperty2);
           p.sairRegiaoCritica(1);
-        } else if (y >= 450 && y <= 750) {
+        } else if (y >= 380 && y <= 480) {
           p.entrarRegiaoCritica2(1, pathTransition2, greenTrain, dividedRateProperty2);
           p.sairRegiaoCritica2(1);
         } else {
