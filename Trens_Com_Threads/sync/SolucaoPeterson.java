@@ -3,7 +3,7 @@ package sync;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 26/04/2026
+* Ultima alteracao.: 27/04/2026
 * Nome.............: SolucaoPeterson.java
 * Funcao...........: Implementa exclusao mutua pelo algoritmo de Peterson.
 *                    Garante exclusao mutua sem inanicao para 2 processos
@@ -12,7 +12,6 @@ package sync;
 *                    trilhos simples da simulacao.
 ************************************************************************ */
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.application.Platform;
 import javafx.animation.Animation;
 import javafx.beans.property.DoubleProperty;
@@ -27,12 +26,10 @@ import javafx.scene.shape.Rectangle;
 *************************************************************** */
 public class SolucaoPeterson {
 
-  private final AtomicBoolean[] want  = { new AtomicBoolean(false), new AtomicBoolean(false) };
-  private volatile int turn;
-
-  private final AtomicBoolean[] want2 = { new AtomicBoolean(false), new AtomicBoolean(false) };
-  private volatile int turn2;
-
+  private boolean[] want  = new boolean[2]; // interesse no primeiro trilho simples
+  private volatile int turn;                // turno do primeiro trilho simples
+  private boolean[] want2 = new boolean[2]; // interesse no segundo trilho simples
+  private volatile int turn2;               // turno do segundo trilho simples
   private volatile boolean shouldStop = false;
 
   /* ***************************************************************
@@ -41,42 +38,54 @@ public class SolucaoPeterson {
   *         O trem sinaliza interesse (want[id] = true), cede a
   *         vez ao outro (turn = outra) e aguarda enquanto o outro
   *         esta interessado E a vez e do outro.
-  * Parametros: @param id          0=trem azul, 1=trem verde
+  * Parametros: @param id          0 = trem azul, 1 = trem verde
   *             @param pathtrans   PathTransition do trem
   *             @param train       retangulo do trem
   *             @param rate        propriedade de taxa de velocidade
   * Retorno: void
   *************************************************************** */
   public void entrarRegiaoCritica(int id, PathTransition pathtrans,
-      Rectangle train, DoubleProperty rate) {
+    Rectangle train, DoubleProperty rate) {
 
     if (!shouldStop) {
       int outra = 1 - id;
-      want[id].set(true);
+      want[id] = true;
       turn = outra;
 
-      while (want[outra].get() && turn == outra) {
+      // Pausa o trem uma unica vez antes de entrar no busy-wait.
+      // Isso evita chamar Platform.runLater repetidamente dentro do loop,
+      // o que saturaria a fila da FX thread e congelaria a interface.
+      Platform.runLater(() -> {
         if (pathtrans.getStatus() != Animation.Status.PAUSED) {
-          Platform.runLater(() -> {
-            pathtrans.pause(); 
-            pathtrans.rateProperty().unbind();
-          });
+          pathtrans.rateProperty().unbind();
+          pathtrans.pause();
         }
-      } // Fim do while Peterson
+      });
 
-      Platform.runLater(() -> { pathtrans.play(); pathtrans.rateProperty().bind(rate); });
-
-      // Aguarda o trem sair do primeiro trilho simples.
-      // VLineTo do path: y = 165 ate y = 265. Margem de 10px absorve latencia.
-      while (!shouldStop) {
-        double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-        if (y < 155 || y > 275)
-          break;
+      // Busy-wait com sleep: aguarda o outro trem sair da regiao critica.
+      // O Thread.sleep(10) cede a CPU entre as verificacoes, evitando que
+      // esta thread consuma 100% de um nucleo enquanto espera.
+      while (want[outra] && turn == outra) {
         try {
-          Thread.sleep(20);
+          Thread.sleep(10);
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
           return;
+        }
+      } // Fim do while Peterson
+
+      // Retoma o trem apos obter acesso a regiao critica.
+      Platform.runLater(() -> { pathtrans.play(); pathtrans.rateProperty().bind(rate); });
+
+      while (true) {
+        double y = train.localToScene(train.getBoundsInLocal()).getMinY();
+        if (y >= 350 || y <= 50) 
+          break;
+        try { 
+          Thread.sleep(100); 
+        } catch (InterruptedException e) { 
+          Thread.currentThread().interrupt(); 
+          return; 
         }
       }
     } // Fim do if shouldStop
@@ -86,7 +95,7 @@ public class SolucaoPeterson {
   * Metodo: entrarRegiaoCritica2
   * Funcao: Entrada de Peterson no segundo trilho simples.
   *         Logica identica ao primeiro, porem usando want2 e turn2.
-  * Parametros: @param id          0=trem azul, 1=trem verde
+  * Parametros: @param id          0 = trem azul, 1=trem verde
   *             @param pathtrans   PathTransition do trem
   *             @param train       retangulo do trem
   *             @param rate        propriedade de taxa de velocidade
@@ -97,32 +106,41 @@ public class SolucaoPeterson {
 
     if (!shouldStop) {
       int outra2 = 1 - id;
-      want2[id].set(true);
+      want2[id] = true;
       turn2 = outra2;
 
-      while (want2[outra2].get() && turn2 == outra2) {
-        if (pathtrans.getStatus() != Animation.Status.PAUSED) {
-          Platform.runLater(() -> {
-            pathtrans.pause(); pathtrans.rateProperty().unbind();
-          });
-        }
-      } // Fim do while Peterson2
-
+      // Pausa o trem uma unica vez antes de entrar no busy-wait.
       Platform.runLater(() -> {
-        pathtrans.play(); pathtrans.rateProperty().bind(rate);
+        if (pathtrans.getStatus() != Animation.Status.PAUSED) {
+          pathtrans.rateProperty().unbind();
+          pathtrans.pause();
+        }
       });
 
-      // Aguarda o trem sair do segundo trilho simples.
-      // VLineTo do path: y = 410 ate y = 450. Margem de 10px absorve latencia.
-      while (!shouldStop) {
-        double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-        if (y < 400 || y > 460)
-          break;
+      // Busy-wait com sleep para o segundo trilho simples.
+      while (want2[outra2] && turn2 == outra2) {
         try {
-          Thread.sleep(20);
+          Thread.sleep(10);
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
           return;
+        }
+      } // Fim do while Peterson2
+
+      // Retoma o trem apos obter acesso ao segundo trilho simples.
+      Platform.runLater(() -> { 
+        pathtrans.play(); pathtrans.rateProperty().bind(rate); 
+      });
+
+      while (true) {
+        double y = train.localToScene(train.getBoundsInLocal()).getMinY();
+        if (y >= 750 || y <= 450) 
+          break;
+        try { 
+          Thread.sleep(100); 
+        } catch (InterruptedException e) { 
+          Thread.currentThread().interrupt(); 
+          return; 
         }
       }
     } // Fim do if shouldStop
@@ -131,25 +149,21 @@ public class SolucaoPeterson {
   /* ***************************************************************
   * Metodo: sairRegiaoCritica
   * Funcao: Libera o interesse no primeiro trilho simples.
-  * Parametros: @param id 0 = trem azul, 1 = trem verde
+  * Parametros: @param id 0 = trem azul, 1=trem verde
   * Retorno: void
   *************************************************************** */
   public void sairRegiaoCritica(int id) {
-    if (!shouldStop){
-      want[id].set(false);
-    } 
+    if (!shouldStop) want[id] = false;
   } // Fim do metodo sairRegiaoCritica
 
   /* ***************************************************************
   * Metodo: sairRegiaoCritica2
   * Funcao: Libera o interesse no segundo trilho simples.
-  * Parametros: @param id 0 = trem azul, 1 = trem verde
+  * Parametros: @param id 0 = trem azul, 1=trem verde
   * Retorno: void
   *************************************************************** */
   public void sairRegiaoCritica2(int id) {
-    if (!shouldStop) {
-      want2[id].set(false);
-    } 
+    if (!shouldStop) want2[id] = false;
   } // Fim do metodo sairRegiaoCritica2
 
   /* ***************************************************************
