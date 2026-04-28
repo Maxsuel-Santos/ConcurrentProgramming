@@ -1,4 +1,4 @@
-# Programacao-Concorrente
+# Programação Concorrente
 Repositório para os projetos da disciplina Programação Concorrente.
 
 
