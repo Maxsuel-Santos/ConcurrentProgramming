@@ -3,13 +3,20 @@ package sync;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 27/04/2026
+* Ultima alteracao.: 28/04/2026
 * Nome.............: SolucaoPeterson.java
 * Funcao...........: Implementa exclusao mutua pelo algoritmo de Peterson.
 *                    Garante exclusao mutua sem inanicao para 2 processos
 *                    usando want[] (interesse) e turn (vez).
 *                    Possui dois conjuntos de variaveis para os dois
 *                    trilhos simples da simulacao.
+*
+*                    NOTA DIDATICA: Este algoritmo eh a implementacao
+*                    mais adequada para o problema em questão com 
+*                    2 processos compartilhando o mesmo recurso 
+*                    compartilhado sem conflito na regiao critica.
+*                    Assim, Garante a exclusao mutua entre dois processos, 
+*                    evitando condicoes de corrida (race conditions).
 ************************************************************************ */
 
 import javafx.application.Platform;
@@ -101,8 +108,7 @@ public class SolucaoPeterson {
   *             @param rate        propriedade de taxa de velocidade
   * Retorno: void
   *************************************************************** */
-  public void entrarRegiaoCritica2(int id, PathTransition pathtrans,
-    Rectangle train, DoubleProperty rate) {
+  public void entrarRegiaoCritica2(int id, PathTransition pathtrans, Rectangle train, DoubleProperty rate) {
 
     if (!shouldStop) {
       int outra2 = 1 - id;
