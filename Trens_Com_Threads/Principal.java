@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 26/04/2026
+* Ultima alteracao.: 29/04/2026
 * Nome.............: Principal.java
 * Funcao...........: Classe principal responsavel por iniciar a aplicacao
 *                    e orquestrar a simulacao dos trens. Apresenta um
