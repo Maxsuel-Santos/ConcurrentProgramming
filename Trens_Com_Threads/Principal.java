@@ -115,7 +115,7 @@ public class Principal extends Application {
     themeSound.play();
 
     this.primaryStage = primaryStage;
-    primaryStage.setTitle("MAXTRAIN SIMULATOR");
+    primaryStage.setTitle("MARLOSUEL SIMULATOR");
     this.screenBounds = Screen.getPrimary().getVisualBounds();
 
     Text directionText = new Text("SELECIONE UMA DAS DIRECOES PARA O TREM:");
@@ -178,7 +178,7 @@ public class Principal extends Application {
 
     // Tela de inicio (splash)
     Stage firstStage = new Stage();
-    firstStage.setTitle("MAXTRAIN SIMULATOR");
+    firstStage.setTitle("MARLOSUEL SIMULATOR");
 
     Button startButton = new Button("START");
     startButton.getStyleClass().add("start-button");
