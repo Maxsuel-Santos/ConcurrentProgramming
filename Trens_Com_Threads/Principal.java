@@ -499,8 +499,8 @@ public class Principal extends Application {
     this.vbox.getChildren().add(this.resetButton);
 
     // Trens
-    Rectangle blueTrain  = createRectangle(-200, -200, 90, 30, "/img/bluetrain.png");
-    Rectangle greenTrain = createRectangle(-200, -200, 90, 30, "/img/greentrain.png");
+    Rectangle blueTrain  = createRectangle(-200, -200, 100, 40, "/img/bluetrain.png");
+    Rectangle greenTrain = createRectangle(-200, -200, 100, 40, "/img/greentrain.png");
 
     // Carros de rua
     Rectangle[] carrosArray = {
@@ -1025,7 +1025,7 @@ public class Principal extends Application {
   private void spawnAirplane(Pane root) {
 
     // Cria o aviao fora da tela
-    Rectangle airplane = createRectangle(250, 1000, 80, 80, "/img/airplane.png");
+    Rectangle airplane = createRectangle(250, 1000, 80, 80, "/img/marlinhosCapivara.png");
 
     root.getChildren().add(airplane);
 
