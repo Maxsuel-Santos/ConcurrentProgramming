@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 29/04/2026
+* Ultima alteracao.: 30/04/2026
 * Nome.............: Principal.java
 * Funcao...........: Classe principal responsavel por iniciar a aplicacao
 *                    e orquestrar a simulacao dos trens. Apresenta um
@@ -614,7 +614,7 @@ public class Principal extends Application {
 
     Te.setDaemon(true);
     Td.setDaemon(true);
-    
+
     // Define caminho e inicia de acordo com a direcao
     switch (message) {
       case OP1:
