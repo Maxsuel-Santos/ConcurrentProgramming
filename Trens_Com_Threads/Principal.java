@@ -30,6 +30,7 @@ import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -206,6 +207,16 @@ public class Principal extends Application {
     double centerY = (this.screenBounds.getHeight() - sceneHeight) / 2.05;
     firstStage.setY(centerY / 4);
 
+    firstStage.setOnCloseRequest(e -> {
+      Platform.exit();
+      System.exit(0);
+    });
+
+    primaryStage.setOnCloseRequest(e -> {
+      Platform.exit();
+      System.exit(0);
+    });
+
     startButton.setOnAction(e -> {
       primaryStage.show();
       primaryStage.setX(firstStage.getX());
@@ -364,6 +375,10 @@ public class Principal extends Application {
       this.stageNew.setResizable(false);
       this.stageNew.setY(80);
       this.stageNew.setX(this.screenBounds.getWidth() / 15);
+      this.stageNew.setOnCloseRequest(e -> {
+        Platform.exit();
+        System.exit(0);
+      });
     }
 
     switch (message) {
@@ -597,6 +612,8 @@ public class Principal extends Application {
     Te = new TremDaEsquerda(blueTrain, blueSpeedSlider);
     Td = new TremDaDireita(greenTrain, greenSpeedSlider);
 
+    Te.setDaemon(true);
+    Td.setDaemon(true);
     // Define caminho e inicia de acordo com a direcao
     switch (message) {
       case OP1:
