@@ -614,6 +614,7 @@ public class Principal extends Application {
 
     Te.setDaemon(true);
     Td.setDaemon(true);
+    
     // Define caminho e inicia de acordo com a direcao
     switch (message) {
       case OP1:
