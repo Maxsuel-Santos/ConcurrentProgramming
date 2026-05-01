@@ -6,7 +6,6 @@
 * Nome.............: style.css
 * Funcao...........: Arquivo com as estilizacoes em CSS com JavaFx
 ************************************************************************ */
-
 .start-button {
     -fx-background-color: linear-gradient(to right, #00c6ff, #3590ff);
     -fx-text-fill: white;
@@ -22,7 +21,6 @@
     -fx-cursor: hand;
 }
 
-/* Botoes de direcao: azul escuro */
 .option-button {
     -fx-background-color: #1565C0;
     -fx-text-fill: #fff;
@@ -54,7 +52,6 @@
     -fx-cursor: hand;
 }
 
-/* Botao reset: mantido vermelho */
 .reset-button {
     -fx-background-color: #F44336;
     -fx-text-fill: white;
@@ -76,7 +73,6 @@
     -fx-background-color: linear-gradient(to bottom, #e0f7fa, #80deea);
 }
 
-/* Botoes de anti-colisao: verde escuro */
 .sync-button {
     -fx-background-color: #2E7D32;
     -fx-text-fill: #fff;
