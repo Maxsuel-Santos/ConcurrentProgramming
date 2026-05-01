@@ -2,9 +2,9 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 18/04/2026
+* Ultima alteracao.: 01/05/2026
 * Nome.............: style.css
-* Funcao...........: Arquivo com as estilizações em CSS com JavaFx
+* Funcao...........: Arquivo com as estilizacoes em CSS com JavaFx
 ************************************************************************ */
 
 .start-button {
@@ -18,11 +18,26 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0.5, 0, 4);
 }
 
+.start-button:hover {
+    -fx-cursor: hand;
+}
+
+/* Botoes de direcao: azul escuro */
 .option-button {
-    -fx-background-color: #000;
+    -fx-background-color: #1565C0;
     -fx-text-fill: #fff;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+}
+
+.option-button:hover {
+    -fx-background-color: #1976D2;
+    -fx-cursor: hand;
+}
+
+.option-button:pressed {
+    -fx-background-color: #0D47A1;
 }
 
 .blue-speed-slider {
@@ -35,30 +50,47 @@
     -fx-background-color: transparent;
 }
 
+.green-speed-slider:hover, .blue-speed-slider {
+    -fx-cursor: hand;
+}
+
+/* Botao reset: mantido vermelho */
 .reset-button {
     -fx-background-color: #F44336;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 16px;
+    -fx-background-radius: 8px;
+}
+
+.reset-button:hover {
+    -fx-background-color: #E53935;
+    -fx-cursor: hand;
+}
+
+.reset-button:pressed {
+    -fx-background-color: #B71C1C;
 }
 
 .main-container {
     -fx-background-color: linear-gradient(to bottom, #e0f7fa, #80deea);
 }
 
+/* Botoes de anti-colisao: verde escuro */
 .sync-button {
-    -fx-background-color: #000;
+    -fx-background-color: #2E7D32;
     -fx-text-fill: #fff;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-padding: 8px 12px;
+    -fx-background-radius: 8px;
     -fx-cursor: hand;
 }
- 
+
 .sync-button:hover {
-    -fx-background-color: #222;
+    -fx-background-color: #388E3C;
 }
- 
+
 .sync-button:pressed {
-    -fx-background-color: #444;
+    -fx-background-color: #1B5E20;
 }
