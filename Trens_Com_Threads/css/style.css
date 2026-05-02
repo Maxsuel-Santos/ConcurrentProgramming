@@ -6,6 +6,7 @@
 * Nome.............: style.css
 * Funcao...........: Arquivo com as estilizacoes em CSS com JavaFx
 ************************************************************************ */
+
 .start-button {
     -fx-background-color: linear-gradient(to right, #00c6ff, #3590ff);
     -fx-text-fill: white;
