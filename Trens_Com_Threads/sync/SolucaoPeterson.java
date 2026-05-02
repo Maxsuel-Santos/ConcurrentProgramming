@@ -3,7 +3,7 @@ package sync;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 15/04/2026
-* Ultima alteracao.: 28/04/2026
+* Ultima alteracao.: 01/05/2026
 * Nome.............: SolucaoPeterson.java
 * Funcao...........: Implementa exclusao mutua pelo algoritmo de Peterson.
 *                    Garante exclusao mutua sem inanicao para 2 processos
@@ -59,20 +59,16 @@ public class SolucaoPeterson {
       want[id] = true;
       turn = outra;
 
-      // Pausa o trem uma unica vez antes de entrar no busy-wait.
-      // Isso evita chamar Platform.runLater repetidamente dentro do loop,
-      // o que saturaria a fila da FX thread e congelaria a interface.
-      Platform.runLater(() -> {
-        if (pathtrans.getStatus() != Animation.Status.PAUSED) {
-          pathtrans.rateProperty().unbind();
-          pathtrans.pause();
-        }
-      });
-
-      // Busy-wait com sleep: aguarda o outro trem sair da regiao critica.
-      // O Thread.sleep(10) cede a CPU entre as verificacoes, evitando que
-      // esta thread consuma 100% de um nucleo enquanto espera.
+      // Busy-wait: so pausa o trem se houver competicao real.
+      // Pausar antes de verificar causava parada desnecessaria quando
+      // o outro trem ja havia saido da zona critica.
       while (want[outra] && turn == outra) {
+        if (pathtrans.getStatus() != Animation.Status.PAUSED) {
+          Platform.runLater(() -> {
+            pathtrans.rateProperty().unbind();
+            pathtrans.pause();
+          });
+        }
         try {
           Thread.sleep(10);
         } catch (InterruptedException e) {
@@ -81,7 +77,7 @@ public class SolucaoPeterson {
         }
       } // Fim do while Peterson
 
-      // Retoma o trem apos obter acesso a regiao critica.
+      // Retoma (ou mantem em movimento) apos obter acesso a regiao critica.
       Platform.runLater(() -> { pathtrans.play(); pathtrans.rateProperty().bind(rate); });
 
       while (true) {
@@ -115,16 +111,14 @@ public class SolucaoPeterson {
       want2[id] = true;
       turn2 = outra2;
 
-      // Pausa o trem uma unica vez antes de entrar no busy-wait.
-      Platform.runLater(() -> {
-        if (pathtrans.getStatus() != Animation.Status.PAUSED) {
-          pathtrans.rateProperty().unbind();
-          pathtrans.pause();
-        }
-      });
-
-      // Busy-wait com sleep para o segundo trilho simples.
+      // Busy-wait: so pausa o trem se houver competicao real.
       while (want2[outra2] && turn2 == outra2) {
+        if (pathtrans.getStatus() != Animation.Status.PAUSED) {
+          Platform.runLater(() -> {
+            pathtrans.rateProperty().unbind();
+            pathtrans.pause();
+          });
+        }
         try {
           Thread.sleep(10);
         } catch (InterruptedException e) {
@@ -133,7 +127,7 @@ public class SolucaoPeterson {
         }
       } // Fim do while Peterson2
 
-      // Retoma o trem apos obter acesso ao segundo trilho simples.
+      // Retoma (ou mantem em movimento) apos obter acesso ao segundo trilho.
       Platform.runLater(() -> { 
         pathtrans.play(); pathtrans.rateProperty().bind(rate); 
       });
