@@ -86,7 +86,7 @@ public class SolucaoPeterson {
 
       while (true) {
         double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-        if (y >= 350 || y <= 50) 
+        if (y >= 300 || y <= 50) 
           break;
         try { 
           Thread.sleep(100); 
@@ -140,7 +140,7 @@ public class SolucaoPeterson {
 
       while (true) {
         double y = train.localToScene(train.getBoundsInLocal()).getMinY();
-        if (y >= 750 || y <= 450) 
+        if (y >= 710 || y <= 450) 
           break;
         try { 
           Thread.sleep(100); 
