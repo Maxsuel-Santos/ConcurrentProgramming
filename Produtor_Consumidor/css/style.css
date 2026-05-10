@@ -7,16 +7,12 @@
 * Funcao...........: Estilizacao completa da aplicacao Churras do Mamax
 ************************************************************************ */
 
-/* ─────────────────────────────────────────────
-   CONTAINER RAIZ
-───────────────────────────────────────────── */
+/* CONTAINER RAIZ */
 .root-container {
     -fx-background-color: #1a0a00;
 }
 
-/* ─────────────────────────────────────────────
-   PAINEL DE CONTROLE
-───────────────────────────────────────────── */
+/* PAINEL DE CONTROLE */
 .painel-controle {
     -fx-background-color: linear-gradient(to bottom, #2c1a0e, #1a0a00);
     -fx-border-color: #c0392b;
@@ -24,9 +20,7 @@
     -fx-padding: 0 0 6 0;
 }
 
-/* ─────────────────────────────────────────────
-   LABELS DO PAINEL
-───────────────────────────────────────────── */
+/* LABELS DO PAINEL */
 .label-personagem {
     -fx-text-fill: #f5c518;
     -fx-font-family: "Arial Black";
@@ -47,13 +41,7 @@
     -fx-min-width: 110px;
 }
 
-/* ─────────────────────────────────────────────
-   SLIDERS
-   Pista laranja para o produtor, verde para o consumidor.
-   Thumb (bolinha) grande e arredondado para facilitar o arraste.
-───────────────────────────────────────────── */
-
-/* Trilha base comum */
+/* SLIDERS & THUMBS*/
 .slider-produtor .track,
 .slider-consumidor .track {
     -fx-background-color: #3a1a00;
@@ -61,7 +49,6 @@
     -fx-pref-height: 8px;
 }
 
-/* Thumb do produtor — laranja */
 .slider-produtor .thumb {
     -fx-background-color: radial-gradient(center 40% 35%, radius 60%, #ff8c00, #c0392b);
     -fx-background-radius: 50%;
@@ -75,7 +62,6 @@
     -fx-background-color: radial-gradient(center 40% 35%, radius 60%, #ffa500, #e74c3c);
 }
 
-/* Thumb do consumidor — verde */
 .slider-consumidor .thumb {
     -fx-background-color: radial-gradient(center 40% 35%, radius 60%, #2ecc71, #1a7a40);
     -fx-background-radius: 50%;
@@ -89,7 +75,6 @@
     -fx-background-color: radial-gradient(center 40% 35%, radius 60%, #58d68d, #27ae60);
 }
 
-/* Tick marks */
 .slider-produtor .tick-mark,
 .slider-consumidor .tick-mark {
     -fx-stroke: #6a3a10;
@@ -101,9 +86,7 @@
     -fx-font-size: 10px;
 }
 
-/* ─────────────────────────────────────────────
-   BOTOES DE PAUSA / RETOMADA
-───────────────────────────────────────────── */
+/* BOTOES DE PAUSA / RETOMADA */
 .btn-pausa {
     -fx-background-color: linear-gradient(to bottom, #d35400, #922b21);
     -fx-text-fill: white;
@@ -126,9 +109,7 @@
     -fx-effect: none;
 }
 
-/* ─────────────────────────────────────────────
-   BOTAO RESET
-───────────────────────────────────────────── */
+/* BOTAO RESET */
 .btn-reset {
     -fx-background-color: linear-gradient(to bottom, #f5c518, #c9a000);
     -fx-text-fill: #1a0a00;
@@ -150,10 +131,7 @@
     -fx-effect: none;
 }
 
-/* ─────────────────────────────────────────────
-   BARRA DE BUFFER (ProgressBar)
-   Muda de cor conforme enchimento via classe CSS.
-───────────────────────────────────────────── */
+/* BARRA DE BUFFER (ProgressBar) */
 .bar-buffer {
     -fx-pref-height: 22px;
     -fx-background-radius: 6px;
@@ -171,9 +149,7 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 3, 0.2, 0, 1);
 }
 
-/* ─────────────────────────────────────────────
-   SEPARADORES DE LINHA DO PAINEL
-───────────────────────────────────────────── */
+/* SEPARADORES DE LINHA DO PAINEL */
 .linha-painel {
     -fx-padding: 8px 20px;
     -fx-background-color: transparent;

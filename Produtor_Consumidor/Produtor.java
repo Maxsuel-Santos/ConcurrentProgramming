@@ -5,7 +5,7 @@
 * Ultima alteracao.: 10/05/2026
 * Nome.............: Produtor.java
 * Funcao...........: Thread do churrasqueiro (produtor).
-*                    Implementa EXATAMENTE o pseudocodigo do livro:
+*                    Implementacao EXATA do pseudocodigo do livro do Tanembaun:
 *
 *                    void producer(void) {
 *                      int item;
@@ -18,6 +18,9 @@
 *                        up(&full);
 *                      }
 *                    }
+*
+*                    OBS: A implemantacao sofreu adaptacoes para o contexto
+*                    do algoritmo em questao.
 ************************************************************************ */
 
 import javafx.application.Platform;

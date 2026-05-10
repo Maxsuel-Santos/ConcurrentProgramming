@@ -5,7 +5,7 @@
 * Ultima alteracao.: 10/05/2026
 * Nome.............: Consumidor.java
 * Funcao...........: Thread do comedor (consumidor).
-*                    Implementa EXATAMENTE o pseudocodigo do livro:
+*                    Implementacao EXATA do pseudocodigo do livro do Tanembaun:
 *
 *                    void consumer(void) {
 *                      int item;
@@ -18,6 +18,9 @@
 *                        consume_item(item);
 *                      }
 *                    }
+*
+*                    OBS: A implemantacao sofreu adaptacoes para o contexto
+*                    do algoritmo em questao.
 ************************************************************************ */
 
 import javafx.application.Platform;
