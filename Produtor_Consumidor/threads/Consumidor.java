@@ -1,21 +1,22 @@
+package threads;
 /* *********************************************************************
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 07/05/2026
 * Ultima alteracao.: 10/05/2026
-* Nome.............: Produtor.java
-* Funcao...........: Thread do churrasqueiro (produtor).
+* Nome.............: Consumidor.java
+* Funcao...........: Thread do comedor (consumidor).
 *                    Implementacao EXATA do pseudocodigo do livro do Tanembaun:
 *
-*                    void producer(void) {
+*                    void consumer(void) {
 *                      int item;
 *                      while (TRUE) {
-*                        produce_item(&item);
-*                        down(&empty);
+*                        down(&full);
 *                        down(&mutex);
-*                        enter_item(item);
+*                        remove_item(item);
 *                        up(&mutex);
-*                        up(&full);
+*                        up(&empty);
+*                        consume_item(item);
 *                      }
 *                    }
 *
@@ -24,31 +25,30 @@
 ************************************************************************ */
 
 import javafx.application.Platform;
-import javafx.scene.image.ImageView;
+import model.ProdutorConsumidor;
 
 /* ***************************************************************
-* Classe: Produtor
-* Funcao: Thread do churrasqueiro. Gera espetos e os coloca na
-*         mesa (buffer). Estrutura identica ao producer() do
-*         pseudocodigo C do livro texto de Tanenbaum.
+* Classe: Consumidor
+* Funcao: Thread do comedor. Retira espetos da mesa (buffer) e os
+*         consome. Estrutura identica ao consumer() do pseudocodigo
+*         C do livro texto de Tanenbaum.
 *************************************************************** */
-public class Produtor extends Thread {
+public class Consumidor extends Thread {
 
   private final ProdutorConsumidor pc;
   private volatile int speedMs;
   private volatile boolean pausado = false;
-  private Runnable onProduziu;
+  private Runnable onConsumiu;
   private Runnable onEsperando;
-  private ImageView imgView;
 
   /* ***************************************************************
-  * Metodo: Produtor (construtor)
-  * Funcao: Inicializa o produtor com o contexto compartilhado.
-  * Parametros: @param pc     contexto compartilhado (buffer + semaforos)
-  *             @param speedMs velocidade inicial de producao
+  * Metodo: Consumidor (construtor)
+  * Funcao: Inicializa o consumidor com o contexto compartilhado.
+  * Parametros: @param pc      contexto compartilhado (buffer + semaforos)
+  *             @param speedMs velocidade inicial de consumo
   * Retorno: nao possui
   *************************************************************** */
-  public Produtor(ProdutorConsumidor pc, int speedMs) {
+  public Consumidor(ProdutorConsumidor pc, int speedMs) {
     this.pc = pc;
     this.speedMs = speedMs;
     setDaemon(true);
@@ -56,7 +56,7 @@ public class Produtor extends Thread {
 
   /* ***************************************************************
   * Metodo: run
-  * Funcao: Laco principal do produtor — traducao direta do
+  * Funcao: Laco principal do consumidor — traducao direta do
   *         pseudocodigo C do livro texto.
   * Parametros: nao possui
   * Retorno: void
@@ -71,58 +71,60 @@ public class Produtor extends Thread {
       esperarSeEmPausa();
       if (isInterrupted()) break;
 
-      // produce_item(&item) — simula o tempo de grelhar
-      item = produceItem();
-      if (isInterrupted()) break;
-
       // Verifica ANTES do down se vai bloquear ou nao.
-      // Se empty == 0 o buffer esta cheio: notifica "esperando".
-      // Se empty > 0 ha espaco livre: vai produzir sem bloquear.
-      if (pc.empty.availablePermits() == 0) {
+      // Se full == 0 o buffer esta vazio: notifica "esperando" e muda imagem.
+      // Se full > 0 ha espeto disponivel: notifica "consumindo" antes de pegar.
+      if (pc.full.availablePermits() == 0) {
         notificarEsperando();
+      } else {
+        notificarConsumindo();
       }
 
-      // down(&empty) — aguarda espaco no buffer
-      ProdutorConsumidor.down(pc.empty);
+      // down(&full) — aguarda item disponivel no buffer
+      ProdutorConsumidor.down(pc.full);
       if (isInterrupted()) break;
+
+      // Ha espeto disponivel: garante que a imagem ativa seja exibida
+      notificarConsumindo();
 
       // down(&mutex) — entra na secao critica
       ProdutorConsumidor.down(pc.mutex);
 
-      // enter_item(item) — coloca espeto na mesa
-      pc.enterItem(item);
+      // remove_item(item) — pega espeto da mesa
+      item = pc.removeItem();
 
       // up(&mutex) — sai da secao critica
       ProdutorConsumidor.up(pc.mutex);
 
-      // up(&full) — avisa que ha mais um espeto disponivel
-      ProdutorConsumidor.up(pc.full);
+      // up(&empty) — avisa que ha mais um espaco livre
+      ProdutorConsumidor.up(pc.empty);
+
+      // consume_item(item) — come o espeto (fora da secao critica)
+      consumeItem(item);
 
       // Notifica a GUI para atualizar os slots da mesa
-      notificarProduziu();
+      notificarConsumiu();
     }
   } // Fim do metodo run
 
   /* ***************************************************************
-  * Metodo: produceItem
-  * Funcao: Simula o tempo de grelhar um espeto (produce_item).
+  * Metodo: consumeItem
+  * Funcao: Simula o tempo de comer um espeto (consume_item).
   *         Dorme pelo tempo configurado no slider de velocidade.
-  * Parametros: nao possui
-  * Retorno: @return int numero do espeto produzido
+  * Parametros: @param item espeto a ser consumido
+  * Retorno: void
   *************************************************************** */
-  private int produceItem() {
+  private void consumeItem(int item) {
     try {
       Thread.sleep(speedMs);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
-    return (int)(Math.random() * 100) + 1;
-  } // Fim do metodo produceItem
+  } // Fim do metodo consumeItem
 
   /* ***************************************************************
   * Metodo: esperarSeEmPausa
-  * Funcao: Bloqueia a thread enquanto o produtor estiver pausado.
-  *         Desbloqueia quando retomar() for chamado.
+  * Funcao: Bloqueia a thread enquanto o consumidor estiver pausado.
   * Parametros: nao possui
   * Retorno: void
   *************************************************************** */
@@ -138,7 +140,7 @@ public class Produtor extends Thread {
 
   /* ***************************************************************
   * Metodo: pausar
-  * Funcao: Pausa o produtor no proximo ciclo do laco principal.
+  * Funcao: Pausa o consumidor no proximo ciclo do laco principal.
   * Parametros: nao possui
   * Retorno: void
   *************************************************************** */
@@ -148,7 +150,7 @@ public class Produtor extends Thread {
 
   /* ***************************************************************
   * Metodo: retomar
-  * Funcao: Retoma o produtor acordando o wait() de esperarSeEmPausa.
+  * Funcao: Retoma o consumidor acordando o wait().
   * Parametros: nao possui
   * Retorno: void
   *************************************************************** */
@@ -159,7 +161,7 @@ public class Produtor extends Thread {
 
   /* ***************************************************************
   * Metodo: isPausado
-  * Funcao: Retorna se o produtor esta pausado.
+  * Funcao: Retorna se o consumidor esta pausado.
   * Parametros: nao possui
   * Retorno: @return boolean true se pausado
   *************************************************************** */
@@ -169,7 +171,7 @@ public class Produtor extends Thread {
 
   /* ***************************************************************
   * Metodo: setSpeedMs
-  * Funcao: Atualiza a velocidade de producao em tempo real.
+  * Funcao: Atualiza a velocidade de consumo em tempo real.
   * Parametros: @param ms novo valor em milissegundos
   * Retorno: void
   *************************************************************** */
@@ -178,18 +180,18 @@ public class Produtor extends Thread {
   } // Fim do metodo setSpeedMs
 
   /* ***************************************************************
-  * Metodo: setOnProduziu
-  * Funcao: Define o callback chamado apos cada item produzido.
+  * Metodo: setOnConsumiu
+  * Funcao: Define o callback chamado apos cada item consumido.
   * Parametros: @param r Runnable a executar na FX thread
   * Retorno: void
   *************************************************************** */
-  public void setOnProduziu(Runnable r) {
-    this.onProduziu = r;
-  } // Fim do metodo setOnProduziu
+  public void setOnConsumiu(Runnable r) {
+    this.onConsumiu = r;
+  } // Fim do metodo setOnConsumiu
 
   /* ***************************************************************
   * Metodo: setOnEsperando
-  * Funcao: Define o callback chamado quando o produtor bloqueia.
+  * Funcao: Define o callback chamado quando o consumidor bloqueia.
   * Parametros: @param r Runnable a executar na FX thread
   * Retorno: void
   *************************************************************** */
@@ -197,9 +199,9 @@ public class Produtor extends Thread {
     this.onEsperando = r;
   } // Fim do metodo setOnEsperando
 
-  private void notificarProduziu() {
-    if (onProduziu != null) {
-      Platform.runLater(onProduziu);
+  private void notificarConsumiu() {
+    if (onConsumiu != null) {
+      Platform.runLater(onConsumiu);
     }
   }
 
@@ -209,4 +211,12 @@ public class Produtor extends Thread {
     }
   }
 
-} // Fim da classe Produtor
+  // Notifica que o consumidor esta ativamente consumindo (buffer nao vazio).
+  // Usado para garantir que a imagem ativa apareca antes do sleep do consumeItem.
+  private void notificarConsumindo() {
+    if (onConsumiu != null) {
+      Platform.runLater(onConsumiu);
+    }
+  }
+
+} // Fim da classe Consumidor

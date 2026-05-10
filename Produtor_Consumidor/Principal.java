@@ -45,6 +45,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.ProdutorConsumidor;
+import threads.Consumidor;
+import threads.Produtor;
 import util.Constants;
 
 public class Principal extends Application {

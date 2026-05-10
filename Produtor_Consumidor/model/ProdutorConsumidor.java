@@ -1,3 +1,4 @@
+package model;
 /* *********************************************************************
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
