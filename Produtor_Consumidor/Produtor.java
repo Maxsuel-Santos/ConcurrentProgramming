@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 07/05/2026
-* Ultima alteracao.: 08/05/2026
+* Ultima alteracao.: 10/05/2026
 * Nome.............: Produtor.java
 * Funcao...........: Thread do churrasqueiro (produtor).
 *                    Implementa EXATAMENTE o pseudocodigo do livro:
@@ -72,8 +72,14 @@ public class Produtor extends Thread {
       item = produceItem();
       if (isInterrupted()) break;
 
+      // Verifica ANTES do down se vai bloquear ou nao.
+      // Se empty == 0 o buffer esta cheio: notifica "esperando".
+      // Se empty > 0 ha espaco livre: vai produzir sem bloquear.
+      if (pc.empty.availablePermits() == 0) {
+        notificarEsperando();
+      }
+
       // down(&empty) — aguarda espaco no buffer
-      notificarEsperando();
       ProdutorConsumidor.down(pc.empty);
       if (isInterrupted()) break;
 

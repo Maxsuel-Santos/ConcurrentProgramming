@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 07/05/2026
-* Ultima alteracao.: 08/05/2026
+* Ultima alteracao.: 10/05/2026
 * Nome.............: Consumidor.java
 * Funcao...........: Thread do comedor (consumidor).
 *                    Implementa EXATAMENTE o pseudocodigo do livro:
@@ -66,10 +66,21 @@ public class Consumidor extends Thread {
       esperarSeEmPausa();
       if (isInterrupted()) break;
 
+      // Verifica ANTES do down se vai bloquear ou nao.
+      // Se full == 0 o buffer esta vazio: notifica "esperando" e muda imagem.
+      // Se full > 0 ha espeto disponivel: notifica "consumindo" antes de pegar.
+      if (pc.full.availablePermits() == 0) {
+        notificarEsperando();
+      } else {
+        notificarConsumindo();
+      }
+
       // down(&full) — aguarda item disponivel no buffer
-      notificarEsperando();
       ProdutorConsumidor.down(pc.full);
       if (isInterrupted()) break;
+
+      // Ha espeto disponivel: garante que a imagem ativa seja exibida
+      notificarConsumindo();
 
       // down(&mutex) — entra na secao critica
       ProdutorConsumidor.down(pc.mutex);
@@ -192,6 +203,14 @@ public class Consumidor extends Thread {
   private void notificarEsperando() {
     if (onEsperando != null) {
       Platform.runLater(onEsperando);
+    }
+  }
+
+  // Notifica que o consumidor esta ativamente consumindo (buffer nao vazio).
+  // Usado para garantir que a imagem ativa apareca antes do sleep do consumeItem.
+  private void notificarConsumindo() {
+    if (onConsumiu != null) {
+      Platform.runLater(onConsumiu);
     }
   }
 
