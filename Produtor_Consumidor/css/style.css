@@ -1,0 +1,187 @@
+/* *********************************************************************
+* Autor............: Maxsuel Aparecido Lima Santos
+* Matricula........: 202511587
+* Inicio...........: 07/05/2026
+* Ultima alteracao.: 10/05/2026
+* Nome.............: style.css
+* Funcao...........: Estilizacao completa da aplicacao Churras do Mamax
+************************************************************************ */
+
+/* ─────────────────────────────────────────────
+   CONTAINER RAIZ
+───────────────────────────────────────────── */
+.root-container {
+    -fx-background-color: #1a0a00;
+}
+
+/* ─────────────────────────────────────────────
+   PAINEL DE CONTROLE
+───────────────────────────────────────────── */
+.painel-controle {
+    -fx-background-color: linear-gradient(to bottom, #2c1a0e, #1a0a00);
+    -fx-border-color: #c0392b;
+    -fx-border-width: 3 0 0 0;
+    -fx-padding: 0 0 6 0;
+}
+
+/* ─────────────────────────────────────────────
+   LABELS DO PAINEL
+───────────────────────────────────────────── */
+.label-personagem {
+    -fx-text-fill: #f5c518;
+    -fx-font-family: "Arial Black";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.label-velocidade {
+    -fx-text-fill: #e0c080;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.label-buffer {
+    -fx-text-fill: #f5c518;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-min-width: 110px;
+}
+
+/* ─────────────────────────────────────────────
+   SLIDERS
+   Pista laranja para o produtor, verde para o consumidor.
+   Thumb (bolinha) grande e arredondado para facilitar o arraste.
+───────────────────────────────────────────── */
+
+/* Trilha base comum */
+.slider-produtor .track,
+.slider-consumidor .track {
+    -fx-background-color: #3a1a00;
+    -fx-background-radius: 4px;
+    -fx-pref-height: 8px;
+}
+
+/* Thumb do produtor — laranja */
+.slider-produtor .thumb {
+    -fx-background-color: radial-gradient(center 40% 35%, radius 60%, #ff8c00, #c0392b);
+    -fx-background-radius: 50%;
+    -fx-pref-width: 22px;
+    -fx-pref-height: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 6, 0.4, 0, 2);
+}
+
+.slider-produtor .thumb:hover {
+    -fx-cursor: hand;
+    -fx-background-color: radial-gradient(center 40% 35%, radius 60%, #ffa500, #e74c3c);
+}
+
+/* Thumb do consumidor — verde */
+.slider-consumidor .thumb {
+    -fx-background-color: radial-gradient(center 40% 35%, radius 60%, #2ecc71, #1a7a40);
+    -fx-background-radius: 50%;
+    -fx-pref-width: 22px;
+    -fx-pref-height: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 6, 0.4, 0, 2);
+}
+
+.slider-consumidor .thumb:hover {
+    -fx-cursor: hand;
+    -fx-background-color: radial-gradient(center 40% 35%, radius 60%, #58d68d, #27ae60);
+}
+
+/* Tick marks */
+.slider-produtor .tick-mark,
+.slider-consumidor .tick-mark {
+    -fx-stroke: #6a3a10;
+}
+
+.slider-produtor .tick-label,
+.slider-consumidor .tick-label {
+    -fx-text-fill: #b0805a;
+    -fx-font-size: 10px;
+}
+
+/* ─────────────────────────────────────────────
+   BOTOES DE PAUSA / RETOMADA
+───────────────────────────────────────────── */
+.btn-pausa {
+    -fx-background-color: linear-gradient(to bottom, #d35400, #922b21);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 7px 18px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 4, 0.3, 0, 2);
+    -fx-min-width: 160px;
+}
+
+.btn-pausa:hover {
+    -fx-background-color: linear-gradient(to bottom, #e67e22, #c0392b);
+}
+
+.btn-pausa:pressed {
+    -fx-background-color: linear-gradient(to bottom, #922b21, #6e2018);
+    -fx-effect: none;
+}
+
+/* ─────────────────────────────────────────────
+   BOTAO RESET
+───────────────────────────────────────────── */
+.btn-reset {
+    -fx-background-color: linear-gradient(to bottom, #f5c518, #c9a000);
+    -fx-text-fill: #1a0a00;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 28px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 6, 0.4, 0, 3);
+}
+
+.btn-reset:hover {
+    -fx-background-color: linear-gradient(to bottom, #ffd700, #e6b800);
+}
+
+.btn-reset:pressed {
+    -fx-background-color: linear-gradient(to bottom, #c9a000, #a07800);
+    -fx-effect: none;
+}
+
+/* ─────────────────────────────────────────────
+   BARRA DE BUFFER (ProgressBar)
+   Muda de cor conforme enchimento via classe CSS.
+───────────────────────────────────────────── */
+.bar-buffer {
+    -fx-pref-height: 22px;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+}
+
+.bar-buffer .track {
+    -fx-background-color: #3a1a00;
+    -fx-background-radius: 6px;
+}
+
+.bar-buffer .bar {
+    -fx-background-color: linear-gradient(to right, #27ae60, #f5c518, #c0392b);
+    -fx-background-radius: 6px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 3, 0.2, 0, 1);
+}
+
+/* ─────────────────────────────────────────────
+   SEPARADORES DE LINHA DO PAINEL
+───────────────────────────────────────────── */
+.linha-painel {
+    -fx-padding: 8px 20px;
+    -fx-background-color: transparent;
+}
+
+.linha-painel-separador {
+    -fx-border-color: transparent transparent #3a1a00 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 8px 20px 9px 20px;
+    -fx-background-color: transparent;
+}

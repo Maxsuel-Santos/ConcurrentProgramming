@@ -11,7 +11,7 @@
 import java.util.ArrayList;
 import java.util.Random;
 import util.Option;
-import util.Constantes;
+import util.Constants;
 
 import javafx.animation.Animation; // Esse sera o import usado para as animacoes com JavaFx
 import javafx.animation.FadeTransition;
@@ -341,9 +341,9 @@ public class Principal extends Application {
       // Abre a tela de simulacao com base na opcao
       openNewScreen(text);
       // Reseta velocidade do trem azul
-      this.blueSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
+      this.blueSpeedSlider.setValue(Constants.DEFAULT_SPEED);
       // Reseta velocidade do trem Vermelho
-      this.greenSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
+      this.greenSpeedSlider.setValue(Constants.DEFAULT_SPEED);
       // Remove pausa do trem 1
       this.pauseTrains1.set(false);
       // Remove pausa do trem 2
@@ -419,7 +419,7 @@ public class Principal extends Application {
     startAirplaneTraffic(root);
 
     // Criacao do slider do trem azul
-    this.blueSpeedSlider = new Slider(0, 100, Constantes.DEFAULT_SPEED); 
+    this.blueSpeedSlider = new Slider(0, 100, Constants.DEFAULT_SPEED); 
     this.blueSpeedSlider.setMinWidth(300);
     this.blueSpeedSlider.setMaxWidth(300);
     this.blueSpeedSlider.setShowTickMarks(true);
@@ -428,7 +428,7 @@ public class Principal extends Application {
     blueSpeedSlider.getStyleClass().add("blue-speed-slider");
 
     // Criacao do slider do trem verde
-    this.greenSpeedSlider = new Slider(0, 100, Constantes.DEFAULT_SPEED); 
+    this.greenSpeedSlider = new Slider(0, 100, Constants.DEFAULT_SPEED); 
     this.greenSpeedSlider.setMinWidth(300);
     this.greenSpeedSlider.setMaxWidth(300);
     this.greenSpeedSlider.setShowTickMarks(true);
@@ -760,8 +760,8 @@ public class Principal extends Application {
     // Define o comportamento do botao reset
     this.resetButton.setOnAction(e -> {
       // Redefine a velocidade dos sliders para o valor padrao
-      this.blueSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
-      this.greenSpeedSlider.setValue(Constantes.DEFAULT_SPEED);
+      this.blueSpeedSlider.setValue(Constants.DEFAULT_SPEED);
+      this.greenSpeedSlider.setValue(Constants.DEFAULT_SPEED);
 
       // Reinicia a animacao do trem azul
       pathTransition1.stop();
