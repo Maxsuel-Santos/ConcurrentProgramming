@@ -3,7 +3,7 @@ package threads;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 07/05/2026
-* Ultima alteracao.: 10/05/2026
+* Ultima alteracao.: 13/05/2026
 * Nome.............: Produtor.java
 * Funcao...........: Thread do churrasqueiro (produtor).
 *                    Implementacao EXATA do pseudocodigo do livro do Tanembaun:
@@ -25,7 +25,6 @@ package threads;
 ************************************************************************ */
 
 import javafx.application.Platform;
-import javafx.scene.image.ImageView;
 import model.ProdutorConsumidor;
 
 /* ***************************************************************
@@ -41,7 +40,6 @@ public class Produtor extends Thread {
   private volatile boolean pausado = false;
   private Runnable onProduziu;
   private Runnable onEsperando;
-  private ImageView imgView;
 
   /* ***************************************************************
   * Metodo: Produtor (construtor)
