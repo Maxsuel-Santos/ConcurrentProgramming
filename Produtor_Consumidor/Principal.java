@@ -81,7 +81,7 @@ public class Principal extends Application {
   // Estado visual atual de cada personagem: evita troca desnecessaria de imagem.
   // O consumidor so volta a imagem ativa apos consumir, nunca por acao do produtor.
   private boolean churrasqueiroEstaAtivo = true;
-  private boolean comedorEstaAtivo       = true;
+  private boolean comedorEstaAtivo = true;
 
   /** ********************************************************************
   * Metodo: start
@@ -105,8 +105,8 @@ public class Principal extends Application {
     // Carrega as imagens
     imgChurrasqueiroAtivo  = new Image("/img/churrasqueiro.png");
     imgChurrasqueiroParado = new Image("/img/churrasqueiro_parado.png");
-    imgComedorAtivo        = new Image("/img/consumidor.png");
-    imgComedorParado       = new Image("/img/consumidor_parado.png");
+    imgComedorAtivo = new Image("/img/consumidor.png");
+    imgComedorParado = new Image("/img/consumidor_parado.png");
 
     // Raiz da cena de simulacao
     Pane simulacaoPane = new Pane();
@@ -117,14 +117,14 @@ public class Principal extends Application {
     BackgroundImage bg = new BackgroundImage(bgImg,
         BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
         BackgroundPosition.DEFAULT,
-        new BackgroundSize(900, 380, false, false, false, false));
+        new BackgroundSize(980, 380, false, false, false, false));
     simulacaoPane.setBackground(new Background(bg));
 
     // Churrasqueiro (produtor) — posicao: x = 30, y = 80
     imgChurrasqueiro = new ImageView(imgChurrasqueiroAtivo);
     imgChurrasqueiro.setFitWidth(80);
     imgChurrasqueiro.setFitHeight(120);
-    imgChurrasqueiro.setLayoutX(30);
+    imgChurrasqueiro.setLayoutX(80);
     imgChurrasqueiro.setLayoutY(80);
     simulacaoPane.getChildren().add(imgChurrasqueiro);
 
@@ -133,7 +133,7 @@ public class Principal extends Application {
     imgComedor = new ImageView(imgComedorAtivo);
     imgComedor.setFitWidth(80);
     imgComedor.setFitHeight(120);
-    imgComedor.setLayoutX(790);
+    imgComedor.setLayoutX(850);
     imgComedor.setLayoutY(80);
     simulacaoPane.getChildren().add(imgComedor);
 
@@ -144,37 +144,22 @@ public class Principal extends Application {
     Text txtMesa = new Text("MESA");
     txtMesa.setFont(Font.font("Arial", FontWeight.BOLD, 18));
     txtMesa.setFill(Color.web("#3e2000"));
-    txtMesa.setLayoutX(430);
+    txtMesa.setLayoutX(470);
     txtMesa.setLayoutY(155);
     simulacaoPane.getChildren().add(txtMesa);
 
     // Labels de status dos personagens
-    lblStatusProdutor = new Label("Grelhando...");
-    lblStatusProdutor.setLayoutX(20);
+    lblStatusProdutor = new Label("GRELHANDO...");
+    lblStatusProdutor.setLayoutX(90);
     lblStatusProdutor.setLayoutY(210);
     lblStatusProdutor.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #FFF;");
     simulacaoPane.getChildren().add(lblStatusProdutor);
 
-    lblStatusConsumidor = new Label("Comendo...");
-    lblStatusConsumidor.setLayoutX(775);
+    lblStatusConsumidor = new Label("COMENDO...");
+    lblStatusConsumidor.setLayoutX(810);
     lblStatusConsumidor.setLayoutY(210);
     lblStatusConsumidor.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #FFF;");
     simulacaoPane.getChildren().add(lblStatusConsumidor);
-
-    // Seta do produtor para a mesa
-    // Seta simples: retangulo x=112, y=195, 40x8px
-    Rectangle setaProdutor = new Rectangle(112, 195, 40, 8);
-    setaProdutor.setFill(Color.web("#c0392b"));
-    setaProdutor.setArcWidth(4);
-    setaProdutor.setArcHeight(4);
-    simulacaoPane.getChildren().add(setaProdutor);
-
-    // Seta do consumidor puxando da mesa
-    Rectangle setaConsumidor = new Rectangle(748, 195, 40, 8);
-    setaConsumidor.setFill(Color.web("#27ae60"));
-    setaConsumidor.setArcWidth(4);
-    setaConsumidor.setArcHeight(4);
-    simulacaoPane.getChildren().add(setaConsumidor);
 
     // Painel de controle
     VBox painelControle = construirPainelControle();
@@ -183,7 +168,7 @@ public class Principal extends Application {
     VBox root = new VBox(0, simulacaoPane, painelControle);
     root.getStyleClass().add("root-container");
 
-    Scene scene = new Scene(root, 900, 600);
+    Scene scene = new Scene(root, 980, 600);
     scene.getStylesheets().add("/css/style.css");
     stage.setScene(scene);
     stage.setResizable(false);
@@ -204,11 +189,11 @@ public class Principal extends Application {
   * Retorno: @return void
   ******************************************************************** */
   private void construirSlotsMesa(Pane pane) {
-    // Mesa de fundo: retangulo marrom x = 145, y = 158, 620x90px
-    Rectangle mesa = new Rectangle(145, 158, 620, 90);
+    // Mesa de fundo: retangulo marrom x = 165, y = 158, 620x90px
+    Rectangle mesa = new Rectangle(180, 158, 620, 90);
     mesa.setFill(Color.web("#8B5E3C"));
     mesa.setArcWidth(16);
-    mesa.setArcHeight(16);
+    mesa.setArcHeight(10);
     pane.getChildren().add(mesa);
 
     Image imgEspeto = new Image("/img/espeto.png");
@@ -217,7 +202,7 @@ public class Principal extends Application {
     for (int i = 0; i < Constants.N; i++) {
       StackPane slot = new StackPane();
       slot.setPrefSize(50, 60);
-      slot.setLayoutX(155 + i * 61);
+      slot.setLayoutX(185 + i * 61);
       slot.setLayoutY(165);
 
       // Imagem base: prato vazio
@@ -247,7 +232,7 @@ public class Principal extends Application {
   private VBox construirPainelControle() {
 
     // Produtor
-    Label lblProd = new Label("CHURRASQUEIRO (Produtor)");
+    Label lblProd = new Label("CHURRASQUEIRO (PRODUTOR)");
     lblProd.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
 
     // Slider 0-10: esquerda=lento, direita=rapido. Conversao para ms em sliderParaMs()
@@ -260,8 +245,8 @@ public class Principal extends Application {
     sliderProdutor.setPrefWidth(300);
     sliderProdutor.getStyleClass().add("slider-produtor");
 
-    Label lblVelProd = new Label("Velocidade:");
-    btnPausaProdutor = new Button("Pausar Produtor");
+    Label lblVelProd = new Label("VELOCIDADE:");
+    btnPausaProdutor = new Button("PAUSAR PRODUTOR");
     btnPausaProdutor.getStyleClass().add("btn-pausa");
 
     HBox linhaProdutor = new HBox(15,
@@ -270,7 +255,7 @@ public class Principal extends Application {
     linhaProdutor.setPadding(new Insets(8, 20, 4, 20));
 
     // Consumidor 
-    Label lblCons = new Label("COMEDOR (Consumidor)");
+    Label lblCons = new Label("COMEDOR (CONSUMIDOR)");
     lblCons.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
 
     sliderConsumidor = new Slider(0, 10, 5);
@@ -282,8 +267,8 @@ public class Principal extends Application {
     sliderConsumidor.setPrefWidth(300);
     sliderConsumidor.getStyleClass().add("slider-consumidor");
 
-    Label lblVelCons = new Label("Velocidade:");
-    btnPausaConsumidor = new Button("Pausar Consumidor");
+    Label lblVelCons = new Label("VELOCIDADE:");
+    btnPausaConsumidor = new Button("PAUSAR CONSUMIDOR");
     btnPausaConsumidor.getStyleClass().add("btn-pausa");
 
     HBox linhaConsumidor = new HBox(15,
@@ -328,11 +313,11 @@ public class Principal extends Application {
       if (produtor == null) return;
       if (produtor.isPausado()) {
         produtor.retomar();
-        btnPausaProdutor.setText("Pausar Produtor");
+        btnPausaProdutor.setText("PAUSAR PRODUTOR");
         atualizarImagemPersonagem(imgChurrasqueiro, imgChurrasqueiroAtivo);
       } else {
         produtor.pausar();
-        btnPausaProdutor.setText("Retomar Produtor");
+        btnPausaProdutor.setText("RETOMAR PRODUTOR");
         atualizarImagemPersonagem(imgChurrasqueiro, imgChurrasqueiroParado);
       }
     });
@@ -342,11 +327,11 @@ public class Principal extends Application {
       if (consumidor == null) return;
       if (consumidor.isPausado()) {
         consumidor.retomar();
-        btnPausaConsumidor.setText("Pausar Consumidor");
+        btnPausaConsumidor.setText("PAUSAR CONSUMIDOR");
         atualizarImagemPersonagem(imgComedor, imgComedorAtivo);
       } else {
         consumidor.pausar();
-        btnPausaConsumidor.setText("Retomar Consumidor");
+        btnPausaConsumidor.setText("RETOMAR CONSUMIDOR");
         atualizarImagemPersonagem(imgComedor, imgComedorParado);
       }
     });
@@ -374,7 +359,7 @@ public class Principal extends Application {
       atualizarSlots();
       atualizarBarra();
       animarSlotAdicionado();
-      lblStatusProdutor.setText("Grelhando...");
+      lblStatusProdutor.setText("GRELHANDO...");
       // Restaura churrasqueiro ativo somente se estava parado
       if (!churrasqueiroEstaAtivo) {
         churrasqueiroEstaAtivo = true;
@@ -384,7 +369,7 @@ public class Principal extends Application {
 
     // Callback quando produtor bloqueia (buffer cheio)
     produtor.setOnEsperando(() -> {
-      lblStatusProdutor.setText("Buffer cheio!");
+      lblStatusProdutor.setText("BUFFER CHEIO!");
       // Troca para parado somente se estava ativo
       if (churrasqueiroEstaAtivo) {
         churrasqueiroEstaAtivo = false;
@@ -396,7 +381,7 @@ public class Principal extends Application {
     consumidor.setOnConsumiu(() -> {
       atualizarSlots();
       atualizarBarra();
-      lblStatusConsumidor.setText("Comendo...");
+      lblStatusConsumidor.setText("COMENDO...");
       // Restaura comedor ativo somente se estava parado
       if (!comedorEstaAtivo) {
         comedorEstaAtivo = true;
@@ -406,7 +391,7 @@ public class Principal extends Application {
 
     // Callback quando consumidor bloqueia (buffer vazio)
     consumidor.setOnEsperando(() -> {
-      lblStatusConsumidor.setText("Aguardando espeto...");
+      lblStatusConsumidor.setText("AGUARDANDO ESPETO...");
       // Troca para parado somente se estava ativo
       if (comedorEstaAtivo) {
         comedorEstaAtivo = false;
@@ -446,12 +431,12 @@ public class Principal extends Application {
     // Reinicia a GUI
     sliderProdutor.setValue(5);
     sliderConsumidor.setValue(5);
-    btnPausaProdutor.setText("Pausar Produtor");
-    btnPausaConsumidor.setText("Pausar Consumidor");
-    lblStatusProdutor.setText("Grelhando...");
-    lblStatusConsumidor.setText("Comendo...");
+    btnPausaProdutor.setText("PAUSAR PRODUTOR");
+    btnPausaConsumidor.setText("PAUSAR CONSUMIDOR");
+    lblStatusProdutor.setText("GRELHANDO...");
+    lblStatusConsumidor.setText("COMENDO...");
     churrasqueiroEstaAtivo = true;
-    comedorEstaAtivo       = true;
+    comedorEstaAtivo = true;
     atualizarImagemPersonagem(imgChurrasqueiro, imgChurrasqueiroAtivo);
     atualizarImagemPersonagem(imgComedor, imgComedorAtivo);
     limparSlots();
