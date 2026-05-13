@@ -91,12 +91,14 @@ public class Principal extends Application {
   @Override
   public void start(Stage stage) {
 
-    AudioClip themeSound = new AudioClip(
-      getClass().getResource("/sound/theme.wav").toExternalForm()
-    );
-
-    themeSound.setCycleCount(AudioClip.INDEFINITE);
-    themeSound.play();
+    try {
+      var soundUrl = getClass().getResource("/sound/theme.wav");
+      if (soundUrl != null) {
+        AudioClip themeSound = new AudioClip(soundUrl.toExternalForm());
+        themeSound.setCycleCount(AudioClip.INDEFINITE);
+        themeSound.play();
+      }
+    } catch (Exception ignored) {}
 
     stage.setTitle("CHURRAS DO MAMAX");
     stage.setOnCloseRequest(e -> { Platform.exit(); System.exit(0); });
@@ -286,7 +288,7 @@ public class Principal extends Application {
 
     // Painel
     VBox painel = new VBox(0, linhaProdutor, linhaConsumidor, linhaBuffer);
-    painel.setStyle("-fx-background-color: #fdf3e7; -fx-border-color: #8B5E3C; -fx-border-width: 2 0 0 0;");
+    painel.getStyleClass().add("painel-controle");
 
     // Eventos dos controles
 
@@ -391,6 +393,17 @@ public class Principal extends Application {
       }
     });
 
+    // Callback quando consumidor esta ativamente consumindo.
+    // Garante que a imagem ativa apareca antes do sleep do consumeItem,
+    // tornando a animacao visivelmente correta durante todo o consumo.
+    consumidor.setOnConsumindo(() -> {
+      lblStatusConsumidor.setText("COMENDO...");
+      if (!comedorEstaAtivo) {
+        comedorEstaAtivo = true;
+        atualizarImagemPersonagem(imgComedor, imgComedorAtivo);
+      }
+    });
+
     produtor.start();
     consumidor.start();
   } // Fim do metodo iniciarSimulacao
@@ -412,12 +425,8 @@ public class Principal extends Application {
       consumidor.interrupt();
     }
 
-    // Aguarda um frame para as threads processarem a interrupcao
-    try { 
-      Thread.sleep(100); 
-    } catch (InterruptedException ignored) {}
-
-    // Reinicia o estado compartilhado
+    // Reinicia o estado compartilhado.
+    // Nao ha necessidade de sleep: as threads sao daemon e encerram via interrupt sem bloquear a FX thread.
     pc.reset();
 
     // Reinicia a GUI

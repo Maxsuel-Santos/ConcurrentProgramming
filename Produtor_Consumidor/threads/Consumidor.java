@@ -3,22 +3,22 @@ package threads;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 07/05/2026
-* Ultima alteracao.: 10/05/2026
+* Ultima alteracao.: 13/05/2026
 * Nome.............: Consumidor.java
 * Funcao...........: Thread do comedor (consumidor).
 *                    Implementacao EXATA do pseudocodigo do livro do Tanembaun:
 *
 *                    void consumer(void) {
-*                      int item;
-*                      while (TRUE) {
-*                        down(&full);
-*                        down(&mutex);
-*                        remove_item(item);
-*                        up(&mutex);
-*                        up(&empty);
-*                        consume_item(item);
-*                      }
-*                    }
+  *                      int item;
+  *                      while (TRUE) {
+  *                        down(&full);
+  *                        down(&mutex);
+  *                        remove_item(item);
+  *                        up(&mutex);
+  *                        up(&empty);
+  *                        consume_item(item);
+  *                      }
+  *                    }
 *
 *                    OBS: A implemantacao sofreu adaptacoes para o contexto
 *                    do algoritmo em questao.
@@ -40,6 +40,7 @@ public class Consumidor extends Thread {
   private volatile boolean pausado = false;
   private Runnable onConsumiu;
   private Runnable onEsperando;
+  private Runnable onConsumindo;
 
   /* ***************************************************************
   * Metodo: Consumidor (construtor)
@@ -199,6 +200,17 @@ public class Consumidor extends Thread {
     this.onEsperando = r;
   } // Fim do metodo setOnEsperando
 
+  /* ***************************************************************
+  * Metodo: setOnConsumindo
+  * Funcao: Define o callback chamado quando o consumidor esta
+  *         ativamente consumindo (antes do sleep do consumeItem).
+  * Parametros: @param r Runnable a executar na FX thread
+  * Retorno: void
+  *************************************************************** */
+  public void setOnConsumindo(Runnable r) {
+    this.onConsumindo = r;
+  } // Fim do metodo setOnConsumindo
+
   private void notificarConsumiu() {
     if (onConsumiu != null) {
       Platform.runLater(onConsumiu);
@@ -214,7 +226,9 @@ public class Consumidor extends Thread {
   // Notifica que o consumidor esta ativamente consumindo (buffer nao vazio).
   // Usado para garantir que a imagem ativa apareca antes do sleep do consumeItem.
   private void notificarConsumindo() {
-    if (onConsumiu != null) {
+    if (onConsumindo != null) {
+      Platform.runLater(onConsumindo);
+    } else if (onConsumiu != null) {
       Platform.runLater(onConsumiu);
     }
   }

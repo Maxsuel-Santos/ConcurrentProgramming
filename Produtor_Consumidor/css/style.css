@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 07/05/2026
-* Ultima alteracao.: 10/05/2026
+* Ultima alteracao.: 13/05/2026
 * Nome.............: style.css
 * Funcao...........: Estilizacao completa da aplicacao Churras do Mamax
 ************************************************************************ */
@@ -14,10 +14,10 @@
 
 /* PAINEL DE CONTROLE */
 .painel-controle {
-    -fx-background-color: linear-gradient(to bottom, #2c1a0e, #1a0a00);
-    -fx-border-color: #c0392b;
-    -fx-border-width: 3 0 0 0;
-    -fx-padding: 0 0 6 0;
+    -fx-background-color: #fdf3e7;
+    -fx-border-color: #8B5E3C;
+    -fx-border-width: 2 0 0 0;
+    -fx-margin: 0 0 6 0;
 }
 
 /* LABELS DO PAINEL */
