@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 07/05/2026
-* Ultima alteracao.: 10/05/2026
+* Ultima alteracao.: 12/05/2026
 * Nome.............: Principal.java
 * Funcao...........: Classe principal da aplicacao JavaFX.
 *                    Monta a GUI com tema de churrasco e conecta
@@ -351,7 +351,7 @@ public class Principal extends Application {
   ******************************************************************** */
   private void iniciarSimulacao() {
     pc = new ProdutorConsumidor();
-    produtor  = new Produtor(pc,  sliderParaMs(sliderProdutor.getValue()));
+    produtor = new Produtor(pc,  sliderParaMs(sliderProdutor.getValue()));
     consumidor = new Consumidor(pc, sliderParaMs(sliderConsumidor.getValue()));
 
     // Callback do produtor: atualiza slots e barra apos cada producao
