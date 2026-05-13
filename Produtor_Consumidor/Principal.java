@@ -124,7 +124,7 @@ public class Principal extends Application {
     imgChurrasqueiro = new ImageView(imgChurrasqueiroAtivo);
     imgChurrasqueiro.setFitWidth(80);
     imgChurrasqueiro.setFitHeight(120);
-    imgChurrasqueiro.setLayoutX(80);
+    imgChurrasqueiro.setLayoutX(98);
     imgChurrasqueiro.setLayoutY(80);
     simulacaoPane.getChildren().add(imgChurrasqueiro);
 
@@ -150,13 +150,13 @@ public class Principal extends Application {
 
     // Labels de status dos personagens
     lblStatusProdutor = new Label("GRELHANDO...");
-    lblStatusProdutor.setLayoutX(90);
-    lblStatusProdutor.setLayoutY(210);
+    lblStatusProdutor.setLayoutX(70);
+    lblStatusProdutor.setLayoutY(240);
     lblStatusProdutor.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #FFF;");
     simulacaoPane.getChildren().add(lblStatusProdutor);
 
     lblStatusConsumidor = new Label("COMENDO...");
-    lblStatusConsumidor.setLayoutX(810);
+    lblStatusConsumidor.setLayoutX(850);
     lblStatusConsumidor.setLayoutY(210);
     lblStatusConsumidor.setStyle("-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #FFF;");
     simulacaoPane.getChildren().add(lblStatusConsumidor);
@@ -189,13 +189,6 @@ public class Principal extends Application {
   * Retorno: @return void
   ******************************************************************** */
   private void construirSlotsMesa(Pane pane) {
-    // Mesa de fundo: retangulo marrom x = 165, y = 158, 620x90px
-    Rectangle mesa = new Rectangle(180, 158, 620, 90);
-    mesa.setFill(Color.web("#8B5E3C"));
-    mesa.setArcWidth(16);
-    mesa.setArcHeight(10);
-    pane.getChildren().add(mesa);
-
     Image imgEspeto = new Image("/img/espeto.png");
     Image imgPratoVazio = new Image("/img/prato_vazio.png");
 
@@ -391,7 +384,7 @@ public class Principal extends Application {
 
     // Callback quando consumidor bloqueia (buffer vazio)
     consumidor.setOnEsperando(() -> {
-      lblStatusConsumidor.setText("AGUARDANDO ESPETO...");
+      lblStatusConsumidor.setText("AGUARDANDO \nESPETO...");
       // Troca para parado somente se estava ativo
       if (comedorEstaAtivo) {
         comedorEstaAtivo = false;
