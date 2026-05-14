@@ -428,7 +428,7 @@ public class Principal extends Application {
   * Funcao: Cria o contexto compartilhado e as duas threads, configura
   *         os callbacks de GUI e inicia a producao/consumo.
   * Parametros: nao possui
-  * Retorno: @return void
+  * Retorno: void
   ******************************************************************** */
   private void iniciarSimulacao() {
     pc = new ProdutorConsumidor();
@@ -500,7 +500,7 @@ public class Principal extends Application {
   * Funcao: Interrompe as threads atuais, reinicia o buffer e os
   *         semaforos e cria novas threads do zero.
   * Parametros: nao possui
-  * Retorno: @return void
+  * Retorno: void
   ******************************************************************** */
   private void resetarSimulacao() {
     // Para as threads atuais
@@ -541,7 +541,7 @@ public class Principal extends Application {
   *         Os primeiros count slots mostram espeto; os demais mostram
   *         o prato vazio.
   * Parametros: nao possui
-  * Retorno: @return void
+  * Retorno: void
   ******************************************************************** */
   private void atualizarSlots() {
     int count = pc.getCount();
@@ -555,7 +555,7 @@ public class Principal extends Application {
   * Metodo: limparSlots
   * Funcao: Oculta todos os espetos dos slots (usado no reset).
   * Parametros: nao possui
-  * Retorno: @return void
+  * Retorno: void
   ******************************************************************** */
   private void limparSlots() {
     for (StackPane slot : slots) {
@@ -568,7 +568,7 @@ public class Principal extends Application {
   * Metodo: atualizarBarra
   * Funcao: Atualiza a ProgressBar e o label de ocupacao do buffer.
   * Parametros: nao possui
-  * Retorno: @return void
+  * Retorno: void
   ******************************************************************** */
   private void atualizarBarra() {
     int count = pc.getCount();
@@ -581,7 +581,7 @@ public class Principal extends Application {
   * Funcao: Aplica um FadeTransition no slot recem preenchido
   *         para dar feedback visual de que um espeto foi adicionado.
   * Parametros: nao possui
-  * Retorno: @return void
+  * Retorno: void
   ******************************************************************** */
   private void animarSlotAdicionado() {
     int count = pc.getCount();
