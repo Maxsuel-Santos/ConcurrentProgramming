@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 07/05/2026
-* Ultima alteracao.: 13/05/2026
+* Ultima alteracao.: 14/05/2026
 * Nome.............: Principal.java
 * Funcao...........: Classe principal da aplicacao JavaFX.
 *                    Monta a GUI com tema de churrasco e conecta
@@ -18,6 +18,7 @@
 
 import javafx.animation.FadeTransition;
 import javafx.application.Application;
+import javafx.scene.shape.Rectangle;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -77,19 +78,104 @@ public class Principal extends Application {
   private Image imgComedorAtivo;
   private Image imgComedorParado;
 
-  // Estado visual atual de cada personagem: evita troca desnecessaria de imagem.
-  // O consumidor so volta a imagem ativa apos consumir, nunca por acao do produtor.
   private boolean churrasqueiroEstaAtivo = true;
   private boolean comedorEstaAtivo = true;
 
   /** ********************************************************************
   * Metodo: start
-  * Funcao: Inicializa a aplicacao JavaFX e monta toda a GUI.
+  * Funcao: Inicializa a aplicacao JavaFX exibindo primeiro a tela de
+  *         splash com botao START. Ao clicar, transiciona para a GUI
+  *         principal da simulacao.
   * Parametros: @param stage janela principal
   * Retorno: @return void
   ******************************************************************** */
   @Override
   public void start(Stage stage) {
+
+    stage.setTitle("CHURRAS DO MAMAX");
+    stage.setOnCloseRequest(e -> { Platform.exit(); System.exit(0); });
+    stage.setResizable(false);
+
+    // Exibe a tela de splash primeiro
+    mostrarTelaSplash(stage);
+
+  } // Fim do metodo start
+
+  /** ********************************************************************
+  * Metodo: mostrarTelaSplash
+  * Funcao: Cria e exibe a tela inicial (splash) com imagem de fundo
+  *         e botao START. Ao clicar no botao, chama mostrarTelaSimulacao.
+  * Parametros: @param stage janela principal
+  * Retorno: @return void
+  ******************************************************************** */
+  private void mostrarTelaSplash(Stage stage) {
+
+    StackPane splashPane = new StackPane();
+    splashPane.setPrefSize(980, 600);
+
+    Image splashImg;
+    try {
+      splashImg = new Image("/img/start_screen.png");
+      if (splashImg.isError()) {
+        splashImg = new Image("/img/start_screen.png");
+      }
+    } catch (Exception ex) {
+      splashImg = new Image("/img/start_screen.png");
+    }
+
+    BackgroundImage splashBg = new BackgroundImage(splashImg,
+        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+        BackgroundPosition.CENTER,
+        new BackgroundSize(980, 600, false, false, false, false));
+    splashPane.setBackground(new Background(splashBg));
+
+    // Overlay semitransparente para destacar titulo e botao
+    Rectangle overlay = new Rectangle(980, 600);
+    overlay.setFill(Color.color(0, 0, 0, 0.45));
+
+    // Botao START
+    Button btnStart = new Button("INICIAR SIMULACAO");
+    btnStart.getStyleClass().add("btn-start");
+    // btnStart.setLayoutY(0);
+
+    // Acao do botao: transiciona para a tela de simulacao com fade
+    btnStart.setOnAction(e -> {
+      FadeTransition ft = new FadeTransition(Duration.millis(500), splashPane);
+      ft.setFromValue(1.0);
+      ft.setToValue(0.0);
+      ft.setOnFinished(ev -> mostrarTelaSimulacao(stage));
+      ft.play();
+    });
+
+    // Agrupa titulo, subtitulo e botao em VBox centralizado
+    VBox conteudo = new VBox(20, btnStart);
+    conteudo.setAlignment(Pos.CENTER);
+    conteudo.setPadding(new Insets(160, 0, 0, 0));
+
+    splashPane.getChildren().addAll(overlay, conteudo);
+
+    // Fade-in da tela splash ao abrir
+    splashPane.setOpacity(0);
+    Scene splashScene = new Scene(splashPane, 980, 600);
+    splashScene.getStylesheets().add("/css/style.css");
+    stage.setScene(splashScene);
+    stage.show();
+
+    FadeTransition fadeIn = new FadeTransition(Duration.millis(800), splashPane);
+    fadeIn.setFromValue(0.0);
+    fadeIn.setToValue(1.0);
+    fadeIn.play();
+
+  } // Fim do metodo mostrarTelaSplash
+
+  /** ********************************************************************
+  * Metodo: mostrarTelaSimulacao
+  * Funcao: Monta e exibe a GUI principal da simulacao (logica original
+  *         do metodo start), e inicia a musica tema e as threads.
+  * Parametros: @param stage janela principal
+  * Retorno: @return void
+  ******************************************************************** */
+  private void mostrarTelaSimulacao(Stage stage) {
 
     try {
       var soundUrl = getClass().getResource("/sound/theme.wav");
@@ -99,9 +185,6 @@ public class Principal extends Application {
         themeSound.play();
       }
     } catch (Exception ignored) {}
-
-    stage.setTitle("CHURRAS DO MAMAX");
-    stage.setOnCloseRequest(e -> { Platform.exit(); System.exit(0); });
 
     // Carrega as imagens
     imgChurrasqueiroAtivo  = new Image("/img/churrasqueiro.png");
@@ -165,20 +248,24 @@ public class Principal extends Application {
     // Painel de controle
     VBox painelControle = construirPainelControle();
 
-    //  Layout raiz
+    // Layout raiz
     VBox root = new VBox(0, simulacaoPane, painelControle);
     root.getStyleClass().add("root-container");
 
     Scene scene = new Scene(root, 980, 600);
     scene.getStylesheets().add("/css/style.css");
+
+    // Fade-in da tela de simulacao
+    root.setOpacity(0);
     stage.setScene(scene);
-    stage.setResizable(false);
-    stage.show();
 
-    // Inicia a simulacao
-    iniciarSimulacao();
+    FadeTransition fadeIn = new FadeTransition(Duration.millis(600), root);
+    fadeIn.setFromValue(0.0);
+    fadeIn.setToValue(1.0);
+    fadeIn.setOnFinished(ev -> iniciarSimulacao());
+    fadeIn.play();
 
-  } // Fim do metodo start
+  } // Fim do metodo mostrarTelaSimulacao
 
   /** ********************************************************************
   * Metodo: construirSlotsMesa

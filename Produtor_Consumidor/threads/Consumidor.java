@@ -9,16 +9,16 @@ package threads;
 *                    Implementacao EXATA do pseudocodigo do livro do Tanembaun:
 *
 *                    void consumer(void) {
-  *                      int item;
-  *                      while (TRUE) {
-  *                        down(&full);
-  *                        down(&mutex);
-  *                        remove_item(item);
-  *                        up(&mutex);
-  *                        up(&empty);
-  *                        consume_item(item);
-  *                      }
-  *                    }
+*                      int item;
+*                      while (TRUE) {
+*                        down(&full);
+*                        down(&mutex);
+*                        remove_item(item);
+*                        up(&mutex);
+*                        up(&empty);
+*                        consume_item(item);
+*                      }
+*                    }
 *
 *                    OBS: A implemantacao sofreu adaptacoes para o contexto
 *                    do algoritmo em questao.
