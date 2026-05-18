@@ -3,7 +3,7 @@ package threads;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 07/05/2026
-* Ultima alteracao.: 13/05/2026
+* Ultima alteracao.: 18/05/2026
 * Nome.............: Produtor.java
 * Funcao...........: Thread do churrasqueiro (produtor).
 *                    Implementacao EXATA do pseudocodigo do livro do Tanembaun:
@@ -67,39 +67,29 @@ public class Produtor extends Thread {
 
     while (!isInterrupted()) {
 
-      // Respeita a pausa antes de comecar um novo ciclo
       esperarSeEmPausa();
       if (isInterrupted()) break;
 
-      // produce_item(&item) — simula o tempo de grelhar
       item = produceItem();
       if (isInterrupted()) break;
 
-      // Verifica ANTES do down se vai bloquear ou nao.
-      // Se empty == 0 o buffer esta cheio: notifica "esperando".
-      // Se empty > 0 ha espaco livre: vai produzir sem bloquear.
       if (pc.empty.availablePermits() == 0) {
         notificarEsperando();
       }
 
-      // down(&empty) — aguarda espaco no buffer
-      ProdutorConsumidor.down(pc.empty);
-      if (isInterrupted()) break;
+      ProdutorConsumidor.down(pc.empty);        // down(&empty) — aguarda espaco no buffer
+      
+      if (isInterrupted()) break;               // Verifica se a Thread foi interrompida
 
-      // down(&mutex) — entra na secao critica
-      ProdutorConsumidor.down(pc.mutex);
+      ProdutorConsumidor.down(pc.mutex);        // down(&mutex) — entra na secao critica
 
-      // enter_item(item) — coloca espeto na mesa
-      pc.enterItem(item);
+      pc.enterItem(item);                       // enter_item(item) — coloca espeto na mesa
 
-      // up(&mutex) — sai da secao critica
-      ProdutorConsumidor.up(pc.mutex);
+      ProdutorConsumidor.up(pc.mutex);          // up(&mutex) — sai da secao critica
 
-      // up(&full) — avisa que ha mais um espeto disponivel
-      ProdutorConsumidor.up(pc.full);
+      ProdutorConsumidor.up(pc.full);           // up(&full) — avisa que ha mais um espeto disponivel
 
-      // Notifica a GUI para atualizar os slots da mesa
-      notificarProduziu();
+      notificarProduziu();                      // Notifica a GUI para atualizar os slots da mesa
     }
   } // Fim do metodo run
 

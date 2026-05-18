@@ -3,7 +3,7 @@ package threads;
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 07/05/2026
-* Ultima alteracao.: 13/05/2026
+* Ultima alteracao.: 18/05/2026
 * Nome.............: Consumidor.java
 * Funcao...........: Thread do comedor (consumidor).
 *                    Implementacao EXATA do pseudocodigo do livro do Tanembaun:
@@ -68,43 +68,32 @@ public class Consumidor extends Thread {
 
     while (!isInterrupted()) {
 
-      // Respeita a pausa antes de comecar um novo ciclo
       esperarSeEmPausa();
       if (isInterrupted()) break;
 
-      // Verifica ANTES do down se vai bloquear ou nao.
-      // Se full == 0 o buffer esta vazio: notifica "esperando" e muda imagem.
-      // Se full > 0 ha espeto disponivel: notifica "consumindo" antes de pegar.
       if (pc.full.availablePermits() == 0) {
         notificarEsperando();
       } else {
         notificarConsumindo();
       }
 
-      // down(&full) — aguarda item disponivel no buffer
-      ProdutorConsumidor.down(pc.full);
-      if (isInterrupted()) break;
+      ProdutorConsumidor.down(pc.full);       // down(&full) — aguarda item disponivel no buffer
 
-      // Ha espeto disponivel: garante que a imagem ativa seja exibida
-      notificarConsumindo();
+      if (isInterrupted()) break;             // Verifica se a Thread foi interrompida
 
-      // down(&mutex) — entra na secao critica
-      ProdutorConsumidor.down(pc.mutex);
+      notificarConsumindo();                  // Ha espeto disponivel: garante que a imagem ativa seja exibida
 
-      // remove_item(item) — pega espeto da mesa
-      item = pc.removeItem();
+      ProdutorConsumidor.down(pc.mutex);      // down(&mutex) — entra na secao critica
 
-      // up(&mutex) — sai da secao critica
-      ProdutorConsumidor.up(pc.mutex);
+      item = pc.removeItem();                 // remove_item(item) — pega espeto da mesa
 
-      // up(&empty) — avisa que ha mais um espaco livre
-      ProdutorConsumidor.up(pc.empty);
+      ProdutorConsumidor.up(pc.mutex);        // up(&mutex) — sai da secao critica
 
-      // consume_item(item) — come o espeto (fora da secao critica)
-      consumeItem(item);
+      ProdutorConsumidor.up(pc.empty);        // up(&empty) — avisa que ha mais um espaco livre
 
-      // Notifica a GUI para atualizar os slots da mesa
-      notificarConsumiu();
+      consumeItem(item);                      // consume_item(item) — come o espeto (fora da secao critica)
+
+      notificarConsumiu();                    // Notifica a GUI para atualizar os slots da mesa
     }
   } // Fim do metodo run
 
