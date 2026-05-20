@@ -45,6 +45,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.media.AudioClip;
 import model.ProdutorConsumidor;
 import threads.Consumidor;
 import threads.Produtor;
@@ -178,12 +179,11 @@ public class Principal extends Application {
   private void mostrarTelaSimulacao(Stage stage) {
 
     try {
-      var soundUrl = getClass().getResource("/sound/theme.wav");
-      if (soundUrl != null) {
-        AudioClip themeSound = new AudioClip(soundUrl.toExternalForm());
-        themeSound.setCycleCount(AudioClip.INDEFINITE);
-        themeSound.play();
-      }
+      AudioClip themeSound = new AudioClip(
+        getClass().getResource("/sound/theme.wav").toExternalForm()
+      );  
+      themeSound.setCycleCount(AudioClip.INDEFINITE);
+      themeSound.play();
     } catch (Exception ignored) {}
 
     // Carrega as imagens
