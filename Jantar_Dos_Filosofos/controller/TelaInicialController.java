@@ -4,7 +4,7 @@
 * Inicio...........: 27/05/2026
 * Ultima alteracao.: 27/05/2026
 * Nome.............: TelaInicialController.java
-* Funcao...........: Controller da tela (fxml) telaInicial que cordena 
+* Funcao...........: Controller da tela (fxml) telaInicial que coordena 
 *                    os eventos.
 ************************************************************************ */
 
@@ -30,7 +30,7 @@ public class TelaInicialController {
     /* ***************************************************************
     * Metodo: iniciarJogo
     * Funcao: Responsavel por redirecionar o usuario a tela de simulacao
-    *         do Jantar dos Filósofos.
+    *         do Jantar dos Filosofos.
     * Parametros: @param event evento de clique
     * Retorno: sem retorno
     *************************************************************** */
