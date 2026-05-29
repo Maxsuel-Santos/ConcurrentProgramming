@@ -36,7 +36,6 @@ public class TelaInicialController {
     *************************************************************** */
     @FXML
     private void iniciarJogo(ActionEvent event) throws IOException {
-        System.out.println("CLICOU");
         Parent root = FXMLLoader.load(
             getClass().getResource("/view/simulacao.fxml")
         );
