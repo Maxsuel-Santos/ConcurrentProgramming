@@ -102,4 +102,29 @@ public class SimulacaoController implements  Initializable {
     iniciarThreads();
   } // Fim do metodo initialize
 
+  /* ***************************************************************
+  * Metodo: carregarImagens
+  * Funcao: Pre-carrega as 3 imagens (pensando, faminto, comendo)
+  *         de cada filosofo para troca rapida durante a simulacao.
+  *         Convencao de nome: /img/<nome>_pensando.png, etc.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  private void carregarImagens() {
+    // [0] = PENSANDO, [1] = FAMINTO, [2] = COMENDO
+    String[][] arquivos = {
+        { "kant_pensando.png",        "kant.png",        "kant_comendo.png"        },
+        { "nietzsche_pensando.png",   "nietzsche.png",   "nietzsche_comendo.png"   },
+        { "platao_pensando.png",      "platao.png",      "platao_comendo.png"      },
+        { "aristoteles_pensando.png", "aristoteles.png", "aristoteles_comendo.png" },
+        { "socrates_pensando.png",    "socrates.png",    "socrates_comendo.png"    }
+    };
+
+    for (int i = 0; i < Constantes.N; i++) {
+        for (int e = 0; e < 3; e++) {
+            imagens[i][e] = new Image(getClass().getResourceAsStream("/img/" + arquivos[i][e]));
+        }
+    }
+  } // Fim do metodo carregarImagens
+
 }
