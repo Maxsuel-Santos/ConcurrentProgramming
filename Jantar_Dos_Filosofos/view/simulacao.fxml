@@ -122,11 +122,11 @@
             <Image url="@../img/comer.png" />
          </image>
       </ImageView>
-      <Button layoutX="875.0" layoutY="89.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-kant" text="Button" />
-      <Button layoutX="875.0" layoutY="217.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-nietzsche" text="Button" />
-      <Button layoutX="875.0" layoutY="352.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-platao" text="Button" />
-      <Button layoutX="870.0" layoutY="489.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-aristoteles" text="Button" />
-      <Button layoutX="874.0" layoutY="627.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="131.0" styleClass="btn-pausar-img-socrates" text="Button" />
-      <Button layoutX="21.0" layoutY="18.0" mnemonicParsing="false" prefHeight="93.0" prefWidth="215.0" styleClass="btn-reset" text="Button" />
+      <Button fx:id="pausarKant" layoutX="875.0" layoutY="89.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-kant" text="Button" />
+      <Button fx:id="pausarNietzsche" layoutX="875.0" layoutY="217.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-nietzsche" text="Button" />
+      <Button fx:id="pausarPlatao" layoutX="875.0" layoutY="352.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-platao" text="Button" />
+      <Button fx:id="pausarAristoteles" layoutX="870.0" layoutY="489.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-aristoteles" text="Button" />
+      <Button fx:id="pausarSocrates" layoutX="874.0" layoutY="627.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="131.0" styleClass="btn-pausar-img-socrates" text="Button" />
+      <Button fx:id="btnReset" layoutX="21.0" layoutY="18.0" mnemonicParsing="false" prefHeight="93.0" prefWidth="215.0" styleClass="btn-reset" text="Button" />
    </children>
 </AnchorPane>
