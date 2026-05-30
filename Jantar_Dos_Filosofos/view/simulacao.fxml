@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="664.0" prefWidth="1080.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fitHeight="720.0" fitWidth="1080.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/background.png" />
+         </image></ImageView>
+      <ImageView fx:id="filosofo1" fitHeight="173.0" fitWidth="204.0" layoutX="411.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/kant_pensando.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="filosofo2" fitHeight="173.0" fitWidth="204.0" layoutX="566.0" layoutY="151.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/nietzsche_pensando.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="filosofo4" fitHeight="173.0" fitWidth="204.0" layoutX="193.0" layoutY="339.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/aristoteles_pensando.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="filosofo5" fitHeight="173.0" fitWidth="204.0" layoutX="143.0" layoutY="151.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/socrates_pensando.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="garfo3" fitHeight="85.0" fitWidth="96.0" layoutX="395.0" layoutY="391.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/garfo.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="garfo4" fitHeight="85.0" fitWidth="96.0" layoutX="332.0" layoutY="330.0" pickOnBounds="true" preserveRatio="true" rotate="71.6">
+         <image>
+            <Image url="@../img/garfo.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="garfo5" fitHeight="85.0" fitWidth="96.0" layoutX="344.0" layoutY="238.0" pickOnBounds="true" preserveRatio="true" rotate="146.1">
+         <image>
+            <Image url="@../img/garfo.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="garfo1" fitHeight="85.0" fitWidth="96.0" layoutX="455.0" layoutY="246.0" pickOnBounds="true" preserveRatio="true" rotate="-135.0">
+         <image>
+            <Image url="@../img/garfo.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="garfo2" fitHeight="85.0" fitWidth="96.0" layoutX="479.0" layoutY="337.0" pickOnBounds="true" preserveRatio="true" rotate="-67.6">
+         <image>
+            <Image url="@../img/garfo.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="filosofo3" fitHeight="173.0" fitWidth="204.0" layoutX="530.0" layoutY="324.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/platao_pensando.png" />
+         </image>
+      </ImageView>
+      <Slider fx:id="sliderKantPensar" layoutX="876.0" layoutY="25.0" prefHeight="16.0" prefWidth="140.0" styleClass="slider-img" />
+      <Slider fx:id="sliderNietzschePensar" layoutX="876.0" layoutY="151.0" prefHeight="16.0" prefWidth="140.0" styleClass="slider-img" />
+      <Slider fx:id="sliderPlataoPensar" layoutX="876.0" layoutY="288.0" prefHeight="16.0" prefWidth="140.0" styleClass="slider-img" />
+      <Slider fx:id="sliderAristotelesPensar" layoutX="876.0" layoutY="421.0" prefHeight="16.0" prefWidth="140.0" styleClass="slider-img" />
+      <Slider fx:id="sliderSocratesPensar" layoutX="876.0" layoutY="562.0" prefHeight="16.0" prefWidth="140.0" styleClass="slider-img" />
+      <ImageView fitHeight="24.0" fitWidth="76.0" layoutX="784.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/pensar.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="24.0" fitWidth="76.0" layoutX="784.0" layoutY="152.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/pensar.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="24.0" fitWidth="76.0" layoutX="784.0" layoutY="289.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/pensar.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="24.0" fitWidth="76.0" layoutX="784.0" layoutY="423.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/pensar.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="24.0" fitWidth="76.0" layoutX="784.0" layoutY="563.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/pensar.png" />
+         </image>
+      </ImageView>
+      <Slider fx:id="sliderKantComer" layoutX="876.0" layoutY="64.0" prefHeight="16.0" prefWidth="140.0" styleClass="slider-img" />
+      <Slider fx:id="sliderNietzscheComer" layoutX="876.0" layoutY="189.0" prefHeight="16.0" prefWidth="140.0" styleClass="slider-img" />
+      <Slider fx:id="sliderPlataoComer" layoutX="876.0" layoutY="323.0" prefHeight="16.0" prefWidth="140.0" styleClass="slider-img" />
+      <Slider fx:id="sliderAristotelesComer" layoutX="876.0" layoutY="459.0" prefHeight="16.0" prefWidth="140.0" styleClass="slider-img" />
+      <Slider fx:id="sliderSocratesComer" layoutX="876.0" layoutY="600.0" prefHeight="16.0" prefWidth="140.0" styleClass="slider-img" />
+      <ImageView fitHeight="24.0" fitWidth="76.0" layoutX="784.0" layoutY="63.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/comer.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="24.0" fitWidth="76.0" layoutX="784.0" layoutY="188.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/comer.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="24.0" fitWidth="76.0" layoutX="784.0" layoutY="322.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/comer.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="24.0" fitWidth="76.0" layoutX="784.0" layoutY="458.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/comer.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="24.0" fitWidth="76.0" layoutX="784.0" layoutY="599.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/comer.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="875.0" layoutY="89.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-kant" text="Button" />
+      <Button layoutX="875.0" layoutY="217.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-nietzsche" text="Button" />
+      <Button layoutX="875.0" layoutY="352.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-platao" text="Button" />
+      <Button layoutX="870.0" layoutY="489.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="131.0" styleClass="btn-pausar-img-aristoteles" text="Button" />
+      <Button layoutX="874.0" layoutY="627.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="131.0" styleClass="btn-pausar-img-socrates" text="Button" />
+      <Button layoutX="21.0" layoutY="18.0" mnemonicParsing="false" prefHeight="93.0" prefWidth="215.0" styleClass="btn-reset" text="Button" />
+   </children>
+</AnchorPane>

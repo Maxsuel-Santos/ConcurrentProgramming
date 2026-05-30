@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 27/05/2026
-* Ultima alteracao.: 27/05/2026
+* Ultima alteracao.: 29/05/2026
 * Nome.............: style.css
 * Funcao...........: Estilizacao completa da aplicacao Jantar dos Filosofos.
 ************************************************************************ */
@@ -47,6 +47,168 @@
 }
 
 .btn-start-img:pressed {
+    -fx-scale-x: 0.96;
+    -fx-scale-y: 0.96;
+    -fx-translate-y: 3;
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(0,0,0,0.9),
+        10,
+        0.25,
+        0,
+        2
+    );
+}
+
+.slider-img .track {
+    -fx-background-color: transparent;
+    -fx-background-image: url("../img/slider.png");
+    -fx-background-size: stretch;
+    -fx-background-repeat: no-repeat;
+    -fx-pref-height: 18px;
+    -fx-cursor: hand;
+}
+
+
+.slider-img .thumb {
+    -fx-background-color: transparent;
+    -fx-background-image: url("../img/slider_button.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: contain;
+    -fx-padding: 12px;
+    -fx-cursor: hand;
+}
+
+.btn-pausar-img-kant {
+    -fx-background-color: transparent;
+    -fx-background-image: url("../img/pausar_kant.png");
+    -fx-background-size: 100% 100%;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-cursor: hand;
+}
+
+.btn-pausar-img-kant:hover {
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(255,190,70,0.85),
+        30,
+        0.45,
+        0,
+        0
+    );
+    -fx-opacity: 1.0;
+}
+
+.btn-pausar-img-nietzsche {
+    -fx-background-color: transparent;
+    -fx-background-image: url("../img/pausar_nietzsche.png");
+    -fx-background-size: 100% 100%;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-cursor: hand;
+}
+
+.btn-pausar-img-nietzsche:hover {
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(255,190,70,0.85),
+        30,
+        0.45,
+        0,
+        0
+    );
+    -fx-opacity: 1.0;
+}
+
+.btn-pausar-img-platao {
+    -fx-background-color: transparent;
+    -fx-background-image: url("../img/pausar_platao.png");
+    -fx-background-size: 100% 100%;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-cursor: hand;
+}
+
+.btn-pausar-img-platao:hover {
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(255,190,70,0.85),
+        30,
+        0.45,
+        0,
+        0
+    );
+    -fx-opacity: 1.0;
+}
+
+.btn-pausar-img-aristoteles {
+    -fx-background-color: transparent;
+    -fx-background-image: url("../img/pausar_aristoteles.png");
+    -fx-background-size: 100% 100%;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-cursor: hand;
+}
+
+.btn-pausar-img-aristoteles:hover {
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(255,190,70,0.85),
+        30,
+        0.45,
+        0,
+        0
+    );
+    -fx-opacity: 1.0;
+}
+
+.btn-pausar-img-socrates {
+    -fx-background-color: transparent;
+    -fx-background-image: url("../img/pausar_socrates.png");
+    -fx-background-size: 100% 100%;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-cursor: hand;
+}
+
+.btn-pausar-img-socrates:hover {
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(255,190,70,0.85),
+        30,
+        0.45,
+        0,
+        0
+    );
+    -fx-opacity: 1.0;
+}
+
+.btn-reset {
+    -fx-background-color: transparent;
+    -fx-background-image: url("../img/reset.png");
+    -fx-background-size: 100% 100%;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-cursor: hand;
+}
+
+.btn-reset:hover {
+    -fx-scale-x: 1.06;
+    -fx-scale-y: 1.06;
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(255,190,70,0.85),
+        30,
+        0.45,
+        0,
+        0
+    );
+    -fx-opacity: 1.0;
+}
+
+.btn-reset:pressed {
     -fx-scale-x: 0.96;
     -fx-scale-y: 0.96;
     -fx-translate-y: 3;
