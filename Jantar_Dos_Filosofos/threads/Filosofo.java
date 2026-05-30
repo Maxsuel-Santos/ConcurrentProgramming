@@ -6,7 +6,7 @@
 * Nome.............: Filosofo.java
 * Funcao...........: Thread de cada filosofo.
 *                    Implementa EXATAMENTE o pseudocodigo do livro
-*                    de Tanenbaum (Modern Operating Systems):
+*                    de Tanenbaum (Sistemas Operacionais - 2th edition):
 *
 *                    void philosopher(int i) {
 *                      while (TRUE) {
