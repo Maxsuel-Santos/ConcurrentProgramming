@@ -16,11 +16,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import controller.SimulacaoController;
+import controller.TelaInicialController;
+
 /* ***************************************************************
 * Classe: Principal
 * Funcao: Inicializa o JavaFX, carrega o FXML da tela inicial
 *         e configura o encerramento da JVM ao fechar a janela.
 *************************************************************** */
+@SuppressWarnings("unused")
 public class Principal extends Application {
 
   /* ***************************************************************
