@@ -84,4 +84,22 @@ public class SimulacaoController implements  Initializable {
   // Imagens pre-carregadas + Estado do Filosofo (0 = PENSANDO, 1 = FAMINTO, 2 = COMENDO)
   private final Image[][] imagens = new Image[Constantes.N][3];
 
+  /* ***************************************************************
+  * Metodo: initialize
+  * Funcao: Ponto de entrada do JavaFX apos o FXML ser carregado.
+  *         Orquestra toda a inicializacao da tela.
+  * Parametros: @param url  nao utilizado
+  *             @param rb   nao utilizado
+  * Retorno: void
+  *************************************************************** */
+  @Override
+  public void initialize(URL url, ResourceBundle rb) {
+    carregarImagens();
+    inicializarModelo();
+    configurarCallbacksDeEstado();
+    configurarSliders();
+    configurarBotoes();
+    iniciarThreads();
+  } // Fim do metodo initialize
+
 }
