@@ -54,10 +54,10 @@ public class Filosofo extends Thread {
   * Retorno: nao possui
   *************************************************************** */
   public Filosofo(int id, JantarFilosofos jantar, int pensarMs, int comerMs) {
-    this.id       = id;
-    this.jantar   = jantar;
+    this.id = id;
+    this.jantar = jantar;
     this.pensarMs = pensarMs;
-    this.comerMs  = comerMs;
+    this.comerMs = comerMs;
     setDaemon(true); // encerra junto com a JVM
   } // Fim do construtor
 
@@ -71,21 +71,25 @@ public class Filosofo extends Thread {
   @Override
   public void run() {
     try {
-      while (!isInterrupted()) {
+      while (!isInterrupted()) {           // Loop principal: mantem o filosofo ativo ate que a thread seja parada
 
-        esperarSeEmPausa();                // verifica pausa antes de cada ciclo
-        if (isInterrupted()) break;
+        esperarSeEmPausa();                // Congela o filosofo se a simulacao for pausada pelo usuario
 
-        think();                           // think()        — filosofo pensa
-        if (isInterrupted()) break;
+        if (isInterrupted()) break;        // Sai do loop se a thread foi interrompida durante a pausa
 
-        jantar.pegarGarfos(id);            // take_forks(i)  — tenta pegar os garfos
-        if (isInterrupted()) break;
+        think();                           // think() - filosofo pensa
 
-        eat();                             // eat()          — filosofo come
-        if (isInterrupted()) break;
+        if (isInterrupted()) break;        // Sai do loop se a thread foi interrompida enquanto ele pensava
 
-        jantar.devolverGarfos(id);         // put_forks(i)   — devolve e acorda vizinhos
+        jantar.pegarGarfos(id);            // take_forks(i) - tenta pegar os garfos
+
+        if (isInterrupted()) break;        // Sai do loop se a thread foi parada enquanto esperava os garfos
+
+        eat();                             // eat() - filosofo come
+
+        if (isInterrupted()) break;        // Sai do loop se a thread foi interrompida enquanto ele comia
+
+        jantar.devolverGarfos(id);         // put_forks(i) - devolve e acorda vizinhos
 
       }
     } catch (InterruptedException e) {
