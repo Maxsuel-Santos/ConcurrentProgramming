@@ -127,4 +127,116 @@ public class SimulacaoController implements  Initializable {
     }
   } // Fim do metodo carregarImagens
 
+  /* ***************************************************************
+  * Metodo: inicializarModelo
+  * Funcao: Cria o JantarFilosofos (semaforos) e as 5 threads
+  *         Filosofo com velocidade padrao Constantes.DEFAULT_SPEED_MS.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  private void inicializarModelo() {
+
+  } // Fim do metodo inicializarModelo
+
+  /* ***************************************************************
+  * Metodo: configurarCallbacksDeEstado
+  * Funcao: Registra em JantarFilosofos um Runnable para cada
+  *         filosofo. Cada Runnable e chamado via Platform.runLater
+  *         sempre que o estado muda, atualizando a imagem do
+  *         filosofo e a visibilidade dos garfos vizinhos.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  private void configurarCallbacksDeEstado() {
+    
+  } // Fim do metodo configurarCallbacksDeEstado
+
+  /* ***************************************************************
+  * Metodo: atualizarImagemFilosofo
+  * Funcao: Troca a imagem do ImageView de acordo com o estado
+  *         atual do filosofo i no modelo.
+  * Parametros: @param i    indice do filosofo
+  *             @param view ImageView correspondente
+  * Retorno: void
+  *************************************************************** */
+  private void atualizarImagemFilosofo(int i, ImageView view) {
+
+  } // Fim do metodo atualizarImagemFilosofo
+
+  /* ***************************************************************
+  * Metodo: atualizarGarfos
+  * Funcao: Esconde o garfo entre dois filosofos quando algum deles
+  *         esta COMENDO (garfo em uso) e exibe quando nenhum dos
+  *         dois esta comendo.
+  *         Mapeamento: garfo[i] fica entre filosofo[i] e
+  *         filosofo[direita(i)], seguindo a ordem circular.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  private void atualizarGarfos() {
+    
+  } // Fim do metodo atualizarGarfos
+
+  /* ***************************************************************
+  * Metodo: configurarSliders
+  * Funcao: Define min/max/valor inicial dos 10 sliders e registra
+  *         listeners que atualizam pensarMs/comerMs das threads em
+  *         tempo real conforme o usuario arrasta o slider.
+  *         Faixa: Constantes.MIN_SPEED_MS a Constantes.MAX_SPEED_MS
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  private void configurarSliders() {
+    
+  } // Fim do metodo configurarSliders
+
+  /* ***************************************************************
+  * Metodo: configurarBotoes
+  * Funcao: Registra os handlers de pausar/retomar individuais e
+  *         de reset global diretamente nos campos @FXML injetados.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  private void configurarBotoes() {
+
+  } // Fim do metodo configurarBotoes
+
+   /* ***************************************************************
+  * Metodo: alternarPausa
+  * Funcao: Pausa o filosofo se estiver rodando, ou retoma se
+  *         estiver pausado. Atualiza o texto do botao para
+  *         refletir o estado atual.
+  * Parametros: @param idx indice do filosofo
+  *             @param btn botao correspondente
+  * Retorno: void
+  *************************************************************** */
+  private void alternarPausa(int idx, Button btn) {
+    
+  } // Fim do metodo alternarPausa
+
+  /* ***************************************************************
+  * Metodo: executarReset
+  * Funcao: Para todas as threads, reinicia o modelo e recria as
+  *         threads do zero, garantindo estado limpo.
+  *         Passos: (1) interrompe threads; (2) reseta semaforos;
+  *                 (3) recria threads e callbacks; (4) reinicia
+  *                 sliders; (5) restaura texto dos botoes.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  private void executarReset() {
+    
+  } // Fim do metodo executarReset
+
+  /* ***************************************************************
+  * Metodo: iniciarThreads
+  * Funcao: Inicia as 5 threads Filosofo. Chamado uma vez no
+  *         initialize() e novamente apos cada reset.
+  * Parametros: nao possui
+  * Retorno: void
+  *************************************************************** */
+  private void iniciarThreads() {
+    
+  } // Fim do metodo iniciarThreads
+
 }
