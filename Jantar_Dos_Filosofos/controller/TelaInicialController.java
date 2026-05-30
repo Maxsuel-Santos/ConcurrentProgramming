@@ -8,7 +8,7 @@
 *                    os eventos.
 ************************************************************************ */
 
-package Jantar_Dos_Filosofos.controller;
+package controller;
 
 import java.io.IOException;
 

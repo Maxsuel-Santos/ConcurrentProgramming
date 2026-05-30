@@ -11,7 +11,7 @@
 *                      #define HUNGRY   1
 *                      #define EATING   2
 ************************************************************************ */
-package Jantar_Dos_Filosofos.model;
+package model;
 
 /* ***************************************************************
 * Enum: EstadoFilosofo

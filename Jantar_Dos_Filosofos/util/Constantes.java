@@ -6,7 +6,7 @@
 * Nome.............: Constantes.java
 * Funcao...........: Constantes globais da aplicacao Jantar dos Filosofos
 ************************************************************************ */
-package Jantar_Dos_Filosofos.util;
+package util;
 
 /* ***************************************************************
 * Classe: Constantes

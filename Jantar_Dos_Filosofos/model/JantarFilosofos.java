@@ -37,10 +37,10 @@
 *                      }
 *                    }
 ************************************************************************ */
-package Jantar_Dos_Filosofos.model;
+package model;
 
 import java.util.concurrent.Semaphore;
-import Jantar_Dos_Filosofos.util.Constantes;
+import util.Constantes;
 
 /* ***************************************************************
 * Classe: JantarFilosofos

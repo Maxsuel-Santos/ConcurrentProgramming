@@ -1,4 +1,4 @@
-package Jantar_Dos_Filosofos.threads;
+package threads;
 
 public class Filosofo {
     

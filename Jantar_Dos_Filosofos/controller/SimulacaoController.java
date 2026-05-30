@@ -1,4 +1,4 @@
-package Jantar_Dos_Filosofos.controller;
+package controller;
 
 public class SimulacaoController {
     
