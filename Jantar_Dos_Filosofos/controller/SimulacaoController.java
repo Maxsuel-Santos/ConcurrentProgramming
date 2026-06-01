@@ -237,7 +237,13 @@ public class SimulacaoController implements  Initializable {
   * Retorno: void
   *************************************************************** */
   private void atualizarGarfos() {
-    
+    ImageView[] garfos = { garfo1, garfo2, garfo3, garfo4, garfo5 };
+
+    for (int i = 0; i < Constantes.N; i++) {
+      int dir = Constantes.direita(i);
+      boolean emUso = jantar.getEstado(i) == EstadoFilosofo.COMENDO || jantar.getEstado(dir) == EstadoFilosofo.COMENDO;
+      garfos[i].setVisible(!emUso);
+    }
   } // Fim do metodo atualizarGarfos
 
   /* ***************************************************************
