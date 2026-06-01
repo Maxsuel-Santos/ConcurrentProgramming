@@ -347,7 +347,33 @@ public class SimulacaoController implements  Initializable {
   * Retorno: void
   *************************************************************** */
   private void executarReset() {
-    
+    // Para as Threads em execucao
+    for (Filosofo f : filosofos) {
+      f.retomar();
+      f.interrupt();
+    }
+
+    // Reinicia semaforos e estados 
+    jantar.reset();
+
+    // Recria Threads e registra callbacks
+    inicializarModelo();
+    configurarCallbacksDeEstado();
+    configurarSliders();
+    iniciarThreads();
+
+    // Restaura texto dos botoes
+    Button[] btns = {
+      pausarKant, 
+      pausarNietzsche, 
+      pausarPlatao,
+      pausarAristoteles, 
+      pausarSocrates
+    };
+
+    for (Button b : btns) {
+      b.setText("PAUSAR");
+    }
   } // Fim do metodo executarReset
 
   /* ***************************************************************
