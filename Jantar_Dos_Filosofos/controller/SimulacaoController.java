@@ -384,7 +384,9 @@ public class SimulacaoController implements  Initializable {
   * Retorno: void
   *************************************************************** */
   private void iniciarThreads() {
-    
+    for (Filosofo f : filosofos) {
+      f.start();
+    }
   } // Fim do metodo iniciarThreads
 
-}
+} // Fim da classe SimulacaoController
