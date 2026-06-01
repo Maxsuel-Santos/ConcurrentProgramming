@@ -327,7 +327,13 @@ public class SimulacaoController implements  Initializable {
   * Retorno: void
   *************************************************************** */
   private void alternarPausa(int idx, Button btn) {
-    
+    if (filosofos[idx].isPausado()) {
+      filosofos[idx].retomar();
+      btn.setText("PAUSAR");
+    } else {
+      filosofos[idx].pausar();
+      btn.setText("RETOMAR");
+    }
   } // Fim do metodo alternarPausa
 
   /* ***************************************************************
