@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 29/05/2026
-* Ultima alteracao.: 31/05/2026
+* Ultima alteracao.: 01/06/2026
 * Nome.............: SimulacaoController.java
 * Funcao...........: Controller da tela simulacao.fxml.
 *                    Liga os widgets JavaFX (ImageViews, Sliders,
@@ -256,7 +256,41 @@ public class SimulacaoController implements  Initializable {
   * Retorno: void
   *************************************************************** */
   private void configurarSliders() {
-    
+    Slider[] slidersPensar = {
+      sliderKantPensar, 
+      sliderNietzschePensar, 
+      sliderPlataoPensar,
+      sliderAristotelesPensar, 
+      sliderSocratesPensar
+    };
+
+    Slider[] slidersComer = {
+      sliderKantComer, 
+      sliderNietzscheComer, 
+      sliderPlataoComer,
+      sliderAristotelesComer, 
+      sliderSocratesComer
+    };
+
+    for (int i = 0; i < Constantes.N; i++) {
+      final int idx = i;
+
+      Slider sp = slidersPensar[i];
+      sp.setMin(Constantes.MIN_SPEED_MS);
+      sp.setMax(Constantes.MAX_SPEED_MS);
+      sp.setValue(Constantes.DEFAULT_SPEED_MS);
+      sp.valueProperty().addListener((obs, antigo, novo) -> 
+        filosofos[idx].setComerMs(novo.intValue())
+      );
+
+      Slider sc = slidersComer[i];
+      sc.setMin(Constantes.MIN_SPEED_MS);
+      sc.setMax(Constantes.MAX_SPEED_MS);
+      sc.setValue(Constantes.DEFAULT_SPEED_MS);
+      sc.valueProperty().addListener((obs, antigo, novo) ->
+        filosofos[idx].setComerMs(novo.intValue())
+      );
+    }
   } // Fim do metodo configurarSliders
 
   /* ***************************************************************
