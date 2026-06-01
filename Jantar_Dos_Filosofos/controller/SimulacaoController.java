@@ -84,6 +84,35 @@ public class SimulacaoController implements  Initializable {
   // Imagens pre-carregadas + Estado do Filosofo (0 = PENSANDO, 1 = FAMINTO, 2 = COMENDO)
   private final Image[][] imagens = new Image[Constantes.N][3];
 
+  //
+  private static final double[][][] LAYOUT = {
+    { // Kant — indice 0
+      { 204, 173, 411, 25  },  // PENSANDO
+      { 204, 173, 411, 25  },  // FAMINTO
+      { 204, 173, 411, 25  }   // COMENDO
+    },
+    { // Nietzsche — indice 1
+      { 204, 173, 566, 151 },  // PENSANDO
+      { 204, 173, 566, 151 },  // FAMINTO
+      { 204, 173, 566, 151 }   // COMENDO
+    },
+    { // Platao — indice 2
+      { 204, 173, 530, 324 },  // PENSANDO
+      { 204, 173, 530, 324 },  // FAMINTO
+      { 204, 173, 530, 324 }   // COMENDO
+    },
+    { // Aristoteles — indice 3
+      { 204, 173, 193, 339 },  // PENSANDO
+      { 204, 173, 193, 339 },  // FAMINTO
+      { 204, 173, 193, 339 }   // COMENDO
+    },
+    { // Socrates — indice 4
+      { 204, 173, 143, 151 },  // PENSANDO
+      { 204, 173, 143, 151 },  // FAMINTO
+      { 204, 173, 143, 151 }   // COMENDO
+    }
+  };
+
   /* ***************************************************************
   * Metodo: initialize
   * Funcao: Ponto de entrada do JavaFX apos o FXML ser carregado.
@@ -178,7 +207,23 @@ public class SimulacaoController implements  Initializable {
   * Retorno: void
   *************************************************************** */
   private void atualizarImagemFilosofo(int i, ImageView view) {
+    EstadoFilosofo estado = jantar.getEstado(i);
+    int idxImagem;
 
+    switch (estado) {
+      case FAMINTO -> idxImagem = 1;
+      case COMENDO -> idxImagem = 2;
+      default -> idxImagem = 0; // PENSANDO
+    }
+
+    double[] layout = LAYOUT[i][idxImagem];
+
+    view.setImage(imagens[i][idxImagem]);
+    view.setFitWidth(layout[0]);
+    view.setFitHeight(layout[1]);
+    view.setLayoutX(layout[2]);
+    view.setLayoutY(layout[3]);
+    view.setPreserveRatio(true);
   } // Fim do metodo atualizarImagemFilosofo
 
   /* ***************************************************************
