@@ -158,7 +158,15 @@ public class SimulacaoController implements  Initializable {
   * Retorno: void
   *************************************************************** */
   private void configurarCallbacksDeEstado() {
-    
+    ImageView[] views = { filosofo1, filosofo2, filosofo3, filosofo4, filosofo5 };
+
+    for (int i = 0; i < Constantes.N; i++) {
+      final int idx = i;
+      jantar.setOnEstadoMudou(idx, () -> {
+        atualizarImagemFilosofo(idx, views[idx]);
+        atualizarGarfos();
+      });
+    }
   } // Fim do metodo configurarCallbacksDeEstado
 
   /* ***************************************************************
