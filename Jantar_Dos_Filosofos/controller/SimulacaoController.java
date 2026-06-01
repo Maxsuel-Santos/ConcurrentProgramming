@@ -76,11 +76,6 @@ public class SimulacaoController implements  Initializable {
   private JantarFilosofos jantar;
   private Filosofo[] filosofos;
 
-  // Nome dos Filosofos
-  private static final String[] NOMES = {
-    "kant", "nietzsche", "platao", "aristoteles", "socrates"
-  };
-
   // Imagens pre-carregadas + Estado do Filosofo (0 = PENSANDO, 1 = FAMINTO, 2 = COMENDO)
   private final Image[][] imagens = new Image[Constantes.N][3];
 
