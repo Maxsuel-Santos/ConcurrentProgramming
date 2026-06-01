@@ -301,7 +301,20 @@ public class SimulacaoController implements  Initializable {
   * Retorno: void
   *************************************************************** */
   private void configurarBotoes() {
+    Button[] btns = {
+      pausarKant, 
+      pausarNietzsche, 
+      pausarPlatao,
+      pausarAristoteles, 
+      pausarSocrates
+    };
 
+    for (int i = 0; i < Constantes.N; i++) {
+      final int idx = i;
+      btns[i].setOnAction(e -> alternarPausa(idx, btns[idx]));
+    }
+
+    btnReset.setOnAction(e -> executarReset());
   } // Fim do metodo configurarBotoes
 
    /* ***************************************************************
