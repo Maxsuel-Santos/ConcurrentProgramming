@@ -135,7 +135,17 @@ public class SimulacaoController implements  Initializable {
   * Retorno: void
   *************************************************************** */
   private void inicializarModelo() {
+    jantar = new JantarFilosofos();
+    filosofos = new Filosofo[Constantes.N];
 
+    for (int i = 0; i < Constantes.N; i++) {
+      filosofos[i] = new Filosofo(
+        i, 
+        jantar,
+        Constantes.DEFAULT_SPEED_MS,  // Pensar
+        Constantes.DEFAULT_SPEED_MS   // Comer
+      );
+    }
   } // Fim do metodo inicializarModelo
 
   /* ***************************************************************
