@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 29/05/2026
-* Ultima alteracao.: 01/06/2026
+* Ultima alteracao.: 02/06/2026
 * Nome.............: SimulacaoController.java
 * Funcao...........: Controller da tela simulacao.fxml.
 *                    Liga os widgets JavaFX (ImageViews, Sliders,
@@ -89,23 +89,23 @@ public class SimulacaoController implements  Initializable {
     },
     { // Nietzsche — indice 1
       { 204, 173, 566, 151 },  // PENSANDO  OK
-      { 204, 173, 566, 151 },  // FAMINTO
-      { 204, 173, 566, 151 }   // COMENDO
+      { 70,  120, 567, 205 },  // FAMINTO   OK
+      { 110, 138, 550, 192 }   // COMENDO   OK
     },
     { // Platao — indice 2
       { 204, 173, 530, 324 },  // PENSANDO  OK
-      { 204, 173, 530, 324 },  // FAMINTO
-      { 204, 173, 530, 324 }   // COMENDO
+      { 204, 173, 530, 324 },  // FAMINTO   
+      { 204, 173, 530, 324 }   // COMENDO   
     },
     { // Aristoteles — indice 3
       { 204, 173, 193, 339 },  // PENSANDO  OK
-      { 204, 173, 193, 339 },  // FAMINTO
-      { 204, 173, 193, 339 }   // COMENDO
+      { 204, 173, 193, 339 },  // FAMINTO   
+      { 204, 173, 193, 339 }   // COMENDO   
     },
     { // Socrates — indice 4
       { 204, 173, 143, 151 },  // PENSANDO  OK
-      { 204, 173, 143, 151 },  // FAMINTO
-      { 204, 173, 143, 151 }   // COMENDO
+      { 204, 173, 143, 151 },  // FAMINTO   
+      { 204, 173, 143, 151 }   // COMENDO   
     }
   };
 
