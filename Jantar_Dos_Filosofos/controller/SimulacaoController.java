@@ -79,30 +79,31 @@ public class SimulacaoController implements  Initializable {
   // Imagens pre-carregadas + Estado do Filosofo (0 = PENSANDO, 1 = FAMINTO, 2 = COMENDO)
   private final Image[][] imagens = new Image[Constantes.N][3];
 
-  //
+  // Matriz com as dimensoes e posicoes dos filosofos
+  // { fitWidth, fitHeight, layoutX, layoutY }
   private static final double[][][] LAYOUT = {
     { // Kant — indice 0
-      { 204, 173, 411, 25  },  // PENSANDO
-      { 204, 173, 411, 25  },  // FAMINTO
-      { 204, 173, 411, 25  }   // COMENDO
+      { 204, 173, 411, 25  },  // PENSANDO  OK
+      { 64,  120, 411, 78  },  // FAMINTO   OK
+      { 107, 134, 391, 70  }   // COMENDO   OK
     },
     { // Nietzsche — indice 1
-      { 204, 173, 566, 151 },  // PENSANDO
+      { 204, 173, 566, 151 },  // PENSANDO  OK
       { 204, 173, 566, 151 },  // FAMINTO
       { 204, 173, 566, 151 }   // COMENDO
     },
     { // Platao — indice 2
-      { 204, 173, 530, 324 },  // PENSANDO
+      { 204, 173, 530, 324 },  // PENSANDO  OK
       { 204, 173, 530, 324 },  // FAMINTO
       { 204, 173, 530, 324 }   // COMENDO
     },
     { // Aristoteles — indice 3
-      { 204, 173, 193, 339 },  // PENSANDO
+      { 204, 173, 193, 339 },  // PENSANDO  OK
       { 204, 173, 193, 339 },  // FAMINTO
       { 204, 173, 193, 339 }   // COMENDO
     },
     { // Socrates — indice 4
-      { 204, 173, 143, 151 },  // PENSANDO
+      { 204, 173, 143, 151 },  // PENSANDO  OK
       { 204, 173, 143, 151 },  // FAMINTO
       { 204, 173, 143, 151 }   // COMENDO
     }
