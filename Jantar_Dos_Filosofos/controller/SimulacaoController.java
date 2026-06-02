@@ -94,8 +94,8 @@ public class SimulacaoController implements  Initializable {
     },
     { // Platao — indice 2
       { 204, 173, 530, 324 },  // PENSANDO  OK
-      { 204, 173, 530, 324 },  // FAMINTO   
-      { 204, 173, 530, 324 }   // COMENDO   
+      { 70,  120, 530, 378 },  // FAMINTO   OK
+      { 101, 148, 509, 362 }   // COMENDO   OK
     },
     { // Aristoteles — indice 3
       { 204, 173, 193, 339 },  // PENSANDO  OK
