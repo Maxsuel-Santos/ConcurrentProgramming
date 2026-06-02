@@ -99,8 +99,8 @@ public class SimulacaoController implements  Initializable {
     },
     { // Aristoteles — indice 3
       { 204, 173, 193, 339 },  // PENSANDO  OK
-      { 204, 173, 193, 339 },  // FAMINTO   
-      { 204, 173, 193, 339 }   // COMENDO   
+      { 67,  130, 290, 393 },  // FAMINTO   OK
+      { 131, 140, 267, 380 }   // COMENDO   OK   
     },
     { // Socrates — indice 4
       { 204, 173, 143, 151 },  // PENSANDO  OK
@@ -207,9 +207,9 @@ public class SimulacaoController implements  Initializable {
     int idxImagem;
 
     switch (estado) {
-      case FAMINTO -> idxImagem = 1;
-      case COMENDO -> idxImagem = 2;
-      default -> idxImagem = 0; // PENSANDO
+      case FAMINTO -> idxImagem = 1;  // FAMINTO
+      case COMENDO -> idxImagem = 2;  // COMENDO
+      default -> idxImagem = 0;       // PENSANDO
     }
 
     double[] layout = LAYOUT[i][idxImagem];
