@@ -82,27 +82,27 @@ public class SimulacaoController implements  Initializable {
   // Matriz com as dimensoes e posicoes dos filosofos
   // { fitWidth, fitHeight, layoutX, layoutY }
   private static final double[][][] LAYOUT = {
-    { // Kant — indice 0
+    { // Kant - indice 0
       { 204, 173, 411, 25  },  // PENSANDO
       { 64,  120, 411, 78  },  // FAMINTO 
       { 107, 134, 391, 70  }   // COMENDO 
     },
-    { // Nietzsche — indice 1
+    { // Nietzsche - indice 1
       { 204, 173, 566, 151 },  // PENSANDO
       { 70,  120, 567, 205 },  // FAMINTO 
       { 110, 138, 550, 192 }   // COMENDO 
     },
-    { // Platao — indice 2
+    { // Platao - indice 2
       { 204, 173, 530, 324 },  // PENSANDO
       { 70,  120, 530, 378 },  // FAMINTO 
       { 101, 148, 509, 362 }   // COMENDO 
     },
-    { // Aristoteles — indice 3
+    { // Aristoteles - indice 3
       { 204, 173, 193, 339 },  // PENSANDO
       { 67,  130, 290, 393 },  // FAMINTO 
       { 131, 140, 267, 380 }   // COMENDO    
     },
-    { // Socrates — indice 4
+    { // Socrates - indice 4
       { 204, 173, 143, 151 },  // PENSANDO
       { 76,  120, 241, 204 },  // FAMINTO 
       { 98,  145, 225, 181 }   // COMENDO 
@@ -207,10 +207,16 @@ public class SimulacaoController implements  Initializable {
     int idxImagem;
 
     switch (estado) {
-      case FAMINTO -> idxImagem = 1;  // FAMINTO
-      case COMENDO -> idxImagem = 2;  // COMENDO
-      default -> idxImagem = 0;       // PENSANDO
-    }
+      case FAMINTO:
+        idxImagem = 1; // FAMINTO
+        break;
+      case COMENDO:
+        idxImagem = 2; // COMENDO
+        break;
+      default:
+        idxImagem = 0; // PENSANDO
+        break;
+  }
 
     double[] layout = LAYOUT[i][idxImagem];
 
@@ -276,7 +282,7 @@ public class SimulacaoController implements  Initializable {
       sp.setMax(Constantes.MAX_SPEED_MS);
       sp.setValue(Constantes.DEFAULT_SPEED_MS);
       sp.valueProperty().addListener((obs, antigo, novo) -> 
-        filosofos[idx].setComerMs(novo.intValue())
+        filosofos[idx].setPensarMs(novo.intValue())
       );
 
       Slider sc = slidersComer[i];
