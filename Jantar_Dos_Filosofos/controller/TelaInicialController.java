@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 /* ***************************************************************
 * Classe: TelaInicialController
 * Funcao: Controla o comportamento da tela inicial do JavaFX, 
-*         conectando os botões e eventos a logica do programa.
+*         conectando os botoes e eventos a logica do programa.
 *************************************************************** */
 public class TelaInicialController {
 
