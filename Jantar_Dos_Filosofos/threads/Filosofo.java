@@ -63,7 +63,7 @@ public class Filosofo extends Thread {
 
   /* ***************************************************************
   * Metodo: run
-  * Funcao: Laco principal do filosofo — traducao direta do
+  * Funcao: Laco principal do filosofo - traducao direta do
   *         pseudocodigo C do livro texto de Tanenbaum.
   * Parametros: nao possui
   * Retorno: void
