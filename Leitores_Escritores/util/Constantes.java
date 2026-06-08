@@ -49,4 +49,5 @@ public class Constantes {
     };
 
     private Constantes() {}
+    
 } // Fim da classe Constantes
