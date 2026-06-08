@@ -1,7 +1,7 @@
 /* *********************************************************************
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
-* Inicio...........: 08/06/2026
+* Inicio...........: 06/06/2026
 * Ultima alteracao.: 08/06/2026
 * Nome.............: Principal.java
 * Funcao...........: Ponto de entrada da aplicacao JavaFX.
