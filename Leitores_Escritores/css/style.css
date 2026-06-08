@@ -1,0 +1,408 @@
+/* *********************************************************************
+* Autor............: Maxsuel Aparecido Lima Santos
+* Matricula........: 202511587
+* Inicio...........: 06/06/2026
+* Ultima alteracao.: 08/06/2026
+* Nome.............: style.css
+* Funcao...........: Estilizacao completa da aplicacao Leitores/Escritores.
+************************************************************************ */
+
+/* ===================== VARIAVEIS (simuladas via repeticao) ===
+   Paleta:
+   Papel:          #F5F0E8
+   Tinta preta:    #1A1008
+   Vermelho jornal:#8B1A1A
+   Borda/coluna:   #D4CCB8
+   Verde ativo:    #2D6A2D
+   Amarelo espera: #B8860B
+   Azul ocioso:    #2C4A6E
+   Roxo pausado:   #5B2C8D
+   Fundo escuro:   #0D0D0D
+   ============================================================= */
+
+/* ===================== RAIZ ================================= */
+
+.root-pane {
+    -fx-background-color: #F5F0E8;
+    -fx-font-family: "Georgia";
+}
+
+/* ===================== CABECALHO =========================== */
+
+.cabecalho {
+    -fx-background-color: #1A1008;
+    -fx-border-color: #8B1A1A;
+    -fx-border-width: 0 0 4 0;
+}
+
+.separador-topo {
+    -fx-background-color: #8B1A1A;
+    -fx-padding: 0;
+}
+
+.label-edicao {
+    -fx-text-fill: #8B1A1A;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.label-status {
+    -fx-text-fill: #D4CCB8;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 11px;
+}
+
+/* ===================== GRID PRINCIPAL ====================== */
+
+.grid-principal {
+    -fx-background-color: transparent;
+    -fx-hgap: 0;
+    -fx-vgap: 0;
+}
+
+/* ===================== COLUNAS ============================= */
+
+.coluna {
+    -fx-background-color: transparent;
+    -fx-padding: 8 8 8 8;
+}
+
+.coluna-central {
+    -fx-border-color: #D4CCB8;
+    -fx-border-width: 0 2 0 2;
+}
+
+.titulo-coluna {
+    -fx-text-fill: #1A1008;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.subtitulo-coluna {
+    -fx-text-fill: #8B1A1A;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 10px;
+    -fx-font-style: italic;
+}
+
+.separador-coluna {
+    -fx-background-color: #1A1008;
+}
+
+.separador-vertical {
+    -fx-background-color: #D4CCB8;
+    -fx-pref-width: 1;
+    -fx-min-width: 1;
+    -fx-max-width: 1;
+}
+
+/* ===================== SCROLL CARDS ======================== */
+
+.scroll-cards {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-cards .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-cards .scroll-bar:vertical {
+    -fx-background-color: #D4CCB8;
+    -fx-pref-width: 8px;
+}
+
+.scroll-cards .scroll-bar:vertical .thumb {
+    -fx-background-color: #8B1A1A;
+    -fx-background-radius: 0;
+}
+
+.scroll-cards .scroll-bar:vertical .track {
+    -fx-background-color: #D4CCB8;
+}
+
+.scroll-cards .scroll-bar:vertical .increment-button,
+.scroll-cards .scroll-bar:vertical .decrement-button {
+    -fx-background-color: #1A1008;
+    -fx-padding: 2;
+}
+
+.lista-cards {
+    -fx-background-color: transparent;
+}
+
+/* ===================== CARDS DE PERSONAGEM ================= */
+
+.card-personagem {
+    -fx-background-color: white;
+    -fx-border-color: #D4CCB8;
+    -fx-border-width: 0 0 0 4;
+    -fx-padding: 8 8 8 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 1, 1);
+}
+
+.nome-personagem {
+    -fx-text-fill: #1A1008;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* ===================== ESTADOS DOS PERSONAGENS ============= */
+
+.estado-ocioso {
+    -fx-text-fill: #2C4A6E;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 11px;
+}
+
+.estado-ativo {
+    -fx-text-fill: #2D6A2D;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.estado-aguardando {
+    -fx-text-fill: #B8860B;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 11px;
+}
+
+.estado-pausado {
+    -fx-text-fill: #5B2C8D;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 11px;
+}
+
+/* ===================== CARD COM BORDA COLORIDA POR ESTADO == */
+
+.card-ativo {
+    -fx-background-color: white;
+    -fx-border-color: #2D6A2D;
+    -fx-border-width: 0 0 0 4;
+    -fx-padding: 8 8 8 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 1, 1);
+}
+
+.card-aguardando {
+    -fx-background-color: white;
+    -fx-border-color: #B8860B;
+    -fx-border-width: 0 0 0 4;
+    -fx-padding: 8 8 8 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 1, 1);
+}
+
+.card-pausado {
+    -fx-background-color: white;
+    -fx-border-color: #5B2C8D;
+    -fx-border-width: 0 0 0 4;
+    -fx-padding: 8 8 8 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0, 1, 1);
+}
+
+/* ===================== SLIDERS ============================= */
+
+.label-slider {
+    -fx-text-fill: #555555;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 9px;
+}
+
+.slider-custom {
+    -fx-pref-width: 160px;
+}
+
+.slider-custom .track {
+    -fx-background-image: url("../img/slider_track.png");
+    -fx-background-repeat: repeat-x;
+    -fx-background-size: auto 12px;
+    -fx-background-color: transparent;
+    -fx-pref-height: 12px;
+}
+
+.slider-custom .thumb {
+    -fx-background-image: url("../img/slider_thumb.png");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 20px 28px;
+    -fx-background-color: transparent;
+    -fx-pref-width: 20px;
+    -fx-pref-height: 28px;
+    -fx-effect: null;
+}
+
+.slider-custom .thumb:hover {
+    -fx-background-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(139,26,26,0.5), 4, 0, 0, 0);
+}
+
+.slider-custom .axis {
+    -fx-tick-label-fill: transparent;
+}
+
+/* ===================== BOTOES ============================== */
+
+.btn-pausa {
+    -fx-background-color: #2C4A6E;
+    -fx-text-fill: white;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 10px;
+    -fx-cursor: hand;
+    -fx-padding: 3 10 3 10;
+    -fx-background-radius: 0;
+    -fx-border-color: #1A1008;
+    -fx-border-width: 1;
+}
+
+.btn-pausa:hover {
+    -fx-background-color: #1A1008;
+}
+
+.btn-pausa:pressed {
+    -fx-background-color: #8B1A1A;
+}
+
+.btn-reset {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.btn-reset:hover {
+    -fx-effect: dropshadow(gaussian, rgba(139,26,26,0.6), 8, 0, 0, 0);
+}
+
+.btn-reset:pressed {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 4, 0, 0, 0);
+    -fx-translate-y: 1;
+}
+
+.btn-start {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.btn-start:hover {
+    -fx-effect: dropshadow(gaussian, rgba(139,26,26,0.7), 12, 0, 0, 0);
+}
+
+.btn-start:pressed {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 4, 0, 0, 0);
+    -fx-translate-y: 2;
+}
+
+/* ===================== BASE DE DADOS (COLUNA CENTRAL) ====== */
+
+.box-manchete {
+    -fx-background-color: white;
+    -fx-border-color: #1A1008;
+    -fx-border-width: 3;
+    -fx-padding: 10 10 10 10;
+    -fx-pref-width: 240px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 6, 0, 2, 2);
+}
+
+.label-manchete-titulo {
+    -fx-text-fill: #8B1A1A;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.label-manchete-conteudo {
+    -fx-text-fill: #1A1008;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 12px;
+    -fx-wrap-text: true;
+}
+
+/* ===================== LEGENDA ============================= */
+
+.box-legenda {
+    -fx-background-color: #D4CCB8;
+    -fx-border-color: #1A1008;
+    -fx-border-width: 1;
+    -fx-padding: 8 10 8 10;
+    -fx-pref-width: 240px;
+}
+
+.titulo-legenda {
+    -fx-text-fill: #1A1008;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
+
+.label-legenda {
+    -fx-text-fill: #1A1008;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 10px;
+}
+
+.dot-ativo {
+    -fx-text-fill: #2D6A2D;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.dot-aguardando {
+    -fx-text-fill: #B8860B;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.dot-ocioso {
+    -fx-text-fill: #2C4A6E;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.dot-pausado {
+    -fx-text-fill: #5B2C8D;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* ===================== RODAPE (LOG) ======================== */
+
+.rodape {
+    -fx-background-color: #1A1008;
+    -fx-padding: 6 16 10 16;
+}
+
+.titulo-log {
+    -fx-text-fill: #D4CCB8;
+    -fx-font-family: "Georgia";
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.area-log {
+    -fx-font-family: "Courier New";
+    -fx-font-size: 11px;
+    -fx-control-inner-background: #0D0D0D;
+    -fx-text-fill: #A0E0A0;
+    -fx-background-color: #0D0D0D;
+    -fx-border-color: #D4CCB8;
+    -fx-border-width: 1;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.area-log .content {
+    -fx-background-color: #0D0D0D;
+}
+
+.area-log .scroll-bar:vertical .thumb {
+    -fx-background-color: #D4CCB8;
+}
+
+.area-log .scroll-bar:vertical .track {
+    -fx-background-color: #1A1008;
+}
