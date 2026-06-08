@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane
+    prefWidth="1280"
+    prefHeight="720"
+    styleClass="root-pane"
+    stylesheets="@../css/style.css"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="controller.TelaInicialController">
+
+    <center>
+        <StackPane>
+
+            <!-- Imagem de fundo -->
+            <ImageView fitWidth="1280" fitHeight="720" preserveRatio="false">
+                <image>
+                    <Image url="@../img/fundo_papel.png"/>
+                </image>
+            </ImageView>
+
+            <!-- Conteudo centralizado -->
+            <VBox alignment="CENTER" spacing="40">
+
+                <!-- Capa principal -->
+                <ImageView fx:id="imgCapa"
+                           fitWidth="820" fitHeight="520"
+                           preserveRatio="true">
+                    <image>
+                        <Image url="@../img/capa_start.png"/>
+                    </image>
+                </ImageView>
+
+                <!-- Botao de start -->
+                <Button
+                    fx:id="btnIniciar"
+                    styleClass="btn-start"
+                    onAction="#handleIniciar">
+                    <graphic>
+                        <ImageView fitWidth="200" fitHeight="60"
+                                   preserveRatio="true">
+                            <image>
+                                <Image url="@../img/btn_start.png"/>
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+            </VBox>
+
+        </StackPane>
+    </center>
+
+</BorderPane>
