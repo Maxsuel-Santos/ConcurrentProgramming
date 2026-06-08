@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane
+    prefWidth="1280"
+    prefHeight="720"
+    styleClass="root-pane"
+    stylesheets="@../css/style.css"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="controller.SimulacaoController">
+
+    <!-- ===== TOPO ===== -->
+    <top>
+        <VBox styleClass="cabecalho">
+
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <VBox.margin>
+                    <Insets top="8" right="16" bottom="4" left="16"/>
+                </VBox.margin>
+
+                <ImageView fitWidth="280" fitHeight="55" preserveRatio="true">
+                    <image>
+                        <Image url="@../img/logo_jornal.png"/>
+                    </image>
+                </ImageView>
+
+                <HBox HBox.hgrow="ALWAYS"/>
+
+                <VBox alignment="CENTER_RIGHT" spacing="4">
+                    <Label fx:id="lblEdicao"
+                           text="Edicao n. 0"
+                           styleClass="label-edicao"/>
+                    <Label fx:id="lblLeitoresAtivos"
+                           text="Editores lendo: 0"
+                           styleClass="label-status"/>
+                </VBox>
+
+            </HBox>
+
+            <Separator styleClass="separador-topo"/>
+
+        </VBox>
+    </top>
+
+    <!-- ===== CENTRO ===== -->
+    <center>
+        <StackPane>
+
+            <ImageView fitWidth="1280" fitHeight="580"
+                       preserveRatio="false" opacity="0.6">
+                <image>
+                    <Image url="@../img/fundo_papel.png"/>
+                </image>
+            </ImageView>
+
+            <GridPane styleClass="grid-principal">
+                <GridPane.margin>
+                    <Insets top="8" right="10" bottom="8" left="10"/>
+                </GridPane.margin>
+
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="33.3" hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="33.4" hgrow="ALWAYS"/>
+                    <ColumnConstraints percentWidth="33.3" hgrow="ALWAYS"/>
+                </columnConstraints>
+
+                <!-- ===== COLUNA 0: EDITORES (LEITORES) ===== -->
+                <VBox GridPane.columnIndex="0" GridPane.rowIndex="0"
+                      styleClass="coluna" spacing="6">
+
+                    <Label text="EDITORES" styleClass="titulo-coluna"/>
+                    <Label text="Leitores da Base" styleClass="subtitulo-coluna"/>
+                    <Separator styleClass="separador-coluna"/>
+
+                    <ScrollPane fitToWidth="true"
+                                styleClass="scroll-cards"
+                                VBox.vgrow="ALWAYS">
+                        <VBox spacing="6" styleClass="lista-cards">
+                            <VBox.margin>
+                                <Insets top="4" right="4" bottom="4" left="4"/>
+                            </VBox.margin>
+
+                            <!-- Card Editor 1 -->
+                            <VBox styleClass="card-personagem" spacing="5">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <ImageView fx:id="imgLeitor1"
+                                               fitWidth="60" fitHeight="75"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/editor_ocioso.png"/>
+                                        </image>
+                                    </ImageView>
+                                    <VBox spacing="3">
+                                        <Label text="Editor 1" styleClass="nome-personagem"/>
+                                        <Label fx:id="lblEstadoLeitor1"
+                                               text="Ocioso"
+                                               styleClass="estado-ocioso"/>
+                                    </VBox>
+                                </HBox>
+                                <Label text="leBaseDeDados (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderLeitLeitura1"
+                                        min="200" max="4000" value="1500"
+                                        styleClass="slider-custom"/>
+                                <Label text="utilizaDadoLido (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderLeitUtiliza1"
+                                        min="200" max="4000" value="1500"
+                                        styleClass="slider-custom"/>
+                                <Button fx:id="btnPausaLeitor1"
+                                        text="Pausar"
+                                        styleClass="btn-pausa"
+                                        onAction="#handlePausaLeitor1"/>
+                            </VBox>
+
+                            <!-- Card Editor 2 -->
+                            <VBox styleClass="card-personagem" spacing="5">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <ImageView fx:id="imgLeitor2"
+                                               fitWidth="60" fitHeight="75"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/editor_ocioso.png"/>
+                                        </image>
+                                    </ImageView>
+                                    <VBox spacing="3">
+                                        <Label text="Editor 2" styleClass="nome-personagem"/>
+                                        <Label fx:id="lblEstadoLeitor2"
+                                               text="Ocioso"
+                                               styleClass="estado-ocioso"/>
+                                    </VBox>
+                                </HBox>
+                                <Label text="leBaseDeDados (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderLeitLeitura2"
+                                        min="200" max="4000" value="1500"
+                                        styleClass="slider-custom"/>
+                                <Label text="utilizaDadoLido (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderLeitUtiliza2"
+                                        min="200" max="4000" value="1500"
+                                        styleClass="slider-custom"/>
+                                <Button fx:id="btnPausaLeitor2"
+                                        text="Pausar"
+                                        styleClass="btn-pausa"
+                                        onAction="#handlePausaLeitor2"/>
+                            </VBox>
+
+                            <!-- Card Editor 3 -->
+                            <VBox styleClass="card-personagem" spacing="5">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <ImageView fx:id="imgLeitor3"
+                                               fitWidth="60" fitHeight="75"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/editor_ocioso.png"/>
+                                        </image>
+                                    </ImageView>
+                                    <VBox spacing="3">
+                                        <Label text="Editor 3" styleClass="nome-personagem"/>
+                                        <Label fx:id="lblEstadoLeitor3"
+                                               text="Ocioso"
+                                               styleClass="estado-ocioso"/>
+                                    </VBox>
+                                </HBox>
+                                <Label text="leBaseDeDados (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderLeitLeitura3"
+                                        min="200" max="4000" value="1500"
+                                        styleClass="slider-custom"/>
+                                <Label text="utilizaDadoLido (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderLeitUtiliza3"
+                                        min="200" max="4000" value="1500"
+                                        styleClass="slider-custom"/>
+                                <Button fx:id="btnPausaLeitor3"
+                                        text="Pausar"
+                                        styleClass="btn-pausa"
+                                        onAction="#handlePausaLeitor3"/>
+                            </VBox>
+
+                            <!-- Card Editor 4 -->
+                            <VBox styleClass="card-personagem" spacing="5">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <ImageView fx:id="imgLeitor4"
+                                               fitWidth="60" fitHeight="75"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/editor_ocioso.png"/>
+                                        </image>
+                                    </ImageView>
+                                    <VBox spacing="3">
+                                        <Label text="Editor 4" styleClass="nome-personagem"/>
+                                        <Label fx:id="lblEstadoLeitor4"
+                                               text="Ocioso"
+                                               styleClass="estado-ocioso"/>
+                                    </VBox>
+                                </HBox>
+                                <Label text="leBaseDeDados (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderLeitLeitura4"
+                                        min="200" max="4000" value="1500"
+                                        styleClass="slider-custom"/>
+                                <Label text="utilizaDadoLido (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderLeitUtiliza4"
+                                        min="200" max="4000" value="1500"
+                                        styleClass="slider-custom"/>
+                                <Button fx:id="btnPausaLeitor4"
+                                        text="Pausar"
+                                        styleClass="btn-pausa"
+                                        onAction="#handlePausaLeitor4"/>
+                            </VBox>
+
+                            <!-- Card Editor 5 -->
+                            <VBox styleClass="card-personagem" spacing="5">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <ImageView fx:id="imgLeitor5"
+                                               fitWidth="60" fitHeight="75"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/editor_ocioso.png"/>
+                                        </image>
+                                    </ImageView>
+                                    <VBox spacing="3">
+                                        <Label text="Editor 5" styleClass="nome-personagem"/>
+                                        <Label fx:id="lblEstadoLeitor5"
+                                               text="Ocioso"
+                                               styleClass="estado-ocioso"/>
+                                    </VBox>
+                                </HBox>
+                                <Label text="leBaseDeDados (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderLeitLeitura5"
+                                        min="200" max="4000" value="1500"
+                                        styleClass="slider-custom"/>
+                                <Label text="utilizaDadoLido (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderLeitUtiliza5"
+                                        min="200" max="4000" value="1500"
+                                        styleClass="slider-custom"/>
+                                <Button fx:id="btnPausaLeitor5"
+                                        text="Pausar"
+                                        styleClass="btn-pausa"
+                                        onAction="#handlePausaLeitor5"/>
+                            </VBox>
+
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+
+                <!-- ===== COLUNA 1: BASE DE DADOS ===== -->
+                <VBox GridPane.columnIndex="1" GridPane.rowIndex="0"
+                      styleClass="coluna coluna-central"
+                      spacing="10" alignment="TOP_CENTER">
+
+                    <Label text="BASE DE DADOS" styleClass="titulo-coluna"/>
+                    <Label text="Manchete em Circulacao" styleClass="subtitulo-coluna"/>
+                    <Separator styleClass="separador-coluna"/>
+
+                    <VBox alignment="CENTER" spacing="8" VBox.vgrow="ALWAYS">
+
+                        <ImageView fx:id="imgJornal"
+                                   fitWidth="200" fitHeight="150"
+                                   preserveRatio="true">
+                            <image>
+                                <Image url="@../img/jornal_fechado.png"/>
+                            </image>
+                        </ImageView>
+
+                        <VBox styleClass="box-manchete" spacing="6">
+                            <Label text="MANCHETE" styleClass="label-manchete-titulo"/>
+                            <Separator/>
+                            <Label fx:id="lblConteudoBase"
+                                   text="Nenhuma materia publicada ainda."
+                                   styleClass="label-manchete-conteudo"
+                                   wrapText="true"/>
+                        </VBox>
+
+                        <VBox styleClass="box-legenda" spacing="5">
+                            <Label text="LEGENDA" styleClass="titulo-legenda"/>
+                            <HBox spacing="6" alignment="CENTER_LEFT">
+                                <Label text="*" styleClass="dot-ativo"/>
+                                <Label text="Na regiao critica" styleClass="label-legenda"/>
+                            </HBox>
+                            <HBox spacing="6" alignment="CENTER_LEFT">
+                                <Label text="*" styleClass="dot-aguardando"/>
+                                <Label text="Aguardando semaforo" styleClass="label-legenda"/>
+                            </HBox>
+                            <HBox spacing="6" alignment="CENTER_LEFT">
+                                <Label text="*" styleClass="dot-ocioso"/>
+                                <Label text="Ocioso" styleClass="label-legenda"/>
+                            </HBox>
+                            <HBox spacing="6" alignment="CENTER_LEFT">
+                                <Label text="*" styleClass="dot-pausado"/>
+                                <Label text="Pausado" styleClass="label-legenda"/>
+                            </HBox>
+                        </VBox>
+
+                        <Button fx:id="btnReset"
+                                styleClass="btn-reset"
+                                onAction="#handleReset">
+                            <graphic>
+                                <ImageView fitWidth="200" fitHeight="60"
+                                           preserveRatio="true">
+                                    <image>
+                                        <Image url="@../img/btn_start.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+
+                    </VBox>
+                </VBox>
+
+                <!-- ===== COLUNA 2: REPORTERS (ESCRITORES) ===== -->
+                <VBox GridPane.columnIndex="2" GridPane.rowIndex="0"
+                      styleClass="coluna" spacing="6">
+
+                    <Label text="REPORTERS" styleClass="titulo-coluna"/>
+                    <Label text="Escritores da Base" styleClass="subtitulo-coluna"/>
+                    <Separator styleClass="separador-coluna"/>
+
+                    <ScrollPane fitToWidth="true"
+                                styleClass="scroll-cards"
+                                VBox.vgrow="ALWAYS">
+                        <VBox spacing="6" styleClass="lista-cards">
+                            <VBox.margin>
+                                <Insets top="4" right="4" bottom="4" left="4"/>
+                            </VBox.margin>
+
+                            <!-- Card Reporter 1 -->
+                            <VBox styleClass="card-personagem" spacing="5">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <ImageView fx:id="imgEscritor1"
+                                               fitWidth="60" fitHeight="75"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/reporter_ocioso.png"/>
+                                        </image>
+                                    </ImageView>
+                                    <VBox spacing="3">
+                                        <Label text="Reporter 1" styleClass="nome-personagem"/>
+                                        <Label fx:id="lblEstadoEscritor1"
+                                               text="Ocioso"
+                                               styleClass="estado-ocioso"/>
+                                    </VBox>
+                                </HBox>
+                                <Label text="obtemDado (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderEscObtencao1"
+                                        min="200" max="4000" value="2000"
+                                        styleClass="slider-custom"/>
+                                <Label text="escreveBaseDeDados (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderEscEscrita1"
+                                        min="200" max="4000" value="2000"
+                                        styleClass="slider-custom"/>
+                                <Button fx:id="btnPausaEscritor1"
+                                        text="Pausar"
+                                        styleClass="btn-pausa"
+                                        onAction="#handlePausaEscritor1"/>
+                            </VBox>
+
+                            <!-- Card Reporter 2 -->
+                            <VBox styleClass="card-personagem" spacing="5">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <ImageView fx:id="imgEscritor2"
+                                               fitWidth="60" fitHeight="75"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/reporter_ocioso.png"/>
+                                        </image>
+                                    </ImageView>
+                                    <VBox spacing="3">
+                                        <Label text="Reporter 2" styleClass="nome-personagem"/>
+                                        <Label fx:id="lblEstadoEscritor2"
+                                               text="Ocioso"
+                                               styleClass="estado-ocioso"/>
+                                    </VBox>
+                                </HBox>
+                                <Label text="obtemDado (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderEscObtencao2"
+                                        min="200" max="4000" value="2000"
+                                        styleClass="slider-custom"/>
+                                <Label text="escreveBaseDeDados (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderEscEscrita2"
+                                        min="200" max="4000" value="2000"
+                                        styleClass="slider-custom"/>
+                                <Button fx:id="btnPausaEscritor2"
+                                        text="Pausar"
+                                        styleClass="btn-pausa"
+                                        onAction="#handlePausaEscritor2"/>
+                            </VBox>
+
+                            <!-- Card Reporter 3 -->
+                            <VBox styleClass="card-personagem" spacing="5">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <ImageView fx:id="imgEscritor3"
+                                               fitWidth="60" fitHeight="75"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/reporter_ocioso.png"/>
+                                        </image>
+                                    </ImageView>
+                                    <VBox spacing="3">
+                                        <Label text="Reporter 3" styleClass="nome-personagem"/>
+                                        <Label fx:id="lblEstadoEscritor3"
+                                               text="Ocioso"
+                                               styleClass="estado-ocioso"/>
+                                    </VBox>
+                                </HBox>
+                                <Label text="obtemDado (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderEscObtencao3"
+                                        min="200" max="4000" value="2000"
+                                        styleClass="slider-custom"/>
+                                <Label text="escreveBaseDeDados (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderEscEscrita3"
+                                        min="200" max="4000" value="2000"
+                                        styleClass="slider-custom"/>
+                                <Button fx:id="btnPausaEscritor3"
+                                        text="Pausar"
+                                        styleClass="btn-pausa"
+                                        onAction="#handlePausaEscritor3"/>
+                            </VBox>
+
+                            <!-- Card Reporter 4 -->
+                            <VBox styleClass="card-personagem" spacing="5">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <ImageView fx:id="imgEscritor4"
+                                               fitWidth="60" fitHeight="75"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/reporter_ocioso.png"/>
+                                        </image>
+                                    </ImageView>
+                                    <VBox spacing="3">
+                                        <Label text="Reporter 4" styleClass="nome-personagem"/>
+                                        <Label fx:id="lblEstadoEscritor4"
+                                               text="Ocioso"
+                                               styleClass="estado-ocioso"/>
+                                    </VBox>
+                                </HBox>
+                                <Label text="obtemDado (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderEscObtencao4"
+                                        min="200" max="4000" value="2000"
+                                        styleClass="slider-custom"/>
+                                <Label text="escreveBaseDeDados (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderEscEscrita4"
+                                        min="200" max="4000" value="2000"
+                                        styleClass="slider-custom"/>
+                                <Button fx:id="btnPausaEscritor4"
+                                        text="Pausar"
+                                        styleClass="btn-pausa"
+                                        onAction="#handlePausaEscritor4"/>
+                            </VBox>
+
+                            <!-- Card Reporter 5 -->
+                            <VBox styleClass="card-personagem" spacing="5">
+                                <HBox spacing="10" alignment="CENTER_LEFT">
+                                    <ImageView fx:id="imgEscritor5"
+                                               fitWidth="60" fitHeight="75"
+                                               preserveRatio="true">
+                                        <image>
+                                            <Image url="@../img/reporter_ocioso.png"/>
+                                        </image>
+                                    </ImageView>
+                                    <VBox spacing="3">
+                                        <Label text="Reporter 5" styleClass="nome-personagem"/>
+                                        <Label fx:id="lblEstadoEscritor5"
+                                               text="Ocioso"
+                                               styleClass="estado-ocioso"/>
+                                    </VBox>
+                                </HBox>
+                                <Label text="obtemDado (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderEscObtencao5"
+                                        min="200" max="4000" value="2000"
+                                        styleClass="slider-custom"/>
+                                <Label text="escreveBaseDeDados (ms):" styleClass="label-slider"/>
+                                <Slider fx:id="sliderEscEscrita5"
+                                        min="200" max="4000" value="2000"
+                                        styleClass="slider-custom"/>
+                                <Button fx:id="btnPausaEscritor5"
+                                        text="Pausar"
+                                        styleClass="btn-pausa"
+                                        onAction="#handlePausaEscritor5"/>
+                            </VBox>
+
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+
+            </GridPane>
+        </StackPane>
+    </center>
+
+    <!-- ===== RODAPE (LOG) ===== -->
+    <bottom>
+        <VBox styleClass="rodape" spacing="4">
+            <Label text="REGISTRO DE EVENTOS" styleClass="titulo-log"/>
+            <TextArea fx:id="areaLog"
+                      editable="false"
+                      prefHeight="90"
+                      styleClass="area-log"/>
+        </VBox>
+    </bottom>
+
+</BorderPane>
