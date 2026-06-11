@@ -14,26 +14,26 @@ package util;
 *************************************************************** */
 public class Constantes {
 
-    public static final int NUM_LEITORES  = 5;
+    public static final int NUM_LEITORES = 5;
     public static final int NUM_ESCRITORES = 5;
 
-    public static final long VEL_PADRAO_LEITOR   = 1500;
+    public static final long VEL_PADRAO_LEITOR = 1500;
     public static final long VEL_PADRAO_ESCRITOR = 2000;
-    public static final long VEL_MIN  = 200;
-    public static final long VEL_MAX  = 4000;
+    public static final long VEL_MIN = 200;
+    public static final long VEL_MAX = 4000;
 
-    public static final String IMG_EDITOR_OCIOSO     = "/img/editor_ocioso.png";
-    public static final String IMG_EDITOR_LENDO      = "/img/editor_lendo.png";
+    public static final String IMG_EDITOR_OCIOSO = "/img/editor_ocioso.png";
+    public static final String IMG_EDITOR_LENDO = "/img/editor_lendo.png";
     public static final String IMG_EDITOR_AGUARDANDO = "/img/editor_aguardando.png";
-    public static final String IMG_EDITOR_PAUSADO    = "/img/editor_pausado.png";
+    public static final String IMG_EDITOR_PAUSADO = "/img/editor_pausado.png";
 
-    public static final String IMG_REPORTER_OCIOSO      = "/img/reporter_ocioso.png";
-    public static final String IMG_REPORTER_ESCREVENDO  = "/img/reporter_escrevendo.png";
-    public static final String IMG_REPORTER_AGUARDANDO  = "/img/reporter_aguardando.png";
-    public static final String IMG_REPORTER_PAUSADO     = "/img/reporter_pausado.png";
+    public static final String IMG_REPORTER_OCIOSO = "/img/reporter_ocioso.png";
+    public static final String IMG_REPORTER_ESCREVENDO = "/img/reporter_escrevendo.png";
+    public static final String IMG_REPORTER_AGUARDANDO = "/img/reporter_aguardando.png";
+    public static final String IMG_REPORTER_PAUSADO = "/img/reporter_pausado.png";
 
     public static final String IMG_JORNAL_FECHADO = "/img/jornal_fechado.png";
-    public static final String IMG_JORNAL_ABERTO  = "/img/jornal_aberto.png";
+    public static final String IMG_JORNAL_ABERTO = "/img/jornal_aberto.png";
 
     public static final String[] PAUTAS = {
         "Exclusivo: Descoberta cientifica revoluciona a medicina",
