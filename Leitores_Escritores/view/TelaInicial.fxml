@@ -1,60 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<BorderPane
-    prefWidth="1280"
-    prefHeight="720"
-    styleClass="root-pane"
-    stylesheets="@../css/style.css"
-    xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="controller.TelaInicialController">
+<AnchorPane prefHeight="720" prefWidth="1280" styleClass="root-pane" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TelaInicialController">
 
-    <center>
-        <StackPane>
+    <!-- Imagem de capa ocupando toda a tela -->
+    <ImageView fitHeight="720" fitWidth="1280" preserveRatio="false" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+        <image>
+            <Image url="@../img/capa_start.png" />
+        </image>
+    </ImageView>
 
-            <!-- Imagem de fundo -->
-            <ImageView fitWidth="1280" fitHeight="720" preserveRatio="false">
+    <!-- Botao no terco inferior, centralizado horizontalmente -->
+    <Button fx:id="btnIniciar" onAction="#handleIniciar" styleClass="btn-start" AnchorPane.bottomAnchor="40" AnchorPane.leftAnchor="540">
+        <graphic>
+            <ImageView fitHeight="60" fitWidth="200" preserveRatio="true">
                 <image>
-                    <Image url="@../img/fundo_papel.png"/>
+                    <Image url="@../img/btn_start.png" />
                 </image>
             </ImageView>
+        </graphic>
+    </Button>
 
-            <!-- Conteudo centralizado -->
-            <VBox alignment="CENTER" spacing="40">
-
-                <!-- Capa principal -->
-                <ImageView fx:id="imgCapa"
-                           fitWidth="820" fitHeight="520"
-                           preserveRatio="true">
-                    <image>
-                        <Image url="@../img/capa_start.png"/>
-                    </image>
-                </ImageView>
-
-                <!-- Botao de start -->
-                <Button
-                    fx:id="btnIniciar"
-                    styleClass="btn-start"
-                    onAction="#handleIniciar">
-                    <graphic>
-                        <ImageView fitWidth="200" fitHeight="60"
-                                   preserveRatio="true">
-                            <image>
-                                <Image url="@../img/btn_start.png"/>
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </Button>
-
-            </VBox>
-
-        </StackPane>
-    </center>
-
-</BorderPane>
+</AnchorPane>
