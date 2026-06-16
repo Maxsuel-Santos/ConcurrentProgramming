@@ -76,7 +76,7 @@ public class ThreadLeitor extends Thread {
 
         base.entradaLeitor();                   // O leitor tem acesso a base de dados
 
-        // --- Regiao Critica ---
+        // --- REGIAO CRITICA ---
         notificar(EstadoThread.ATIVO);
 
         ultimaMateria = base.leBaseDeDados();   // leBaseDeDados()
@@ -84,7 +84,7 @@ public class ThreadLeitor extends Thread {
         Thread.sleep(velLeitura);               // simula tempo de leitura
 
         base.saidaLeitor();                     // O leitor sai da base de dados
-        // --- Fim da Regiao Critica ---
+        // --- FIM DA REGIAO CRITICA ---
 
         notificar(EstadoThread.OCIOSO);
 
