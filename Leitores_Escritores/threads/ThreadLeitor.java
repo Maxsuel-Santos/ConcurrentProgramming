@@ -74,9 +74,9 @@ public class ThreadLeitor extends Thread {
 
         notificar(EstadoThread.AGUARDANDO);
 
+        // --- REGIAO CRITICA ---
         base.entradaLeitor();                   // O leitor tem acesso a base de dados
 
-        // --- REGIAO CRITICA ---
         notificar(EstadoThread.ATIVO);
 
         ultimaMateria = base.leBaseDeDados();   // leBaseDeDados()
@@ -93,8 +93,8 @@ public class ThreadLeitor extends Thread {
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
         break;
-      } // Fim do try-catch
-    } // Fim do while
+      }
+    } 
 
     notificar(EstadoThread.OCIOSO);
   
