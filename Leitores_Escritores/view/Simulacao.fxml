@@ -309,7 +309,7 @@
                                 <ImageView fitWidth="200" fitHeight="60"
                                            preserveRatio="true">
                                     <image>
-                                        <Image url="@../img/btn_start.png"/>
+                                        <Image url="@../img/reset.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
