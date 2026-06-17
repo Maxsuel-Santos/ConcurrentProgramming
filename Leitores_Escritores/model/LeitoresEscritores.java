@@ -43,8 +43,7 @@ public class LeitoresEscritores {
   // Flags de pausa individuais por id (indice 0 ignorado)
   private final boolean[] pausado = new boolean[6];
 
-  // Locks individuais de pausa por id
-  private final Object[] pauseLock = new Object[6];
+  private final Semaphore[] portaoPausa = new Semaphore[6];
 
   // Pautas disponiveis para os reporters
   private static final String[] PAUTAS = {
@@ -72,14 +71,15 @@ public class LeitoresEscritores {
 
   /* ***************************************************************
   * Metodo: LeitoresEscritores (construtor)
-  * Funcao: Inicializa os locks de pausa individuais e os valores
-  *         padrao de velocidade para cada leitor e escritor.
+  * Funcao: Inicializa os portoes de pausa individuais (abertos) e
+  *         os valores padrao de velocidade para cada leitor e
+  *         escritor.
   * Parametros: nenhum
   * Retorno: nenhum
   *************************************************************** */
   public LeitoresEscritores() {
     for (int i = 1; i <= 5; i++) {
-      pauseLock[i] = new Object();
+      portaoPausa[i] = new Semaphore(1);
       velLeitura[i] = 1500;
       velUtilizacao[i] = 1500;
       velObtencao[i] = 2000;
@@ -211,48 +211,60 @@ public class LeitoresEscritores {
 
   /* ***************************************************************
   * Metodo: verificarPausa
-  * Funcao: Bloqueia a thread em wait() enquanto pausado[id]=true,
-  *         notificando a GUI com o estado PAUSADO correspondente.
-  * Parametros: id       - id da thread a verificar
+  * Funcao: Bloqueia a thread tentando atravessar o portao de pausa
+  *         (acquire seguido de release imediato). Se o portao
+  *         estiver fechado (pausado[id]=true), o acquire() bloqueia
+  *         a thread ali mesmo, sem busy-wait, ate retomarLeitor()
+  *         reabrir o portao com release(). Notifica a GUI com o
+  *         estado PAUSADO antes de bloquear.
+  * Parametros: id - id da thread a verificar
   *             ehLeitor - true se leitor, false se escritor
   * Retorno: void
   *************************************************************** */
   private void verificarPausa(int id, boolean ehLeitor) throws InterruptedException {
-    synchronized (pauseLock[id]) {
-      while (pausado[id]) {
-        if (ehLeitor) {
-          onLeitorPausado.accept(id);
-        } else {
-          onEscritorPausado.accept(id);
-        }
-        pauseLock[id].wait();
+    if (pausado[id]) {
+      if (ehLeitor) {
+        onLeitorPausado.accept(id);
+      } else {
+        onEscritorPausado.accept(id);
       }
     }
+
+    portaoPausa[id].acquire();
+    portaoPausa[id].release();
   } // Fim do metodo verificarPausa
 
   /* ***************************************************************
   * Metodo: pausarLeitor
-  * Funcao: Sinaliza o leitor de id informado para pausar
+  * Funcao: Sinaliza o leitor de id informado para pausar, fechando
+  *         o portao de pausa correspondente (acquire). So fecha o
+  *         portao se ele ainda nao estiver fechado, evitando que
+  *         chamadas redundantes travem a thread da GUI (que nao
+  *         pode bloquear em acquire) ou acumulem fechamentos.
   * Parametros: id - id do leitor a pausar
   * Retorno: void
   *************************************************************** */
   public void pausarLeitor(int id) {
-    synchronized (pauseLock[id]) {
+    if (!pausado[id]) {
       pausado[id] = true;
-    } // Fim do synchronized
+      portaoPausa[id].tryAcquire();
+    }
   } // Fim do metodo pausarLeitor
 
   /* ***************************************************************
   * Metodo: retomarLeitor
-  * Funcao: Remove a pausa do leitor de id informado e o acorda
+  * Funcao: Remove a pausa do leitor de id informado, reabrindo o
+  *         portao de pausa (release) e liberando a thread bloqueada
+  *         em verificarPausa. So reabre o portao se ele estiver
+  *         de fato fechado, evitando acumular permits acima de 1.
   * Parametros: id - id do leitor a retomar
   * Retorno: void
   *************************************************************** */
   public void retomarLeitor(int id) {
-    synchronized (pauseLock[id]) {
+    if (pausado[id]) {
       pausado[id] = false;
-      pauseLock[id].notifyAll();
-    } // Fim do synchronized
+      portaoPausa[id].release();
+    }
   } // Fim do metodo retomarLeitor
 
   /* ***************************************************************
@@ -269,7 +281,8 @@ public class LeitoresEscritores {
 
   /* ***************************************************************
   * Metodo: retomarEscritor
-  * Funcao: Remove a pausa do escritor de id informado e o acorda
+  * Funcao: Remove a pausa do escritor de id informado e reabre o
+  *         portao correspondente
   * Parametros: id - id do escritor a retomar
   * Retorno: void
   *************************************************************** */
