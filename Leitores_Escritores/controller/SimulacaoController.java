@@ -2,13 +2,15 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 10/06/2026
-* Ultima alteracao.: 15/06/2026
+* Ultima alteracao.: 17/06/2026
 * Nome.............: SimulacaoController.java
 * Funcao...........: Controller JavaFX da tela de simulacao. Gerencia
-*                    o ciclo de vida das threads leitoras e escritoras,
-*                    vincula sliders e botoes de pausa a cada thread,
-*                    e atualiza a GUI via Platform.runLater conforme
-*                    as mudancas de estado notificadas pelas threads.
+*                    o ciclo de vida das threads leitoras e escritoras
+*                    executando os metodos leitor()/escritor() da
+*                    classe LeitoresEscritores, vincula sliders e
+*                    botoes de pausa, e atualiza a GUI via
+*                    Platform.runLater conforme os callbacks da
+*                    classe LeitoresEscritores.
 ************************************************************************ */
 
 package controller;
@@ -24,10 +26,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
-import model.BaseDeDados;
-import model.EstadoThread;
-import threads.ThreadEscritor;
-import threads.ThreadLeitor;
+import model.LeitoresEscritores;
 import util.Constantes;
 
 import java.net.URL;
@@ -36,9 +35,10 @@ import java.util.ResourceBundle;
 /* ***************************************************************
 * Classe: SimulacaoController
 * Funcao: Controller da tela Simulacao.fxml. Inicializa e controla
-*         as 5 threads leitoras e 5 escritoras, conecta os
-*         componentes FXML as threads e atualiza imagens, labels
-*         e estilos dos cards conforme o estado de cada thread.
+*         as 5 threads leitoras e 5 escritoras executando os
+*         metodos leitor()/escritor() de LeitoresEscritores, conecta
+*         os componentes FXML aos callbacks e atualiza imagens,
+*         labels e estilos dos cards conforme o estado de cada thread.
 *************************************************************** */
 public class SimulacaoController implements Initializable {
 
@@ -82,7 +82,7 @@ public class SimulacaoController implements Initializable {
   @FXML private Button btnPausaLeitor4;
   @FXML private Button btnPausaLeitor5;
 
-  // ESCRITORES (Reposters)
+  // ESCRITORES (Reporters)
   @FXML private ImageView imgEscritor1;
   @FXML private ImageView imgEscritor2;
   @FXML private ImageView imgEscritor3;
@@ -117,9 +117,9 @@ public class SimulacaoController implements Initializable {
   @FXML private TextArea areaLog;
 
   // Estado interno
-  private BaseDeDados base;
-  private ThreadLeitor[] leitores = new ThreadLeitor[Constantes.NUM_LEITORES + 1];
-  private ThreadEscritor[] escritores = new ThreadEscritor[Constantes.NUM_ESCRITORES + 1];
+  private LeitoresEscritores le;
+  private Thread[] threadsLeitores = new Thread[Constantes.NUM_LEITORES + 1];
+  private Thread[] threadsEscritores = new Thread[Constantes.NUM_ESCRITORES + 1];
 
   // Arrays para acesso indexado aos componentes da GUI (indice 0 ignorado)
   private ImageView[] imgLeitores;
@@ -241,28 +241,33 @@ public class SimulacaoController implements Initializable {
 
   /* ***************************************************************
   * Metodo: iniciarSimulacao
-  * Funcao: Instancia a base de dados e cria as 5 threads leitoras
-  *         e 5 escritoras, vinculando os sliders de velocidade a
-  *         cada thread via listener e iniciando a execucao.
+  * Funcao: Instancia LeitoresEscritores, registra os callbacks que
+  *         atualizam a GUI via Platform.runLater, vincula os
+  *         sliders de velocidade e cria as 5 threads leitoras e
+  *         5 escritoras executando le.leitor(id) e le.escritor(id).
   * Parametros: nenhum
   * Retorno: void
   *************************************************************** */
   private void iniciarSimulacao() {
-    base = new BaseDeDados();
+    le = new LeitoresEscritores();
+    registrarCallbacks();
 
     for (int i = 1; i <= Constantes.NUM_LEITORES; i++) {
       final int id = i;
 
-      ThreadLeitor tl = new ThreadLeitor(id, base, (tid, estado) -> Platform.runLater(() -> atualizarLeitor(tid, estado)));
+      vincularSlidersLeitor(id);
+      vincularSlidersEscritor(id);
 
-      vincularSlidersLeitor(id, tl);
-      leitores[id] = tl;
+      Thread tl = new Thread(() -> le.leitor(id));
+      tl.setDaemon(true);
+      tl.setName("Editor-" + id);
+      threadsLeitores[id] = tl;
       tl.start();
 
-      ThreadEscritor te = new ThreadEscritor(id, base, (tid, estado) -> Platform.runLater(() -> atualizarEscritor(tid, estado)));
-
-      vincularSlidersEscritor(id, te);
-      escritores[id] = te;
+      Thread te = new Thread(() -> le.escritor(id));
+      te.setDaemon(true);
+      te.setName("Reporter-" + id);
+      threadsEscritores[id] = te;
       te.start();
     }
 
@@ -270,40 +275,59 @@ public class SimulacaoController implements Initializable {
   } // Fim do metodo iniciarSimulacao
 
   /* ***************************************************************
-  * Metodo: vincularSlidersLeitor
-  * Funcao: Registra listeners nos sliders de velocidade do leitor
-  *         para propagar alteracoes diretamente a thread em tempo
-  *         real, sem necessidade de botao confirmar.
-  * Parametros: id - id do leitor
-  *             tl - referencia a ThreadLeitor correspondente
+  * Metodo: registrarCallbacks
+  * Funcao: Registra em LeitoresEscritores os callbacks que serao
+  *         disparados pelas threads ao mudar de estado. Cada
+  *         callback executa na thread leitora/escritora e por isso
+  *         repassa a atualizacao da GUI via Platform.runLater.
+  * Parametros: nenhum
   * Retorno: void
   *************************************************************** */
-  private void vincularSlidersLeitor(int id, ThreadLeitor tl) {
-    slidersLeitLeitura[id].valueProperty().addListener((obs, ov, nv) -> tl.setVelLeitura(nv.longValue()));
+  private void registrarCallbacks() {
+    le.setOnLeitorAguardando(id -> Platform.runLater(() -> atualizarLeitorAguardando(id)));
+    le.setOnLeitorLendo(id -> Platform.runLater(() -> atualizarLeitorLendo(id)));
+    le.setOnLeitorOcioso(id -> Platform.runLater(() -> atualizarLeitorOcioso(id)));
+    le.setOnLeitorPausado(id -> Platform.runLater(() -> aplicarEstadoLeitorGUI(id, "PAUSADO")));
 
-    slidersLeitUtiliza[id].valueProperty().addListener((obs, ov, nv) -> tl.setVelUtilizacao(nv.longValue()));
+    le.setOnEscritorAguardando(id -> Platform.runLater(() -> aplicarEstadoEscritorGUI(id, "AGUARDANDO")));
+    le.setOnEscritorEscrevendo(id -> Platform.runLater(() -> atualizarEscritorEscrevendo(id)));
+    le.setOnEscritorOcioso(id -> Platform.runLater(() -> atualizarEscritorOcioso(id)));
+    le.setOnEscritorPausado(id -> Platform.runLater(() -> aplicarEstadoEscritorGUI(id, "PAUSADO")));
+  } // Fim do metodo registrarCallbacks
+
+  /* ***************************************************************
+  * Metodo: vincularSlidersLeitor
+  * Funcao: Registra listeners nos sliders de velocidade do leitor
+  *         para propagar alteracoes diretamente a LeitoresEscritores
+  *         em tempo real, sem necessidade de botao confirmar.
+  * Parametros: id - id do leitor
+  * Retorno: void
+  *************************************************************** */
+  private void vincularSlidersLeitor(int id) {
+    slidersLeitLeitura[id].valueProperty().addListener((obs, ov, nv) -> le.setVelLeitura(id, nv.longValue()));
+
+    slidersLeitUtiliza[id].valueProperty().addListener((obs, ov, nv) -> le.setVelUtilizacao(id, nv.longValue()));
   } // Fim do metodo vincularSlidersLeitor
 
   /* ***************************************************************
   * Metodo: vincularSlidersEscritor
   * Funcao: Registra listeners nos sliders de velocidade do escritor
-  *         para propagar alteracoes diretamente a thread em tempo
-  *         real, sem necessidade de botao confirmar.
+  *         para propagar alteracoes diretamente a LeitoresEscritores
+  *         em tempo real, sem necessidade de botao confirmar.
   * Parametros: id - id do escritor
-  *             te - referencia a ThreadEscritor correspondente
   * Retorno: void
   *************************************************************** */
-  private void vincularSlidersEscritor(int id, ThreadEscritor te) {
-    slidersEscObtencao[id].valueProperty().addListener((obs, ov, nv) -> te.setVelObtencao(nv.longValue()));
+  private void vincularSlidersEscritor(int id) {
+    slidersEscObtencao[id].valueProperty().addListener((obs, ov, nv) -> le.setVelObtencao(id, nv.longValue()));
 
-    slidersEscEscrita[id].valueProperty().addListener((obs, ov, nv) -> te.setVelEscrita(nv.longValue()));
+    slidersEscEscrita[id].valueProperty().addListener((obs, ov, nv) -> le.setVelEscrita(id, nv.longValue()));
   } // Fim do metodo vincularSlidersEscritor
 
   /* ***************************************************************
   * Metodo: handleReset
-  * Funcao: Para todas as threads em execucao, reseta o visual da
-  *         GUI para o estado inicial e reinicia a simulacao com
-  *         uma nova instancia da base de dados.
+  * Funcao: Interrompe todas as threads em execucao, reseta o
+  *         visual da GUI para o estado inicial e reinicia a
+  *         simulacao com uma nova instancia de LeitoresEscritores.
   * Parametros: nenhum
   * Retorno: void
   *************************************************************** */
@@ -312,12 +336,12 @@ public class SimulacaoController implements Initializable {
     log("--- RESET: encerrando threads ---");
 
     for (int i = 1; i <= Constantes.NUM_LEITORES; i++) {
-      if (leitores[i] != null) {
-        leitores[i].parar();
+      if (threadsLeitores[i] != null) {
+        threadsLeitores[i].interrupt();
       }
 
-      if (escritores[i] != null) {
-        escritores[i].parar();
+      if (threadsEscritores[i] != null) {
+        threadsEscritores[i].interrupt();
       }
     }
 
@@ -337,8 +361,8 @@ public class SimulacaoController implements Initializable {
   *************************************************************** */
   private void resetarVisual() {
     for (int i = 1; i <= Constantes.NUM_LEITORES; i++) {
-      aplicarEstadoLeitorGUI(i, EstadoThread.OCIOSO);
-      aplicarEstadoEscritorGUI(i, EstadoThread.OCIOSO);
+      aplicarEstadoLeitorGUI(i, "OCIOSO");
+      aplicarEstadoEscritorGUI(i, "OCIOSO");
       btnsPausaLeitor[i].setText("Pausar");
       btnsPausaEscritor[i].setText("Pausar");
     }
@@ -359,27 +383,21 @@ public class SimulacaoController implements Initializable {
 
   /* ***************************************************************
   * Metodo: togglePausaLeitor
-  * Funcao: Alterna o estado de pausa de um leitor especifico.
-  *         Se pausado, retoma; se rodando, pausa. Atualiza o
-  *         texto do botao correspondente e registra no log.
+  * Funcao: Alterna o estado de pausa de um leitor especifico via
+  *         LeitoresEscritores. Se pausado, retoma; se rodando,
+  *         pausa. Atualiza o texto do botao e registra no log.
   * Parametros: id - id do leitor a alternar
   * Retorno: void
   *************************************************************** */
   private void togglePausaLeitor(int id) {
-    ThreadLeitor t = leitores[id];
-
-    if (t == null) {
-      return;
-    }
-
-    if (t.isPausado()) {
-      t.retomar();
+    if (le.isPausado(id)) {
+      le.retomarLeitor(id);
       btnsPausaLeitor[id].setText("Pausar");
 
       log("Editor " + id + " retomado.");
     } 
     else {
-      t.pausar();
+      le.pausarLeitor(id);
       btnsPausaLeitor[id].setText("Retomar");
 
       log("Editor " + id + " pausado.");
@@ -395,27 +413,21 @@ public class SimulacaoController implements Initializable {
 
   /* ***************************************************************
   * Metodo: togglePausaEscritor
-  * Funcao: Alterna o estado de pausa de um escritor especifico.
-  *         Se pausado, retoma; se rodando, pausa. Atualiza o
-  *         texto do botao correspondente e registra no log.
+  * Funcao: Alterna o estado de pausa de um escritor especifico via
+  *         LeitoresEscritores. Se pausado, retoma; se rodando,
+  *         pausa. Atualiza o texto do botao e registra no log.
   * Parametros: id - id do escritor a alternar
   * Retorno: void
   *************************************************************** */
   private void togglePausaEscritor(int id) {
-    ThreadEscritor t = escritores[id];
-
-    if (t == null) {
-      return;
-    }
-
-    if (t.isPausado()) {
-      t.retomar();
+    if (le.isPausado(id)) {
+      le.retomarEscritor(id);
       btnsPausaEscritor[id].setText("Pausar");
     
       log("Reporter " + id + " retomado.");
     } 
     else {
-      t.pausar();
+      le.pausarEscritor(id);
       btnsPausaEscritor[id].setText("Retomar");
     
       log("Reporter " + id + " pausado.");
@@ -423,55 +435,76 @@ public class SimulacaoController implements Initializable {
   } // Fim do metodo togglePausaEscritor
 
   /* ***************************************************************
-  * Metodo: atualizarLeitor
-  * Funcao: Atualiza os componentes visuais de um leitor conforme
-  *         seu novo estado. Tambem atualiza o conteudo da base e
-  *         a imagem do jornal quando o leitor entra na regiao critica.
-  *         Deve ser chamado dentro de Platform.runLater.
-  * Parametros: id     - id do leitor
-  *             estado - novo EstadoThread notificado pela thread
+  * Metodo: atualizarLeitorAguardando
+  * Funcao: Atualiza a GUI quando o leitor de id informado entra no
+  *         estado AGUARDANDO (esperando acesso a base de dados).
+  * Parametros: id - id do leitor
   * Retorno: void
   *************************************************************** */
-  private void atualizarLeitor(int id, EstadoThread estado) {
-    aplicarEstadoLeitorGUI(id, estado);
+  private void atualizarLeitorAguardando(int id) {
+    aplicarEstadoLeitorGUI(id, "AGUARDANDO");
+  } // Fim do metodo atualizarLeitorAguardando
 
-    if (estado == EstadoThread.ATIVO) {
-      lblConteudoBase.setText(base.leBaseDeDados());
-      imgJornal.setImage(imgJornalAberto);
+  /* ***************************************************************
+  * Metodo: atualizarLeitorLendo
+  * Funcao: Atualiza a GUI quando o leitor de id informado entra na
+  *         regiao critica (lendo a base de dados). Atualiza tambem
+  *         o conteudo exibido, a imagem do jornal e o contador de
+  *         leitores ativos.
+  * Parametros: id - id do leitor
+  * Retorno: void
+  *************************************************************** */
+  private void atualizarLeitorLendo(int id) {
+    aplicarEstadoLeitorGUI(id, "ATIVO");
 
-      log("Editor " + id + " entrou na base (leitura).");
-    } 
-    else if (estado == EstadoThread.OCIOSO) {
-      if (base.getNumLeitores() == 0) {
-        imgJornal.setImage(imgJornalFechado);
-      }
+    lblConteudoBase.setText(le.getConteudo());
+    imgJornal.setImage(imgJornalAberto);
+    lblLeitoresAtivos.setText("Editores lendo: " + le.getLeitoresAtivos());
+
+    log("Editor " + id + " entrou na base (leitura).");
+  } // Fim do metodo atualizarLeitorLendo
+
+  /* ***************************************************************
+  * Metodo: atualizarLeitorOcioso
+  * Funcao: Atualiza a GUI quando o leitor de id informado volta ao
+  *         estado OCIOSO (utilizando o dado lido). Fecha a imagem
+  *         do jornal apenas quando nao houver mais leitores ativos.
+  * Parametros: id - id do leitor
+  * Retorno: void
+  *************************************************************** */
+  private void atualizarLeitorOcioso(int id) {
+    aplicarEstadoLeitorGUI(id, "OCIOSO");
+
+    if (le.getLeitoresAtivos() == 0) {
+      imgJornal.setImage(imgJornalFechado);
     }
 
-    lblLeitoresAtivos.setText("Editores lendo: " + base.getNumLeitores());
-  } // Fim do metodo atualizarLeitor
+    lblLeitoresAtivos.setText("Editores lendo: " + le.getLeitoresAtivos());
+  } // Fim do metodo atualizarLeitorOcioso
 
   /* ***************************************************************
   * Metodo: aplicarEstadoLeitorGUI
   * Funcao: Troca a imagem do personagem, o texto e estilo do label
   *         de estado e a borda do card do leitor de acordo com o
-  *         EstadoThread recebido.
+  *         nome do estado informado.
   * Parametros: id     - id do leitor
-  *             estado - EstadoThread a aplicar visualmente
+  *             estado - nome do estado a aplicar (ATIVO, AGUARDANDO,
+  *                      PAUSADO ou OCIOSO)
   * Retorno: void
   *************************************************************** */
-  private void aplicarEstadoLeitorGUI(int id, EstadoThread estado) {
+  private void aplicarEstadoLeitorGUI(int id, String estado) {
     switch (estado) {
-      case ATIVO:
+      case "ATIVO":
         imgLeitores[id].setImage(imgsCacheLeitores[IDX_ATIVO]);
         setEstado(lblEstadoLeitores[id], "Lendo manchete", "estado-ativo");
         setCardStyle(imgLeitores[id], "card-ativo");
         break;
-      case AGUARDANDO:
+      case "AGUARDANDO":
         imgLeitores[id].setImage(imgsCacheLeitores[IDX_AGUARDANDO]);
         setEstado(lblEstadoLeitores[id], "Aguardando acesso", "estado-aguardando");
         setCardStyle(imgLeitores[id], "card-aguardando");
         break;
-      case PAUSADO:
+      case "PAUSADO":
         imgLeitores[id].setImage(imgsCacheLeitores[IDX_PAUSADO]);
         setEstado(lblEstadoLeitores[id], "Pausado", "estado-pausado");
         setCardStyle(imgLeitores[id], "card-pausado");
@@ -485,52 +518,60 @@ public class SimulacaoController implements Initializable {
   } // Fim do metodo aplicarEstadoLeitorGUI
 
   /* ***************************************************************
-  * Metodo: atualizarEscritor
-  * Funcao: Atualiza os componentes visuais de um escritor conforme
-  *         seu novo estado. Tambem atualiza o conteudo da base, o
-  *         numero da edicao e a imagem do jornal quando o escritor
-  *         esta na regiao critica. Deve ser chamado em runLater.
-  * Parametros: id     - id do escritor
-  *             estado - novo EstadoThread notificado pela thread
+  * Metodo: atualizarEscritorEscrevendo
+  * Funcao: Atualiza a GUI quando o escritor de id informado entra
+  *         na regiao critica (publicando a materia). Atualiza
+  *         tambem o conteudo exibido, o numero da edicao e a
+  *         imagem do jornal.
+  * Parametros: id - id do escritor
   * Retorno: void
   *************************************************************** */
-  private void atualizarEscritor(int id, EstadoThread estado) {
-    aplicarEstadoEscritorGUI(id, estado);
+  private void atualizarEscritorEscrevendo(int id) {
+    aplicarEstadoEscritorGUI(id, "ATIVO");
 
-    if (estado == EstadoThread.ATIVO) {
-      lblConteudoBase.setText(base.leBaseDeDados());
-      lblEdicao.setText("Edicao n. " + base.getEdicao());
-      imgJornal.setImage(imgJornalAberto);
-      
-      log("Reporter " + id + " publicou - Edicao " + base.getEdicao());
-    } 
-    else if (estado == EstadoThread.OCIOSO) {
-      imgJornal.setImage(imgJornalFechado);
-    }
-  } // Fim do metodo atualizarEscritor
+    lblConteudoBase.setText(le.getConteudo());
+    lblEdicao.setText("Edicao n. " + le.getEdicao());
+    imgJornal.setImage(imgJornalAberto);
+
+    log("Reporter " + id + " publicou - Edicao " + le.getEdicao());
+  } // Fim do metodo atualizarEscritorEscrevendo
+
+  /* ***************************************************************
+  * Metodo: atualizarEscritorOcioso
+  * Funcao: Atualiza a GUI quando o escritor de id informado volta
+  *         ao estado OCIOSO (apurando a proxima pauta). Fecha a
+  *         imagem do jornal.
+  * Parametros: id - id do escritor
+  * Retorno: void
+  *************************************************************** */
+  private void atualizarEscritorOcioso(int id) {
+    aplicarEstadoEscritorGUI(id, "OCIOSO");
+    imgJornal.setImage(imgJornalFechado);
+  } // Fim do metodo atualizarEscritorOcioso
 
   /* ***************************************************************
   * Metodo: aplicarEstadoEscritorGUI
   * Funcao: Troca a imagem do personagem, o texto e estilo do label
-  *         de estado e a borda do card do escritor de acordo com o
-  *         EstadoThread recebido.
+  *         de estado e a borda do card do escritor de acordo com
+  *         o nome do estado informado.
   * Parametros: id     - id do escritor
-  *             estado - EstadoThread a aplicar visualmente
+  *             estado - nome do estado a aplicar (ATIVO, AGUARDANDO,
+  *                      PAUSADO ou OCIOSO)
   * Retorno: void
   *************************************************************** */
-  private void aplicarEstadoEscritorGUI(int id, EstadoThread estado) {
+  private void aplicarEstadoEscritorGUI(int id, String estado) {
     switch (estado) {
-      case ATIVO:
+      case "ATIVO":
         imgEscritores[id].setImage(imgsCacheEscritores[IDX_ATIVO]);
         setEstado(lblEstadoEscritores[id], "Publicando materia", "estado-ativo");
         setCardStyle(imgEscritores[id], "card-ativo");
         break;
-      case AGUARDANDO:
+      case "AGUARDANDO":
         imgEscritores[id].setImage(imgsCacheEscritores[IDX_AGUARDANDO]);
         setEstado(lblEstadoEscritores[id], "Aguardando acesso", "estado-aguardando");
         setCardStyle(imgEscritores[id], "card-aguardando");
         break;
-      case PAUSADO:
+      case "PAUSADO":
         imgEscritores[id].setImage(imgsCacheEscritores[IDX_PAUSADO]);
         setEstado(lblEstadoEscritores[id], "Pausado", "estado-pausado");
         setCardStyle(imgEscritores[id], "card-pausado");
