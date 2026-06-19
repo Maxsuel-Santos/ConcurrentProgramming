@@ -390,7 +390,7 @@ public class SimulacaoController implements Initializable {
   * Retorno: void
   *************************************************************** */
   private void togglePausaLeitor(int id) {
-    if (le.isPausado(id)) {
+    if (le.isPausadoLeitor(id)) {
       le.retomarLeitor(id);
       btnsPausaLeitor[id].setText("Pausar");
 
@@ -420,7 +420,7 @@ public class SimulacaoController implements Initializable {
   * Retorno: void
   *************************************************************** */
   private void togglePausaEscritor(int id) {
-    if (le.isPausado(id)) {
+    if (le.isPausadoEscritor(id)) {
       le.retomarEscritor(id);
       btnsPausaEscritor[id].setText("Pausar");
     

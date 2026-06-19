@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 08/06/2026
-* Ultima alteracao.: 16/06/2026
+* Ultima alteracao.: 18/06/2026
 * Nome.............: LeitoresEscritores.java
 * Funcao...........: Implementa o protocolo classico de
 *                    Leitores/Escritores conforme Tanenbaum,
@@ -41,9 +41,12 @@ public class LeitoresEscritores {
   private final long[] velEscrita = new long[6];
 
   // Flags de pausa individuais por id (indice 0 ignorado)
-  private final boolean[] pausado = new boolean[6];
+  // Arrays separados para leitores e escritores evitam que o leitor N e o escritor N compartilhem o mesmo indice e se pausem mutuamente
+  private final boolean[] pausadoLeitor = new boolean[6];
+  private final boolean[] pausadoEscritor = new boolean[6];
 
-  private final Semaphore[] portaoPausa = new Semaphore[6];
+  private final Semaphore[] portaoPausaLeitor = new Semaphore[6];
+  private final Semaphore[] portaoPausaEscritor = new Semaphore[6];
 
   // Pautas disponiveis para os reporters
   private static final String[] PAUTAS = {
@@ -79,8 +82,9 @@ public class LeitoresEscritores {
   *************************************************************** */
   public LeitoresEscritores() {
     for (int i = 1; i <= 5; i++) {
-      portaoPausa[i] = new Semaphore(1);
-      velLeitura[i] = 1500;
+      portaoPausaLeitor[i] = new Semaphore(1);
+      portaoPausaEscritor[i] = new Semaphore(1);
+      velLeitura[i]  = 1500;
       velUtilizacao[i] = 1500;
       velObtencao[i] = 2000;
       velEscrita[i] = 2000;
@@ -222,16 +226,22 @@ public class LeitoresEscritores {
   * Retorno: void
   *************************************************************** */
   private void verificarPausa(int id, boolean ehLeitor) throws InterruptedException {
-    if (pausado[id]) {
-      if (ehLeitor) {
+    if (ehLeitor) {
+      if (pausadoLeitor[id]) {
         onLeitorPausado.accept(id);
-      } else {
+      }
+
+      portaoPausaLeitor[id].acquire();
+      portaoPausaLeitor[id].release();
+    } 
+    else {
+      if (pausadoEscritor[id]) {
         onEscritorPausado.accept(id);
       }
-    }
 
-    portaoPausa[id].acquire();
-    portaoPausa[id].release();
+      portaoPausaEscritor[id].acquire();
+      portaoPausaEscritor[id].release();
+    }
   } // Fim do metodo verificarPausa
 
   /* ***************************************************************
@@ -245,60 +255,76 @@ public class LeitoresEscritores {
   * Retorno: void
   *************************************************************** */
   public void pausarLeitor(int id) {
-    if (!pausado[id]) {
-      pausado[id] = true;
-      portaoPausa[id].tryAcquire();
+    if (!pausadoLeitor[id]) {
+      pausadoLeitor[id] = true;
+      portaoPausaLeitor[id].tryAcquire();
     }
   } // Fim do metodo pausarLeitor
 
   /* ***************************************************************
   * Metodo: retomarLeitor
   * Funcao: Remove a pausa do leitor de id informado, reabrindo o
-  *         portao de pausa (release) e liberando a thread bloqueada
-  *         em verificarPausa. So reabre o portao se ele estiver
-  *         de fato fechado, evitando acumular permits acima de 1.
+  *         portao de pausa e liberando a thread bloqueada em
+  *         verificarPausa. So reabre se o portao estiver fechado.
   * Parametros: id - id do leitor a retomar
   * Retorno: void
   *************************************************************** */
   public void retomarLeitor(int id) {
-    if (pausado[id]) {
-      pausado[id] = false;
-      portaoPausa[id].release();
+    if (pausadoLeitor[id]) {
+      pausadoLeitor[id] = false;
+      portaoPausaLeitor[id].release();
     }
   } // Fim do metodo retomarLeitor
 
   /* ***************************************************************
   * Metodo: pausarEscritor
-  * Funcao: Sinaliza o escritor de id informado para pausar.
-  *         Usa o mesmo array pausado, pois ids de leitores e
-  *         escritores sao tratados separadamente pelo controller.
+  * Funcao: Sinaliza o escritor de id informado para pausar, fechando
+  *         seu portao de pausa exclusivo. Nao interfere com o leitor
+  *         de mesmo id.
   * Parametros: id - id do escritor a pausar
   * Retorno: void
   *************************************************************** */
   public void pausarEscritor(int id) {
-    pausarLeitor(id);
+    if (!pausadoEscritor[id]) {
+      pausadoEscritor[id] = true;
+      portaoPausaEscritor[id].tryAcquire();
+    }
   } // Fim do metodo pausarEscritor
 
   /* ***************************************************************
   * Metodo: retomarEscritor
-  * Funcao: Remove a pausa do escritor de id informado e reabre o
-  *         portao correspondente
+  * Funcao: Remove a pausa do escritor de id informado, reabrindo
+  *         seu portao de pausa exclusivo. Nao interfere com o
+  *         leitor de mesmo id.
   * Parametros: id - id do escritor a retomar
   * Retorno: void
   *************************************************************** */
   public void retomarEscritor(int id) {
-    retomarLeitor(id);
+    if (pausadoEscritor[id]) {
+      pausadoEscritor[id] = false;
+      portaoPausaEscritor[id].release();
+    }
   } // Fim do metodo retomarEscritor
 
   /* ***************************************************************
-  * Metodo: isPausado
-  * Funcao: Informa se a thread de id informado esta pausada
-  * Parametros: id - id da thread a consultar
-  * Retorno: boolean true se pausada, false caso contrario
+  * Metodo: isPausadoLeitor
+  * Funcao: Informa se o leitor de id informado esta pausado
+  * Parametros: id - id do leitor a consultar
+  * Retorno: boolean true se pausado, false caso contrario
   *************************************************************** */
-  public boolean isPausado(int id) {
-    return pausado[id];
-  } // Fim do metodo isPausado
+  public boolean isPausadoLeitor(int id) {
+    return pausadoLeitor[id];
+  } // Fim do metodo isPausadoLeitor
+
+  /* ***************************************************************
+  * Metodo: isPausadoEscritor
+  * Funcao: Informa se o escritor de id informado esta pausado
+  * Parametros: id - id do escritor a consultar
+  * Retorno: boolean true se pausado, false caso contrario
+  *************************************************************** */
+  public boolean isPausadoEscritor(int id) {
+    return pausadoEscritor[id];
+  } // Fim do metodo isPausadoEscritor
 
   /* ***************************************************************
   * Metodo: getConteudo
@@ -375,13 +401,36 @@ public class LeitoresEscritores {
   } // Fim do metodo setVelEscrita
 
   // SETTERS DE CALLBACKS
-  public void setOnLeitorAguardando(IntConsumer cb) { onLeitorAguardando = cb; }
-  public void setOnLeitorLendo(IntConsumer cb) { onLeitorLendo = cb; }
-  public void setOnLeitorOcioso(IntConsumer cb) { onLeitorOcioso = cb; }
-  public void setOnLeitorPausado(IntConsumer cb) { onLeitorPausado = cb; }
-  public void setOnEscritorAguardando(IntConsumer cb) { onEscritorAguardando = cb; }
-  public void setOnEscritorEscrevendo(IntConsumer cb) { onEscritorEscrevendo = cb; }
-  public void setOnEscritorOcioso(IntConsumer cb) { onEscritorOcioso = cb; }
-  public void setOnEscritorPausado(IntConsumer cb) { onEscritorPausado = cb; }
+  public void setOnLeitorAguardando(IntConsumer cb) { 
+    onLeitorAguardando = cb; 
+  }
+
+  public void setOnLeitorLendo(IntConsumer cb) { 
+    onLeitorLendo = cb; 
+  }
+
+  public void setOnLeitorOcioso(IntConsumer cb) { 
+    onLeitorOcioso = cb;
+   }
+
+  public void setOnLeitorPausado(IntConsumer cb) { 
+    onLeitorPausado = cb; 
+  }
+
+  public void setOnEscritorAguardando(IntConsumer cb) { 
+    onEscritorAguardando = cb; 
+  }
+
+  public void setOnEscritorEscrevendo(IntConsumer cb) { 
+    onEscritorEscrevendo = cb; 
+  }
+
+  public void setOnEscritorOcioso(IntConsumer cb) { 
+    onEscritorOcioso = cb; 
+  }
+
+  public void setOnEscritorPausado(IntConsumer cb) { 
+    onEscritorPausado = cb; 
+  }
 
 } // Fim da classe LeitoresEscritores
