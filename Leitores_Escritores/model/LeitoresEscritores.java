@@ -181,7 +181,7 @@ public class LeitoresEscritores {
 
         // obtemDado() - reporter apura a materia
         onEscritorOcioso.accept(id);
-        Thread.sleep(velObtencao[id]);      //simula tempo de apuracao da pauta
+        Thread.sleep(velObtencao[id]);      // simula tempo de apuracao da pauta
 
         String novaMateria = "Reporter " + id + ": " + PAUTAS[pautaIdx % PAUTAS.length];
         pautaIdx++;
@@ -197,7 +197,7 @@ public class LeitoresEscritores {
         onEscritorEscrevendo.accept(id);
         edicao++;
         conteudo = "[ Edicao " + edicao + " ] " + novaMateria;
-        Thread.sleep(velEscrita[id]);       //escreveBaseDeDados() - simula escrita
+        Thread.sleep(velEscrita[id]);       // escreveBaseDeDados() - simula escrita
         // --- FIM DA REGIAO CRITICA ---
 
         // --- SAIDA DO ESCRITOR ---

@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 10/06/2026
-* Ultima alteracao.: 17/06/2026
+* Ultima alteracao.: 19/06/2026
 * Nome.............: SimulacaoController.java
 * Funcao...........: Controller JavaFX da tela de simulacao. Gerencia
 *                    o ciclo de vida das threads leitoras e escritoras
@@ -48,8 +48,8 @@ public class SimulacaoController implements Initializable {
 
   // Base de Dados
   @FXML private ImageView imgJornal;
-  @FXML private Label     lblConteudoBase;
-  @FXML private Button    btnReset;
+  @FXML private Label lblConteudoBase;
+  @FXML private Button btnReset;
 
   // LEITORES (Editores)
   @FXML private ImageView imgLeitor1;
