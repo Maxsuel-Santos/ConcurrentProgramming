@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="490.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ControllerBarbearia">
+   <children>
+      <ImageView fx:id="imgBarbearia" fitHeight="700.0" fitWidth="900.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/Barbearia.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgBarbeiro" fitHeight="218.0" fitWidth="191.0" layoutX="275.0" layoutY="217.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/Dormindo.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

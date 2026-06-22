@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.ControllerMenu"
+      spacing="18" alignment="CENTER"
+      style="-fx-background-color: #1a1a2e; -fx-padding: 24;"
+      prefWidth="300">
+
+    <!-- Título -->
+    <Label text="Painel de Controle"
+           style="-fx-text-fill: #e0e0e0; -fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <Separator style="-fx-background-color: #444;"/>
+
+    <!-- ── Velocidade Barbeiro ── -->
+    <VBox spacing="6" alignment="CENTER_LEFT">
+        <Label text="✂  Velocidade do Barbeiro"
+               style="-fx-text-fill: #aaaaaa; -fx-font-size: 12px;"/>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Slider fx:id="sliderBarbeiro" min="0.5" max="5.0" value="1.0"
+                    blockIncrement="0.5" showTickLabels="true" showTickMarks="true"
+                    majorTickUnit="1" minorTickCount="1"
+                    HBox.hgrow="ALWAYS" prefWidth="200"/>
+            <Label fx:id="labelVelBarbeiro" text="1.0x"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 13px;" minWidth="40"/>
+        </HBox>
+    </VBox>
+
+    <!-- ── Velocidade Clientes ── -->
+    <VBox spacing="6" alignment="CENTER_LEFT">
+        <Label text="🧍 Velocidade dos Clientes"
+               style="-fx-text-fill: #aaaaaa; -fx-font-size: 12px;"/>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Slider fx:id="sliderClientes" min="0.5" max="5.0" value="1.0"
+                    blockIncrement="0.5" showTickLabels="true" showTickMarks="true"
+                    majorTickUnit="1" minorTickCount="1"
+                    HBox.hgrow="ALWAYS" prefWidth="200"/>
+            <Label fx:id="labelVelClientes" text="1.0x"
+                   style="-fx-text-fill: #ffffff; -fx-font-size: 13px;" minWidth="40"/>
+        </HBox>
+    </VBox>
+
+    <Separator style="-fx-background-color: #444;"/>
+
+    <!-- ── Pausas individuais ── -->
+    <Label text="⏯  Controle de Pausa"
+           style="-fx-text-fill: #aaaaaa; -fx-font-size: 12px;"/>
+
+    <Button fx:id="btnPausaBarbeiro" text="⏸ Pausar Barbeiro"
+            onAction="#onPausaBarbeiro"
+            maxWidth="Infinity"
+            style="-fx-background-color: #2d6a4f; -fx-text-fill: white;
+                   -fx-font-size: 13px; -fx-padding: 8 16; -fx-cursor: hand;"/>
+
+    <Button fx:id="btnPausaClientes" text="⏸ Pausar Clientes"
+            onAction="#onPausaClientes"
+            maxWidth="Infinity"
+            style="-fx-background-color: #2d6a4f; -fx-text-fill: white;
+                   -fx-font-size: 13px; -fx-padding: 8 16; -fx-cursor: hand;"/>
+
+    <Separator style="-fx-background-color: #444;"/>
+
+    <!-- ── Reset ── -->
+    <Button fx:id="btnReset" text="🔄 Reiniciar Simulação"
+            onAction="#onReset"
+            maxWidth="Infinity"
+            style="-fx-background-color: #c1121f; -fx-text-fill: white;
+                   -fx-font-size: 13px; -fx-font-weight: bold;
+                   -fx-padding: 10 16; -fx-cursor: hand;"/>
+
+</VBox>
