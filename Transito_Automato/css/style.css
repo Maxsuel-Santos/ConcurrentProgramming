@@ -1,0 +1,66 @@
+/* *********************************************************************
+* Autor............: Maxsuel Aparecido Lima Santos
+* Matricula........: 202511587
+* Inicio...........: 22/06/2026
+* Ultima alteracao.: 22/06/2026
+* Nome.............: style.css
+* Funcao...........: Estilizacao completa da aplicacao Jantar dos Filosofos.
+************************************************************************ */
+
+.root {
+    -fx-background-color: black;
+}
+
+.btn-start {
+    -fx-background-color: transparent;
+    -fx-background-image: url("../img/start.png");
+    -fx-background-size: 100% 100%;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-opacity: 0.96;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(0,0,0,0.8),
+        18,
+        0.35,
+        0,
+        5
+    );
+}
+
+.btn-start:hover {
+    -fx-scale-x: 1.06;
+    -fx-scale-y: 1.06;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(255,180,0,0.9),
+        35,
+        0.45,
+        0,
+        0
+    );
+
+    -fx-opacity: 1.0;
+}
+
+.btn-start:pressed {
+    -fx-scale-x: 0.96;
+    -fx-scale-y: 0.96;
+    -fx-translate-y: 3;
+
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(0,0,0,0.9),
+        12,
+        0.25,
+        0,
+        2
+    );
+}
