@@ -73,17 +73,22 @@ public class Constantes {
 
     // -----------------------------------------------------------------
     // Sequencia de trechos (arestas RHxx/RVxx) que compoem o ciclo de
-    // cada percurso. A ordem abaixo percorre o ciclo sempre no MESMO
-    // sentido de referencia (sentido horario na tela); o sentido real
-    // de cada carro (SA/SH) e aplicado depois, em tempo de execucao,
-    // percorrendo esta mesma lista de forma direta (SH) ou invertida
-    // (SA). Ver model.Percurso.
+    // cada percurso.
+    //
+    // ATENCAO - dois formatos coexistem nesta etapa do trabalho:
+    // - CARRO_1_TRECHOS: JA' esta' na ORDEM REAL de deslocamento
+    //   (sentido SA validado geometricamente). model.Percurso NAO deve
+    //   inverter esta lista.
+    // - CARRO_2_TRECHOS .. CARRO_8_TRECHOS: ainda estao na ordem de
+    //   REFERENCIA (sentido horario na tela); serao atualizados para o
+    //   mesmo formato do Carro 1 conforme cada carro for implementado.
+    //   Por ora nao sao usados (Simulacao.fxml so' tem o Carro 1).
     // -----------------------------------------------------------------
     public static final String[] CARRO_1_TRECHOS = {
-        "RH01","RH02","RH03","RH04","RH05",
-        "RV30","RV29","RV28","RV27","RV26",
-        "RH30","RH29","RH28","RH27","RH26",
-        "RV01","RV02","RV03","RV04","RV05"
+        "RV05","RV04","RV03","RV02","RV01",
+        "RH26","RH27","RH28","RH29","RH30",
+        "RV26","RV27","RV28","RV29","RV30",
+        "RH05","RH04","RH03","RH02","RH01"
     };
 
     public static final String[] CARRO_2_TRECHOS = {

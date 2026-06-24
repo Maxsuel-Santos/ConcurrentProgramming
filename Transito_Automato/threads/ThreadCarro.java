@@ -35,7 +35,7 @@ import model.Vertice;
 public class ThreadCarro extends Thread {
 
     private final Carro carro;
-    private final Consumer<Carro> aoMover; // callback p/ a UI redesenhar o carro a cada passo
+    private final Consumer<Carro> aoMover; // callback: avisa a UI que ha' um novo trecho (origem->destino) para animar
     private Semaphore semaforoOcupadoAtualmente = null;
 
     public ThreadCarro(Carro carro, Consumer<Carro> aoMover) {
@@ -108,9 +108,13 @@ public class ThreadCarro extends Thread {
 
     /* ***************************************************************
     * Metodo: moverParaVertice
-    * Funcao: Atualiza a posicao logica do carro para o vertice destino
-    *         e notifica a UI (via callback) para que ela anime o
-    *         deslocamento na tela.
+    * Funcao: Atualiza a posicao LOGICA do carro para o vertice destino
+    *         (origem/destino do trecho, usados para a interpolacao) e
+    *         notifica a UI via callback. A ThreadCarro NAO anima nada
+    *         na tela - ela so' marca onde o carro estava e onde deve
+    *         chegar; quem desenha a transicao suave entre esses dois
+    *         pontos, ao longo da duracao de getTempoPassoMs(), e' o
+    *         Controller (unico lugar que pode tocar em nodos JavaFX).
     * Parametros: @param destino vertice de chegada do trecho atual
     * Retorno: sem retorno
     *************************************************************** */
