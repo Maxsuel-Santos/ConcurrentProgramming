@@ -45,12 +45,19 @@
     
       <Button fx:id="btnPauseCar8" layoutX="1204.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
       <Button fx:id="btnShowRouteCar8" layoutX="1146.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+
       <ImageView fx:id="quadraCarro1" fitHeight="786.0" fitWidth="723.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../img/P05_SA.png" />
          </image>
       </ImageView>
       
+
+      <ImageView fx:id="quadraCarro2" fitHeight="786.0" fitWidth="723.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/P03_SA.png" />
+         </image>
+      </ImageView>
 
       <Button fx:id="btnReset" layoutX="1213.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="62.0" styleClass="btn-reset-simulation" />
 
@@ -59,5 +66,6 @@
             <Image url="@../img/carro1.png" />
          </image>
       </ImageView>
+
    </children>
 </AnchorPane>
