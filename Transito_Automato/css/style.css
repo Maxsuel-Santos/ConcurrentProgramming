@@ -116,3 +116,23 @@
 .btn-show-route-car {
     -fx-background-image: url("../img/routon_button.png");
 }
+
+.btn-reset-simulation {
+    -fx-background-color: transparent;
+    -fx-background-image: url("../img/reset_button.png");
+    -fx-background-size: 100% 100%;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-opacity: 0.96;
+}
+
+.btn-reset-simulation:hover {
+    -fx-scale-x: 1.06;
+    -fx-scale-y: 1.06;
+    -fx-opacity: 1.0;
+}

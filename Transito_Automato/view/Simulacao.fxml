@@ -85,5 +85,13 @@
             <Image url="@../img/P23_SA.png" />
          </image>
       </ImageView>
+
+      <Button fx:id="btnReset" layoutX="1213.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="61.0" styleClass="btn-reset-simulation" text="RESET" />
+
+      <ImageView fx:id="imgCarro1" fitHeight="40.0" fitWidth="40.0" pickOnBounds="false" preserveRatio="true">
+         <image>
+            <Image url="@../img/carro1.png" />
+         </image>
+      </ImageView>
    </children>
 </AnchorPane>
