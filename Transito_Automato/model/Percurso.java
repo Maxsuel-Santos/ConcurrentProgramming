@@ -10,7 +10,7 @@
 *                    Constantes.CARRO_x_TRECHOS pode vir em dois formatos:
 *                    - JA' na ordem real de deslocamento (ordemJaResolvida
 *                      = true): a lista e' usada exatamente como esta',
-*                      sem nenhuma inversao. E' o caso do Carro 1.
+*                      sem nenhuma inversao. E' o caso dos Carros 1 e 2.
 *                    - Na ordem de referencia / sentido horario na tela
 *                      (ordemJaResolvida = false): se o sentido do carro
 *                      for Anti-Horario (SA), a ordem e' invertida antes

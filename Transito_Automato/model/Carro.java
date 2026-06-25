@@ -35,6 +35,7 @@ public class Carro {
 
     private final int numero;            // 1..8
     private final Percurso percurso;
+    private final int indiceCicloInicial; // ponto de partida do ciclo (usado pelo RESET)
 
     private volatile int indiceCicloAtual = 0;   // posicao (indice da aresta) dentro do ciclo
 
@@ -60,11 +61,37 @@ public class Carro {
 
     private final Object travaPausa = new Object();
 
+    /* ***************************************************************
+    * Construtor: Carro (inicio no comeco do ciclo)
+    * Funcao: Cria o carro posicionado no vertice de indice 0 do seu
+    *         Percurso (comportamento padrao - usado quando o carro
+    *         comeca do primeiro trecho da lista, ex: Carro 1).
+    *************************************************************** */
     public Carro(int numero, Percurso percurso) {
+        this(numero, percurso, 0);
+    }
+
+    /* ***************************************************************
+    * Construtor: Carro (inicio em ponto especifico do ciclo)
+    * Funcao: Cria o carro ja' posicionado no vertice correspondente ao
+    *         indice informado dentro do ciclo do seu Percurso, em vez
+    *         de sempre comecar do primeiro trecho da lista. Usado, por
+    *         exemplo, quando o discente decide que um carro deve
+    *         "nascer" no meio do seu proprio percurso (ex: Carro 2
+    *         comecando no trecho RV18 em vez do primeiro RV05 da
+    *         lista).
+    * Parametros: @param numero numero do carro (1..8)
+    *             @param percurso ciclo fechado que o carro vai seguir
+    *             @param indiceCicloInicial posicao inicial dentro do
+    *             ciclo (0 = primeiro trecho da lista de Constantes)
+    *************************************************************** */
+    public Carro(int numero, Percurso percurso, int indiceCicloInicial) {
         this.numero = numero;
         this.percurso = percurso;
+        this.indiceCicloInicial = indiceCicloInicial % percurso.getQuantidadeTrechos();
+        this.indiceCicloAtual = this.indiceCicloInicial;
 
-        Vertice inicio = percurso.getVertice(0);
+        Vertice inicio = percurso.getVertice(this.indiceCicloAtual);
         this.xOrigem = inicio.getX();
         this.yOrigem = inicio.getY();
         this.xAtual = inicio.getX();
@@ -311,8 +338,8 @@ public class Carro {
     * Retorno: sem retorno
     *************************************************************** */
     public void reiniciar() {
-        indiceCicloAtual = 0;
-        Vertice inicio = percurso.getVertice(0);
+        indiceCicloAtual = indiceCicloInicial;
+        Vertice inicio = percurso.getVertice(indiceCicloAtual);
         xOrigem = inicio.getX();
         yOrigem = inicio.getY();
         xAtual = inicio.getX();
