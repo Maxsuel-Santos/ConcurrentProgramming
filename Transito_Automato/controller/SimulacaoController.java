@@ -2,36 +2,70 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 23/06/2026
-* Ultima alteracao.: 23/06/2026
+* Ultima alteracao.: 24/06/2026
 * Nome.............: SimulacaoController.java
-* Funcao...........: Controller da tela (fxml) Simulacao. Monta o Grid,
-*                    o GerenciadorSemaforos, os 8 Percursos e os 8
-*                    Carros, e dispara uma ThreadCarro para cada um.
-*                    Liga os controles individuais (slider de
-*                    velocidade, botao de pausa/retomada e botao de
-*                    exibicao da quadra) aos respectivos Carros, e
-*                    implementa o RESET geral da simulacao.
+* Funcao...........: Controller da tela (fxml) Simulacao.
 *
-*                    Estimativa de geometria: cada imagem de quadra
-*                    (P05_SA.png, P03_SA.png, ...) tem 723x786 pixels e
-*                    representa uma malha logica de 6x6 vertices (5x5
-*                    quadras). MARGEM_X/MARGEM_Y definem a borda da
-*                    imagem onde a malha realmente comeca/termina; ajuste
-*                    esses dois valores se os carros nao baterem
-*                    exatamente com o desenho das ruas.
+*                    ETAPA ATUAL: Carro 1 (P05_SA) e Carro 2 (P03_SA)
+*                    estao implementados de fato, incluindo os 17
+*                    trechos compartilhados entre eles (regioes
+*                    criticas/semaforos). Os sliders e botoes dos
+*                    Carros 3 a 8 ja existem na FXML (paineis visuais
+*                    completos) mas ainda nao tem Carro/Thread por tras
+*                    - por isso ficam desabilitados, so' para nao travar
+*                    a aplicacao com erro de referencia nula. Conforme
+*                    cada carro for migrado para o novo formato de
+*                    Constantes (ordem de trechos ja' na sequencia real
+*                    de movimento), basta adiciona-lo ao array
+*                    DEFINICOES (e mapear seus campos @FXML em
+*                    montarSlots()) - todo o resto (animacao, rotacao,
+*                    pausa, velocidade, exibicao de quadra, RESET) e'
+*                    generico e funciona automaticamente para qualquer
+*                    carro presente na lista.
+*
+*                    Geometria do percurso (REPOSICIONAR AQUI): cada
+*                    carro tem sua PROPRIA imagem de fundo (quadra), e
+*                    cada imagem pode ter sua propria malha calibrada
+*                    independentemente (MARGEM_X/MARGEM_Y/LARGURA_
+*                    IMAGEM/ALTURA_IMAGEM dentro de cada DefinicaoCarro,
+*                    mais abaixo). Ajuste os 4 valores do carro
+*                    correspondente para alinhar o sprite ao desenho das
+*                    ruas daquela quadra especifica.
+*
+*                    Posicionamento no ciclo: Constantes.
+*                    CARRO_INDICE_CICLO_INICIAL define em qual trecho de
+*                    CARRO_x_TRECHOS cada carro comeca a se mover (0 =
+*                    primeiro trecho da lista). O Carro 2, por exemplo,
+*                    comeca no trecho RV18 (indice 16), nao no primeiro
+*                    RV05 da lista.
+*
+*                    Animacao: o movimento entre dois cruzamentos e'
+*                    interpolado de forma LINEAR e continua por uma
+*                    Timeline (em vez do carro "pular" instantaneamente
+*                    de ponto a ponto). A mesma Timeline tambem gira o
+*                    sprite (ImageView.setRotate) para a direcao do
+*                    deslocamento, simulando o carro "virando" nas
+*                    curvas. Ver animarMovimento().
 ************************************************************************ */
 
 package controller;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 
 import model.Carro;
 import model.Grid;
@@ -42,45 +76,91 @@ import util.GerenciadorSemaforos;
 
 public class SimulacaoController implements Initializable {
 
-    // ----------------------------------------------------------------
-    // Geometria estimada da malha dentro de cada imagem 723x786.
-    // Ajuste estes 4 valores para alinhar os carros ao desenho das
-    // ruas nas imagens reais.
-    // ----------------------------------------------------------------
-    private static final double MARGEM_X = 60.0;
-    private static final double MARGEM_Y = 60.0;
-    private static final double LARGURA_IMAGEM = 723.0;
-    private static final double ALTURA_IMAGEM = 786.0;
+    /* ***************************************************************
+    * Classe interna: DefinicaoCarro
+    * Funcao: Agrupa, para um unico carro, tudo que e' fixo/conhecido
+    *         de antemao: numero, geometria da malha dentro da SUA
+    *         imagem de quadra, e o ajuste de angulo do seu sprite.
+    *         Existe uma instancia por carro ATIVO nesta etapa (ver
+    *         array DEFINICOES, mais abaixo).
+    *************************************************************** */
+    private static class DefinicaoCarro {
+        final int numero; // 1..8
+
+        // >>> REPOSICIONAMENTO DO PERCURSO (ajuste aqui) <<<
+        // Geometria estimada da malha dentro da imagem de quadra deste
+        // carro especifico. A malha logica e' sempre 6x6 vertices
+        // (Constantes.N_VERTICES), igualmente espacados dentro do
+        // retangulo definido por estes 4 valores.
+        //   - margemX / margemY: deslocam toda a malha para a direita/
+        //     baixo (aumente para mover a malha para dentro da imagem;
+        //     diminua para mover para fora/cima-esquerda).
+        //   - larguraImagem / alturaImagem: tamanho real da regiao onde
+        //     a malha se encaixa; mudar isso afeta o espacamento entre
+        //     os vertices.
+        final double margemX;
+        final double margemY;
+        final double larguraImagem;
+        final double alturaImagem;
+
+        // >>> CALIBRACAO DA ROTACAO DO SPRITE (ajuste aqui) <<<
+        // Carro.getAnguloAtual() devolve 0 graus quando o carro esta'
+        // andando para a DIREITA (eixo X positivo), 90 para BAIXO,
+        // 180/-180 para a ESQUERDA e -90/270 para CIMA (convencao de
+        // ImageView.setRotate()). Se a imagem carroN.png foi desenhada
+        // apontando para a direita, deixe este valor em 0. Se foi
+        // desenhada apontando para CIMA (comum em sprites vistos de
+        // cima, estilo GTA), use 90. Ajuste em incrementos de 90 ate' o
+        // carro virar para o lado certo em cada trecho da pista.
+        final double ajusteAnguloSprite;
+
+        DefinicaoCarro(int numero, double margemX, double margemY,
+                       double larguraImagem, double alturaImagem,
+                       double ajusteAnguloSprite) {
+            this.numero = numero;
+            this.margemX = margemX;
+            this.margemY = margemY;
+            this.larguraImagem = larguraImagem;
+            this.alturaImagem = alturaImagem;
+            this.ajusteAnguloSprite = ajusteAnguloSprite;
+        }
+    }
+
+    // ==================================================================
+    // >>> CARROS ATIVOS NESTA ETAPA (adicione novos carros aqui) <<<
+    // Cada carro listado aqui tera' Carro/Thread/animacao reais
+    // criados em iniciarSimulacao(). Os campos @FXML correspondentes
+    // (quadraCarroN, imgCarroN, sliderCarroN, btnPauseCarN,
+    // btnShowRouteCarN) precisam existir na Simulacao.fxml.
+    // ==================================================================
+    private static final DefinicaoCarro[] DEFINICOES = {
+        // numero, margemX, margemY, larguraImagem, alturaImagem, ajusteAnguloSprite
+        new DefinicaoCarro(1, 22.0, 13.0, 767.0, 710.0, 90.0),
+        new DefinicaoCarro(2, 20.0, 13.0, 767.0, 710.0, 90.0),
+    };
 
     // ----------------------------------------------------------------
-    // Injecoes FXML: quadras (pista de cada percurso)
+    // Injecoes FXML - Carro 1
     // ----------------------------------------------------------------
     @FXML private ImageView quadraCarro1;
-    @FXML private ImageView quadraCarro2;
-    @FXML private ImageView quadraCarro3;
-    @FXML private ImageView quadraCarro4;
-    @FXML private ImageView quadraCarro5;
-    @FXML private ImageView quadraCarro6;
-    @FXML private ImageView quadraCarro7;
-    @FXML private ImageView quadraCarro8;
-
-    // ----------------------------------------------------------------
-    // Injecoes FXML: sprites dos carros
-    // ----------------------------------------------------------------
     @FXML private ImageView imgCarro1;
-    @FXML private ImageView imgCarro2;
-    @FXML private ImageView imgCarro3;
-    @FXML private ImageView imgCarro4;
-    @FXML private ImageView imgCarro5;
-    @FXML private ImageView imgCarro6;
-    @FXML private ImageView imgCarro7;
-    @FXML private ImageView imgCarro8;
+    @FXML private Slider sliderCarro1;
+    @FXML private Button btnPauseCar1;
+    @FXML private Button btnShowRouteCar1;
 
     // ----------------------------------------------------------------
-    // Injecoes FXML: sliders de velocidade
+    // Injecoes FXML - Carro 2
     // ----------------------------------------------------------------
-    @FXML private Slider sliderCarro1;
+    @FXML private ImageView quadraCarro2;
+    @FXML private ImageView imgCarro2;
     @FXML private Slider sliderCarro2;
+    @FXML private Button btnPauseCar2;
+    @FXML private Button btnShowRouteCar2;
+
+    // ----------------------------------------------------------------
+    // Injecoes FXML - Carros 3 a 8 (paineis ja' existem na tela, mas
+    // ainda sem Carro/Thread correspondente; ficam desabilitados)
+    // ----------------------------------------------------------------
     @FXML private Slider sliderCarro3;
     @FXML private Slider sliderCarro4;
     @FXML private Slider sliderCarro5;
@@ -88,11 +168,6 @@ public class SimulacaoController implements Initializable {
     @FXML private Slider sliderCarro7;
     @FXML private Slider sliderCarro8;
 
-    // ----------------------------------------------------------------
-    // Injecoes FXML: botoes de pausa/retomada
-    // ----------------------------------------------------------------
-    @FXML private Button btnPauseCar1;
-    @FXML private Button btnPauseCar2;
     @FXML private Button btnPauseCar3;
     @FXML private Button btnPauseCar4;
     @FXML private Button btnPauseCar5;
@@ -100,11 +175,6 @@ public class SimulacaoController implements Initializable {
     @FXML private Button btnPauseCar7;
     @FXML private Button btnPauseCar8;
 
-    // ----------------------------------------------------------------
-    // Injecoes FXML: botoes de exibicao da quadra
-    // ----------------------------------------------------------------
-    @FXML private Button btnShowRouteCar1;
-    @FXML private Button btnShowRouteCar2;
     @FXML private Button btnShowRouteCar3;
     @FXML private Button btnShowRouteCar4;
     @FXML private Button btnShowRouteCar5;
@@ -114,189 +184,326 @@ public class SimulacaoController implements Initializable {
 
     @FXML private Button btnReset;
 
+    /* ***************************************************************
+    * Classe interna: SlotCarro
+    * Funcao: Agrupa, em tempo de execucao, o Carro/ThreadCarro/Timeline
+    *         de UM carro ativo, junto com as referencias aos seus nodos
+    *         JavaFX (sprite, quadra, slider, botoes) e a DefinicaoCarro
+    *         correspondente. E' a unidade que iniciarSimulacao() cria
+    *         para cada entrada de DEFINICOES, e que os metodos
+    *         genericos de animacao/controle abaixo manipulam.
+    *************************************************************** */
+    private static class SlotCarro {
+        final DefinicaoCarro definicao;
+        final ImageView quadra;
+        final ImageView sprite;
+        final Slider slider;
+        final Button btnPause;
+        final Button btnShowRoute;
+
+        Carro carro;
+        ThreadCarro thread;
+        Timeline animacao;
+
+        SlotCarro(DefinicaoCarro definicao, ImageView quadra, ImageView sprite,
+                  Slider slider, Button btnPause, Button btnShowRoute) {
+            this.definicao = definicao;
+            this.quadra = quadra;
+            this.sprite = sprite;
+            this.slider = slider;
+            this.btnPause = btnPause;
+            this.btnShowRoute = btnShowRoute;
+        }
+    }
+
     // ----------------------------------------------------------------
-    // Estado da simulacao (recriado inteiramente a cada RESET)
+    // Estado da simulacao (recriado a cada RESET)
     // ----------------------------------------------------------------
     private GerenciadorSemaforos gerenciadorSemaforos;
-    private Grid grid;
-    private Carro[] carros;          // indice 0..7 = carro 1..8
-    private ThreadCarro[] threads;   // indice 0..7 = carro 1..8
-
-    private ImageView[] imgsQuadra;
-    private ImageView[] imgsCarro;
-    private Slider[] sliders;
-    private Button[] btnsPause;
-    private Button[] btnsShowRoute;
+    private List<SlotCarro> slots;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        agruparReferenciasFXML();
-        ligarBotoesEControles();
+        montarSlots();
+        ligarControlesDosCarrosAtivos();
+        desabilitarControlesDosCarrosInativos();
+        ligarBotaoReset();
         iniciarSimulacao();
     }
 
     /* ***************************************************************
-    * Metodo: agruparReferenciasFXML
-    * Funcao: Organiza as 8 referencias individuais injetadas pelo FXML
-    *         em arrays, para que o restante do codigo possa iterar
-    *         de 0 a 7 em vez de repetir 8 blocos quase identicos.
+    * Metodo: montarSlots
+    * Funcao: Cria um SlotCarro para cada DefinicaoCarro em DEFINICOES,
+    *         associando-o aos campos @FXML correspondentes ao numero
+    *         do carro (quadraCarroN, imgCarroN, sliderCarroN, etc).
     * Parametros: nenhum
     * Retorno: sem retorno
     *************************************************************** */
-    private void agruparReferenciasFXML() {
-        imgsQuadra = new ImageView[] {
-            quadraCarro1, quadraCarro2, quadraCarro3, quadraCarro4,
-            quadraCarro5, quadraCarro6, quadraCarro7, quadraCarro8
-        };
-        imgsCarro = new ImageView[] {
-            imgCarro1, imgCarro2, imgCarro3, imgCarro4,
-            imgCarro5, imgCarro6, imgCarro7, imgCarro8
-        };
-        sliders = new Slider[] {
-            sliderCarro1, sliderCarro2, sliderCarro3, sliderCarro4,
-            sliderCarro5, sliderCarro6, sliderCarro7, sliderCarro8
-        };
-        btnsPause = new Button[] {
-            btnPauseCar1, btnPauseCar2, btnPauseCar3, btnPauseCar4,
-            btnPauseCar5, btnPauseCar6, btnPauseCar7, btnPauseCar8
-        };
-        btnsShowRoute = new Button[] {
-            btnShowRouteCar1, btnShowRouteCar2, btnShowRouteCar3, btnShowRouteCar4,
-            btnShowRouteCar5, btnShowRouteCar6, btnShowRouteCar7, btnShowRouteCar8
-        };
+    private void montarSlots() {
+        slots = new ArrayList<>();
+
+        for (DefinicaoCarro def : DEFINICOES) {
+            ImageView quadra;
+            ImageView sprite;
+            Slider slider;
+            Button btnPause;
+            Button btnShowRoute;
+
+            switch (def.numero) {
+                case 1:
+                    quadra = quadraCarro1;
+                    sprite = imgCarro1;
+                    slider = sliderCarro1;
+                    btnPause = btnPauseCar1;
+                    btnShowRoute = btnShowRouteCar1;
+                    break;
+                case 2:
+                    quadra = quadraCarro2;
+                    sprite = imgCarro2;
+                    slider = sliderCarro2;
+                    btnPause = btnPauseCar2;
+                    btnShowRoute = btnShowRouteCar2;
+                    break;
+                default:
+                    throw new IllegalStateException(
+                        "Carro " + def.numero + " esta em DEFINICOES mas nao tem "
+                        + "campos @FXML mapeados em montarSlots() - adicione um "
+                        + "novo 'case' quando esse carro for implementado."
+                    );
+            }
+
+            slots.add(new SlotCarro(def, quadra, sprite, slider, btnPause, btnShowRoute));
+        }
     }
 
     /* ***************************************************************
     * Metodo: iniciarSimulacao
-    * Funcao: Monta o Grid, o GerenciadorSemaforos, os 8 Percursos e os
-    *         8 Carros a partir das Constantes, posiciona os sprites na
-    *         tela e dispara as 8 ThreadCarro.
+    * Funcao: Monta o GerenciadorSemaforos (uma unica vez, compartilhado
+    *         por todos os carros) e, para cada SlotCarro, monta o seu
+    *         proprio Grid (com a geometria especifica daquele carro),
+    *         o Percurso a partir das Constantes, o Carro (iniciando no
+    *         indice de ciclo configurado) e a respectiva ThreadCarro.
     * Parametros: nenhum
     * Retorno: sem retorno
     *************************************************************** */
     private void iniciarSimulacao() {
         gerenciadorSemaforos = new GerenciadorSemaforos();
 
-        double tamanhoQuadraX = (LARGURA_IMAGEM - 2 * MARGEM_X) / Constantes.TAMANHO_MALHA;
-        double tamanhoQuadraY = (ALTURA_IMAGEM - 2 * MARGEM_Y) / Constantes.TAMANHO_MALHA;
-        // usamos a media para manter os vertices em um grid uniforme mesmo
-        // que a imagem nao seja perfeitamente quadrada
-        double tamanhoQuadra = (tamanhoQuadraX + tamanhoQuadraY) / 2.0;
+        for (SlotCarro slot : slots) {
+            int idx = slot.definicao.numero - 1; // indice 0-based nos arrays de Constantes
 
-        grid = new Grid(gerenciadorSemaforos, MARGEM_X, MARGEM_Y, tamanhoQuadra);
+            double tamanhoQuadraX = (slot.definicao.larguraImagem - 2 * slot.definicao.margemX)
+                / Constantes.TAMANHO_MALHA;
+            double tamanhoQuadraY = (slot.definicao.alturaImagem - 2 * slot.definicao.margemY)
+                / Constantes.TAMANHO_MALHA;
+            double tamanhoQuadra = (tamanhoQuadraX + tamanhoQuadraY) / 2.0;
 
-        carros = new Carro[Constantes.N_CARROS];
-        threads = new ThreadCarro[Constantes.N_CARROS];
-
-        for (int i = 0; i < Constantes.N_CARROS; i++) {
-            int numeroCarro = i + 1;
-
-            Percurso percurso = new Percurso(
-                grid,
-                Constantes.CARRO_PERCURSO_NOME[i],
-                Constantes.CARRO_SENTIDO[i],
-                Constantes.CARRO_TRECHOS[i]
+            // Cada carro tem sua propria imagem de fundo, logo seu
+            // proprio Grid (mesma malha logica 6x6, mas calibrada para
+            // a geometria daquela imagem especifica).
+            Grid gridDoCarro = new Grid(
+                gerenciadorSemaforos,
+                slot.definicao.margemX,
+                slot.definicao.margemY,
+                tamanhoQuadra
             );
 
-            Carro carro = new Carro(numeroCarro, percurso);
-            carros[i] = carro;
+            // CARRO_x_TRECHOS ja' esta' na ordem real de deslocamento
+            // (sentido SA/SH validado geometricamente) - por isso
+            // usamos o construtor de Percurso que NAO faz inversao.
+            Percurso percurso = new Percurso(
+                gridDoCarro,
+                Constantes.CARRO_PERCURSO_NOME[idx],
+                Constantes.CARRO_SENTIDO[idx],
+                Constantes.CARRO_TRECHOS[idx]
+            );
 
-            posicionarSpriteInicial(i, carro);
+            int indiceInicial = Constantes.CARRO_INDICE_CICLO_INICIAL[idx];
 
-            ThreadCarro threadCarro = new ThreadCarro(carro, this::atualizarPosicaoNaTela);
-            threads[i] = threadCarro;
-            threadCarro.start();
+            slot.carro = new Carro(slot.definicao.numero, percurso, indiceInicial);
+
+            posicionarSpriteInicial(slot);
+
+            slot.thread = new ThreadCarro(slot.carro, c -> atualizarPosicaoNaTela(slot));
+            slot.thread.start();
         }
     }
 
     /* ***************************************************************
     * Metodo: atualizarPosicaoNaTela
-    * Funcao: Callback chamado pela ThreadCarro a cada passo. Como o
-    *         JavaFX so' permite atualizar nodos da cena pela JavaFX
-    *         Application Thread, o reposicionamento e' delegado a
-    *         Platform.runLater.
-    * Parametros: @param carro carro que se moveu
+    * Funcao: Callback chamado pela ThreadCarro do slot a cada passo,
+    *         assim que ela decide o PROXIMO trecho (origem/destino ja'
+    *         definidos no Carro). Dispara a animacao linear
+    *         correspondente na JavaFX Application Thread.
+    * Parametros: @param slot slot do carro que vai se mover agora
     * Retorno: sem retorno
     *************************************************************** */
-    private void atualizarPosicaoNaTela(Carro carro) {
-        Platform.runLater(() -> {
-            int indice = carro.getNumero() - 1;
-            ImageView sprite = imgsCarro[indice];
-            // centraliza o sprite no ponto (x,y) do vertice atual
-            sprite.setLayoutX(carro.getXAtual() - sprite.getFitWidth() / 2.0);
-            sprite.setLayoutY(carro.getYAtual() - sprite.getFitHeight() / 2.0);
-        });
-    }
-
-    private void posicionarSpriteInicial(int indice, Carro carro) {
-        ImageView sprite = imgsCarro[indice];
-        sprite.setLayoutX(carro.getXAtual() - sprite.getFitWidth() / 2.0);
-        sprite.setLayoutY(carro.getYAtual() - sprite.getFitHeight() / 2.0);
+    private void atualizarPosicaoNaTela(SlotCarro slot) {
+        Platform.runLater(() -> animarMovimento(slot));
     }
 
     /* ***************************************************************
-    * Metodo: ligarBotoesEControles
-    * Funcao: Associa cada Slider/Button da tela ao Carro correspondente
-    *         (controles individuais de velocidade, pausa/retomada e
-    *         exibicao da quadra), alem do botao geral de RESET.
+    * Metodo: animarMovimento
+    * Funcao: Cria e dispara uma Timeline que interpola LINEARMENTE a
+    *         posicao do sprite do carro entre o ponto de origem e o de
+    *         destino do trecho atual (em vez de "pular" direto para o
+    *         destino), e gira o sprite (setRotate) para o angulo da
+    *         direcao do movimento - e' isso que faz o carro "virar"
+    *         visualmente nas curvas.
+    *
+    *         Se uma animacao anterior do MESMO carro ainda estiver
+    *         rodando (ex: a velocidade foi alterada bem no limite entre
+    *         dois trechos), ela e' parada antes de iniciar a nova, para
+    *         nao haver duas Timelines concorrendo pelo mesmo sprite.
+    * Parametros: @param slot slot do carro cujo proximo trecho sera'
+    *             animado
+    * Retorno: sem retorno
+    *************************************************************** */
+    private void animarMovimento(SlotCarro slot) {
+        if (slot.animacao != null) {
+            slot.animacao.stop();
+        }
+
+        Carro carro = slot.carro;
+        ImageView sprite = slot.sprite;
+
+        double xOrigem = carro.getXOrigem() - sprite.getFitWidth() / 2.0;
+        double yOrigem = carro.getYOrigem() - sprite.getFitHeight() / 2.0;
+        double xDestino = carro.getXAtual() - sprite.getFitWidth() / 2.0;
+        double yDestino = carro.getYAtual() - sprite.getFitHeight() / 2.0;
+
+        // garante que a animacao comeca exatamente do ponto de partida,
+        // mesmo que o sprite esteja, por qualquer razao, fora de posicao
+        sprite.setLayoutX(xOrigem);
+        sprite.setLayoutY(yOrigem);
+        sprite.setRotate(carro.getAnguloAtual() + slot.definicao.ajusteAnguloSprite);
+
+        Duration duracaoPasso = Duration.millis(carro.getTempoPassoMs());
+
+        KeyValue avancoX = new KeyValue(sprite.layoutXProperty(), xDestino, Interpolator.LINEAR);
+        KeyValue avancoY = new KeyValue(sprite.layoutYProperty(), yDestino, Interpolator.LINEAR);
+
+        KeyFrame quadroFinal = new KeyFrame(duracaoPasso, avancoX, avancoY);
+
+        slot.animacao = new Timeline(quadroFinal);
+        slot.animacao.play();
+    }
+
+    private void posicionarSpriteInicial(SlotCarro slot) {
+        Carro carro = slot.carro;
+        ImageView sprite = slot.sprite;
+
+        sprite.setLayoutX(carro.getXAtual() - sprite.getFitWidth() / 2.0);
+        sprite.setLayoutY(carro.getYAtual() - sprite.getFitHeight() / 2.0);
+        sprite.setRotate(carro.getAnguloAtual() + slot.definicao.ajusteAnguloSprite);
+    }
+
+    /* ***************************************************************
+    * Metodo: ligarControlesDosCarrosAtivos
+    * Funcao: Associa o Slider de velocidade e os botoes de
+    *         pausa/retomada e exibicao da quadra de CADA carro ativo
+    *         (slots) ao respectivo objeto Carro.
     * Parametros: nenhum
     * Retorno: sem retorno
     *************************************************************** */
-    private void ligarBotoesEControles() {
-        for (int i = 0; i < Constantes.N_CARROS; i++) {
-            final int indice = i;
-
-            sliders[i].valueProperty().addListener((obs, antigo, novo) -> {
-                if (carros != null && carros[indice] != null) {
-                    carros[indice].setVelocidade(novo.doubleValue());
+    private void ligarControlesDosCarrosAtivos() {
+        for (SlotCarro slot : slots) {
+            slot.slider.valueProperty().addListener((obs, antigo, novo) -> {
+                if (slot.carro != null) {
+                    slot.carro.setVelocidade(novo.doubleValue());
                 }
             });
 
-            btnsPause[i].setOnAction(evento -> {
-                if (carros != null && carros[indice] != null) {
-                    carros[indice].alternarPausa();
+            slot.btnPause.setOnAction(evento -> {
+                if (slot.carro != null) {
+                    slot.carro.alternarPausa();
                 }
             });
 
-            btnsShowRoute[i].setOnAction(evento -> {
-                if (carros != null && carros[indice] != null) {
-                    carros[indice].alternarVisibilidadeQuadra();
-                    imgsQuadra[indice].setVisible(carros[indice].isQuadraVisivel());
+            slot.btnShowRoute.setOnAction(evento -> {
+                if (slot.carro != null) {
+                    slot.carro.alternarVisibilidadeQuadra();
+                    slot.quadra.setVisible(slot.carro.isQuadraVisivel());
                 }
             });
         }
+    }
 
+    /* ***************************************************************
+    * Metodo: desabilitarControlesDosCarrosInativos
+    * Funcao: Os paineis dos carros que ainda nao estao em DEFINICOES
+    *         ja existem na tela, mas ainda nao tem Carro/Thread por
+    *         tras nesta etapa. Sao desabilitados para deixar a
+    *         interface coerente, sem lancar excecao de referencia nula
+    *         e sem dar a falsa impressao de que ja estao funcionando.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
+    private void desabilitarControlesDosCarrosInativos() {
+        Slider[] sliders = { sliderCarro3, sliderCarro4,
+            sliderCarro5, sliderCarro6, sliderCarro7, sliderCarro8 };
+        Button[] botoesPause = { btnPauseCar3, btnPauseCar4,
+            btnPauseCar5, btnPauseCar6, btnPauseCar7, btnPauseCar8 };
+        Button[] botoesShowRoute = { btnShowRouteCar3, btnShowRouteCar4,
+            btnShowRouteCar5, btnShowRouteCar6, btnShowRouteCar7, btnShowRouteCar8 };
+
+        for (Slider s : sliders) {
+            if (s != null) {
+                s.setDisable(true);
+            }
+        }
+        for (Button b : botoesPause) {
+            if (b != null) {
+                b.setDisable(true);
+            }
+        }
+        for (Button b : botoesShowRoute) {
+            if (b != null) {
+                b.setDisable(true);
+            }
+        }
+    }
+
+    /* ***************************************************************
+    * Metodo: ligarBotaoReset
+    * Funcao: Liga o botao geral de RESET a' rotina de reinicio da
+    *         simulacao.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
+    private void ligarBotaoReset() {
         btnReset.setOnAction(evento -> reiniciarSimulacao());
     }
 
     /* ***************************************************************
     * Metodo: reiniciarSimulacao
-    * Funcao: Implementa o controle RESET: desativa e interrompe todas
-    *         as ThreadCarro em execucao, zera todos os semaforos
-    *         (garantindo que nenhum fique "preso" de uma execucao
-    *         anterior) e recria toda a simulacao do zero.
+    * Funcao: Implementa o controle RESET: desativa e interrompe a
+    *         ThreadCarro de CADA carro ativo, para suas Timelines de
+    *         animacao, zera os semaforos (garantindo que nenhum fique
+    *         "preso" de uma execucao anterior) e recria toda a
+    *         simulacao do zero.
     * Parametros: nenhum
     * Retorno: sem retorno
     *************************************************************** */
     private void reiniciarSimulacao() {
-        if (threads != null) {
-            for (int i = 0; i < threads.length; i++) {
-                if (carros[i] != null) {
-                    carros[i].desativar();
-                }
-                if (threads[i] != null) {
-                    threads[i].interrupt();
-                }
+        for (SlotCarro slot : slots) {
+            if (slot.carro != null) {
+                slot.carro.desativar();
             }
+            if (slot.thread != null) {
+                slot.thread.interrupt();
+            }
+            if (slot.animacao != null) {
+                slot.animacao.stop();
+            }
+
+            slot.quadra.setVisible(true);
+            slot.slider.setValue(Constantes.VELOCIDADE_PADRAO);
+            slot.sprite.setRotate(0);
         }
 
         if (gerenciadorSemaforos != null) {
             gerenciadorSemaforos.reiniciarTodos();
-        }
-
-        for (int i = 0; i < Constantes.N_CARROS; i++) {
-            imgsQuadra[i].setVisible(true);
-            sliders[i].setValue(Constantes.VELOCIDADE_PADRAO);
         }
 
         iniciarSimulacao();

@@ -2,21 +2,29 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 23/06/2026
-* Ultima alteracao.: 23/06/2026
+* Ultima alteracao.: 24/06/2026
 * Nome.............: Carro.java
 * Funcao...........: Representa o estado de um carro na simulacao: seu
 *                    percurso, posicao atual no ciclo, velocidade,
 *                    pausa/retomada e visibilidade da sua quadra. Esta
 *                    classe NAO contem a thread de movimento (essa fica
-*                    em threads.ThreadCarro); aqui ficam apenas os dados
-*                    e os controles individuais exigidos pelo trabalho:
-*                    VELOCIDADE, PAUSA/RETOMADA e EXIBICAO DA QUADRA.
+*                    em threads.ThreadCarro) nem a animacao em si (essa
+*                    fica no Controller, que e' quem pode tocar em nodos
+*                    JavaFX); aqui ficam apenas os dados e os controles
+*                    individuais exigidos pelo trabalho: VELOCIDADE,
+*                    PAUSA/RETOMADA e EXIBICAO DA QUADRA.
 *
-*                    Os campos de posicao (xAtual, yAtual) sao lidos
-*                    pela thread de UI (JavaFX Application Thread) a
-*                    cada frame, por isso sao 'volatile': a ThreadCarro
-*                    escreve, a UI le, sem necessidade de lock pesado
-*                    para um simples valor numerico.
+*                    Para permitir uma animacao LINEAR (em vez de o
+*                    carro "pular" de vertice a vertice), o Carro guarda
+*                    tanto o ponto de PARTIDA (xOrigem,yOrigem) quanto o
+*                    de CHEGADA (xDestino,yDestino) do trecho atual. O
+*                    Controller interpola entre esses dois pontos ao
+*                    longo da duracao do passo (ver getTempoPassoMs()).
+*                    O angulo de rotacao do sprite (para o carro "virar"
+*                    nas curvas) e' calculado a partir dessa mesma
+*                    direcao (origem -> destino), em graus, no sistema
+*                    de coordenadas do JavaFX (0 = direita, sentido
+*                    horario positivo, igual ao usado por Node.setRotate).
 ************************************************************************ */
 
 package model;
@@ -27,10 +35,24 @@ public class Carro {
 
     private final int numero;            // 1..8
     private final Percurso percurso;
+    private final int indiceCicloInicial; // ponto de partida do ciclo (usado pelo RESET)
 
     private volatile int indiceCicloAtual = 0;   // posicao (indice da aresta) dentro do ciclo
+
+    // Ponto de PARTIDA do trecho atual (onde o carro estava antes deste passo)
+    private volatile double xOrigem;
+    private volatile double yOrigem;
+
+    // Ponto de CHEGADA do trecho atual (para onde o carro esta' indo neste passo)
     private volatile double xAtual;
     private volatile double yAtual;
+
+    // Angulo (em graus) da direcao origem -> destino do trecho atual,
+    // pronto para uso direto em ImageView.setRotate(). 0 = apontando
+    // para a direita, 90 = para baixo, 180 = para a esquerda, 270/-90 =
+    // para cima (sistema de coordenadas de tela, eixo Y crescendo para
+    // baixo - igual ao usado pelo JavaFX).
+    private volatile double anguloAtual = 0.0;
 
     private volatile double velocidade = Constantes.VELOCIDADE_PADRAO;
     private volatile boolean pausado = false;
@@ -39,13 +61,43 @@ public class Carro {
 
     private final Object travaPausa = new Object();
 
+    /* ***************************************************************
+    * Construtor: Carro (inicio no comeco do ciclo)
+    * Funcao: Cria o carro posicionado no vertice de indice 0 do seu
+    *         Percurso (comportamento padrao - usado quando o carro
+    *         comeca do primeiro trecho da lista, ex: Carro 1).
+    *************************************************************** */
     public Carro(int numero, Percurso percurso) {
+        this(numero, percurso, 0);
+    }
+
+    /* ***************************************************************
+    * Construtor: Carro (inicio em ponto especifico do ciclo)
+    * Funcao: Cria o carro ja' posicionado no vertice correspondente ao
+    *         indice informado dentro do ciclo do seu Percurso, em vez
+    *         de sempre comecar do primeiro trecho da lista. Usado, por
+    *         exemplo, quando o discente decide que um carro deve
+    *         "nascer" no meio do seu proprio percurso (ex: Carro 2
+    *         comecando no trecho RV18 em vez do primeiro RV05 da
+    *         lista).
+    * Parametros: @param numero numero do carro (1..8)
+    *             @param percurso ciclo fechado que o carro vai seguir
+    *             @param indiceCicloInicial posicao inicial dentro do
+    *             ciclo (0 = primeiro trecho da lista de Constantes)
+    *************************************************************** */
+    public Carro(int numero, Percurso percurso, int indiceCicloInicial) {
         this.numero = numero;
         this.percurso = percurso;
+        this.indiceCicloInicial = indiceCicloInicial % percurso.getQuantidadeTrechos();
+        this.indiceCicloAtual = this.indiceCicloInicial;
 
-        Vertice inicio = percurso.getVertice(0);
+        Vertice inicio = percurso.getVertice(this.indiceCicloAtual);
+        this.xOrigem = inicio.getX();
+        this.yOrigem = inicio.getY();
         this.xAtual = inicio.getX();
         this.yAtual = inicio.getY();
+
+        recalcularAngulo();
     }
 
     public int getNumero() {
@@ -60,6 +112,14 @@ public class Carro {
         return indiceCicloAtual;
     }
 
+    public double getXOrigem() {
+        return xOrigem;
+    }
+
+    public double getYOrigem() {
+        return yOrigem;
+    }
+
     public double getXAtual() {
         return xAtual;
     }
@@ -68,9 +128,53 @@ public class Carro {
         return yAtual;
     }
 
+    public double getAnguloAtual() {
+        return anguloAtual;
+    }
+
+    /* ***************************************************************
+    * Metodo: setPosicaoAtual
+    * Funcao: Define o novo ponto de CHEGADA do carro (destino do
+    *         trecho que ele esta' percorrendo agora). O ponto de
+    *         PARTIDA (xOrigem,yOrigem) e' automaticamente atualizado
+    *         para a posicao de chegada ANTERIOR, antes de sobrescreve-
+    *         la - isso preserva o par (origem,destino) que o Controller
+    *         usa para interpolar a animacao do trecho atual. O angulo
+    *         de direcao e' recalculado a partir desse novo par.
+    * Parametros: @param x coordenada x de chegada (pixel)
+    *             @param y coordenada y de chegada (pixel)
+    * Retorno: sem retorno
+    *************************************************************** */
     public void setPosicaoAtual(double x, double y) {
+        this.xOrigem = this.xAtual;
+        this.yOrigem = this.yAtual;
         this.xAtual = x;
         this.yAtual = y;
+        recalcularAngulo();
+    }
+
+    /* ***************************************************************
+    * Metodo: recalcularAngulo
+    * Funcao: Calcula o angulo (em graus) da direcao xOrigem,yOrigem ->
+    *         xAtual,yAtual, no sistema de coordenadas do JavaFX (Y
+    *         crescendo para baixo), pronto para uso em
+    *         ImageView.setRotate(). Usa Math.atan2, que ja' devolve o
+    *         angulo correto em qualquer um dos 4 quadrantes (incluindo
+    *         os 4 casos retos: direita/baixo/esquerda/cima, que sao os
+    *         unicos que ocorrem nesta malha, pois todo trecho RHxx/RVxx
+    *         e' horizontal ou vertical).
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
+    private void recalcularAngulo() {
+        double dx = xAtual - xOrigem;
+        double dy = yAtual - yOrigem;
+
+        if (dx == 0 && dy == 0) {
+            return; // sem deslocamento (ex: posicao inicial) - mantem angulo anterior
+        }
+
+        anguloAtual = Math.toDegrees(Math.atan2(dy, dx));
     }
 
     /* ***************************************************************
@@ -234,10 +338,13 @@ public class Carro {
     * Retorno: sem retorno
     *************************************************************** */
     public void reiniciar() {
-        indiceCicloAtual = 0;
-        Vertice inicio = percurso.getVertice(0);
+        indiceCicloAtual = indiceCicloInicial;
+        Vertice inicio = percurso.getVertice(indiceCicloAtual);
+        xOrigem = inicio.getX();
+        yOrigem = inicio.getY();
         xAtual = inicio.getX();
         yAtual = inicio.getY();
+        anguloAtual = 0.0;
         velocidade = Constantes.VELOCIDADE_PADRAO;
         pausado = false;
         quadraVisivel = true;

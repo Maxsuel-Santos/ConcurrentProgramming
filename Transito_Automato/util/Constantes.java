@@ -72,26 +72,53 @@ public class Constantes {
     };
 
     // -----------------------------------------------------------------
+    // Indice (dentro da lista CARRO_x_TRECHOS de cada carro) onde o
+    // ciclo do carro comeca a ser percorrido. 0 = comeca no primeiro
+    // trecho da lista (padrao). Usado quando o discente decide
+    // posicionar o carro "nascendo" no meio do proprio percurso, em
+    // vez de no primeiro trecho listado.
+    //
+    // Carro 2 (P03_SA): comeca no trecho RV18 (indice 16 da lista
+    // CARRO_2_TRECHOS), conforme posicionamento definido para a tela.
+    // -----------------------------------------------------------------
+    public static final int[] CARRO_INDICE_CICLO_INICIAL = {
+        0,  // Carro 1
+        16, // Carro 2 - comeca em RV18
+        0,  // Carro 3
+        0,  // Carro 4
+        0,  // Carro 5
+        0,  // Carro 6
+        0,  // Carro 7
+        0   // Carro 8
+    };
+
+    // -----------------------------------------------------------------
     // Sequencia de trechos (arestas RHxx/RVxx) que compoem o ciclo de
-    // cada percurso. A ordem abaixo percorre o ciclo sempre no MESMO
-    // sentido de referencia (sentido horario na tela); o sentido real
-    // de cada carro (SA/SH) e aplicado depois, em tempo de execucao,
-    // percorrendo esta mesma lista de forma direta (SH) ou invertida
-    // (SA). Ver model.Percurso.
+    // cada percurso.
+    //
+    // ATENCAO - dois formatos coexistem nesta etapa do trabalho:
+    // - CARRO_1_TRECHOS e CARRO_2_TRECHOS: JA' estao na ORDEM REAL de
+    //   deslocamento (sentido SA/SH validado geometricamente).
+    //   model.Percurso NAO deve inverter estas listas.
+    // - CARRO_3_TRECHOS .. CARRO_8_TRECHOS: ainda estao na ordem de
+    //   REFERENCIA (sentido horario na tela); serao atualizados para o
+    //   mesmo formato dos Carros 1 e 2 conforme cada carro for
+    //   implementado. Por ora nao sao usados (Simulacao.fxml so' tem
+    //   os Carros 1 e 2).
     // -----------------------------------------------------------------
     public static final String[] CARRO_1_TRECHOS = {
-        "RH01","RH02","RH03","RH04","RH05",
-        "RV30","RV29","RV28","RV27","RV26",
-        "RH30","RH29","RH28","RH27","RH26",
-        "RV01","RV02","RV03","RV04","RV05"
+        "RV05","RV04","RV03","RV02","RV01",
+        "RH26","RH27","RH28","RH29","RH30",
+        "RV26","RV27","RV28","RV29","RV30",
+        "RH05","RH04","RH03","RH02","RH01"
     };
 
     public static final String[] CARRO_2_TRECHOS = {
-        "RH01","RH02","RH03","RH04","RH05",
-        "RV30","RV29","RH15","RH14","RV18",
-        "RH19","RV22","RH25","RV26","RH30",
-        "RH29","RV16","RH23","RV11","RH27",
-        "RH26","RV01","RV02","RV03","RV04","RV05"
+        "RV05","RV04","RV03","RV02","RV01",
+        "RH26","RH27","RV11","RH23","RV16",
+        "RH29","RH30","RV26","RH25","RV22",
+        "RH19","RV18","RH14","RH15","RV29",
+        "RV30","RH05","RH04","RH03","RH02","RH01"
     };
 
     public static final String[] CARRO_3_TRECHOS = {

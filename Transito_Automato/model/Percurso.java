@@ -2,19 +2,20 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 23/06/2026
-* Ultima alteracao.: 23/06/2026
+* Ultima alteracao.: 24/06/2026
 * Nome.............: Percurso.java
 * Funcao...........: Representa o ciclo fechado de um carro: a sequencia
 *                    ORDENADA de Arestas que ele percorre repetidamente.
 *
-*                    Constantes.CARRO_x_TRECHOS guarda cada percurso na
-*                    ordem que percorre o ciclo sempre no mesmo sentido
-*                    de referencia (horario na tela). Aqui resolvemos
-*                    essa lista de nomes para Arestas reais do Grid e,
-*                    se o sentido do carro for Anti-Horario (SA),
-*                    invertemos a ordem - o carro acaba andando, de
-*                    fato, no sentido contrario ao da lista original,
-*                    sem que seja necessario re-listar os trechos.
+*                    Constantes.CARRO_x_TRECHOS pode vir em dois formatos:
+*                    - JA' na ordem real de deslocamento (ordemJaResolvida
+*                      = true): a lista e' usada exatamente como esta',
+*                      sem nenhuma inversao. E' o caso dos Carros 1 e 2.
+*                    - Na ordem de referencia / sentido horario na tela
+*                      (ordemJaResolvida = false): se o sentido do carro
+*                      for Anti-Horario (SA), a ordem e' invertida antes
+*                      de uso. Usado pelos carros que ainda nao tiveram
+*                      sua lista de trechos revalidada no novo formato.
 ************************************************************************ */
 
 package model;
@@ -31,38 +32,93 @@ public class Percurso {
     private final List<Aresta> arestasOrdenadas = new ArrayList<>();
     private final List<Vertice> verticesOrdenados = new ArrayList<>();
 
+    /* ***************************************************************
+    * Construtor: Percurso (ordem ja' resolvida)
+    * Funcao: Usa a lista de trechos exatamente como informada, sem
+    *         qualquer inversao - para percursos cuja ordem real de
+    *         movimento ja' foi validada (ex: Carro 1).
+    *************************************************************** */
     public Percurso(Grid grid, String nomePercurso, String sentido, String[] trechos) {
+        this(grid, nomePercurso, sentido, trechos, true);
+    }
+
+    /* ***************************************************************
+    * Construtor: Percurso (formato legado)
+    * Funcao: Mantido por compatibilidade com os percursos (Carros
+    *         2 a 8) cuja lista de trechos ainda esta' na ordem de
+    *         referencia (sentido horario) e depende da inversao por
+    *         sentido. Sera' descontinuado quando todos os percursos
+    *         migrarem para o formato de ordem ja' resolvida.
+    * Parametros: @param ordemJaResolvida false = aplica a inversao
+    *             legada quando o sentido for Anti-Horario
+    *************************************************************** */
+    public Percurso(Grid grid, String nomePercurso, String sentido, String[] trechos,
+                     boolean ordemJaResolvida) {
         this.nomePercurso = nomePercurso;
         this.sentido = sentido;
 
         montarCicloNaOrdemBase(grid, trechos);
 
-        if (Constantes.SENTIDO_ANTI_HORARIO.equals(sentido)) {
+        if (!ordemJaResolvida && Constantes.SENTIDO_ANTI_HORARIO.equals(sentido)) {
             inverterCiclo();
         }
     }
 
     /* ***************************************************************
+    * Metodo: determinarVerticeInicial
+    * Funcao: Identifica o vertice de partida correto do ciclo: o
+    *         extremo da primeira aresta que NAO e' compartilhado com a
+    *         segunda aresta da lista. Como uma Aresta nao tem direcao
+    *         fixa (origem/destino sao apenas rotulos), nao basta usar
+    *         getOrigem() - isso falharia sempre que a "origem" rotulada
+    *         coincidir com o vertice de CHEGADA do trecho.
+    * Parametros: @param grid malha com as Arestas reais
+    *             @param trechos nomes dos trechos, na ordem do ciclo
+    * Retorno: @return Vertice de partida do ciclo
+    *************************************************************** */
+    private Vertice determinarVerticeInicial(Grid grid, String[] trechos) {
+        Aresta primeira = grid.getAresta(trechos[0]);
+
+        if (trechos.length == 1) {
+            // ciclo degenerado de 1 trecho (nao deveria ocorrer na pratica)
+            return primeira.getOrigem();
+        }
+
+        Aresta segunda = grid.getAresta(trechos[1]);
+
+        Vertice a = primeira.getOrigem();
+        Vertice b = primeira.getDestino();
+
+        boolean aPertenceSegunda = a.equals(segunda.getOrigem()) || a.equals(segunda.getDestino());
+        boolean bPertenceSegunda = b.equals(segunda.getOrigem()) || b.equals(segunda.getDestino());
+
+        if (aPertenceSegunda && !bPertenceSegunda) {
+            return b;
+        }
+        if (bPertenceSegunda && !aPertenceSegunda) {
+            return a;
+        }
+
+        // ambiguo (ambos ou nenhum extremo coincide) - cai para a origem
+        // rotulada como padrao
+        return a;
+    }
+
+    /* ***************************************************************
     * Metodo: montarCicloNaOrdemBase
-    * Funcao: Percorre a lista de nomes de trechos (na ordem de
-    *         referencia, sentido horario) e resolve a sequencia real
-    *         de vertices visitados, validando que cada trecho conecta
-    *         corretamente ao vertice atual.
+    * Funcao: Percorre a lista de nomes de trechos, partindo do vertice
+    *         inicial correto (ver determinarVerticeInicial), e resolve
+    *         a sequencia real de Arestas/Vertices visitados.
     * Parametros: @param grid malha com as Arestas/Vertices reais
-    *             @param trechos nomes dos trechos, na ordem horaria
+    *             @param trechos nomes dos trechos, na ordem de percurso
     * Retorno: sem retorno
     *************************************************************** */
     private void montarCicloNaOrdemBase(Grid grid, String[] trechos) {
-        Vertice atual = null;
+        Vertice atual = determinarVerticeInicial(grid, trechos);
+        verticesOrdenados.add(atual);
 
         for (String nomeTrecho : trechos) {
             Aresta aresta = grid.getAresta(nomeTrecho);
-
-            if (atual == null) {
-                // primeiro trecho do ciclo: define o vertice inicial
-                atual = aresta.getOrigem();
-                verticesOrdenados.add(atual);
-            }
 
             Vertice proximo = aresta.outroExtremo(atual);
 
