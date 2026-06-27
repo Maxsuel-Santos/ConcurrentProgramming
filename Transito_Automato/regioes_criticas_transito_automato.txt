@@ -1,0 +1,133 @@
+REGIÕES CRÍTICAS DO PROBLEMA DE TRÂNSITO AUTÔMATO
+
+-----------------------------------------------------------------------------------------------------------------
+
+CARRO 1 x CARRO 2 
+RC_01: RV29, RV30, RH05, RH04, RH03, RH02, RH01, RV05, RV04, RV03, RV02, RV01, RH26, RH27 -> semaforo1e2RC1
+RC_02: RH29, RH30, RV26 -> semaforo1e2RC2
+
+CARRO 1 x CARRO 3
+RC_03: RV04, RV05, RH01, RH02, RH03, RH04, RH05, RV30, RV29 -> semaforo1e3RC1
+
+CARRO 1 x CARRO 4
+RC_04: RH02, RH01, RV05, RV04, RV03, RV02, RV01, RH26, RH27 -> semaforo1e4RC1
+
+CARRO 1 x CARRO 5
+RC_05: RV28, RV29, RV30, RH05, RH04, RH03 -> semaforo1e5RC1
+
+CARRO 1 x CARRO 6
+RC_06: RV28, RV27, RV26, RH30, RH29, RH28 -> semaforo1e6RC1
+
+CARRO 1 x CARRO 7
+RC_07: RH03 -> semaforo1e7RC1
+RC_08: RV28 -> semaforo1e7RC2
+RC_09: RH28 -> semaforo1e7RC3
+RC_10: RV03 -> semaforo1e7RC4
+
+CARRO 1 x CARRO 8
+RC_11: RH02, RH01, RV05, RV04 -> semaforo1e8RC1
+RC_12: RH29, RH30, RV26, RV27 -> semaforo1e8RC2
+
+-----------------------------------------------------------------------------------------------------------------
+
+CARRO 2 x CARRO 3
+RC_13: RV04, RV05, RH01, RH02, RH03, RH04, RH05, RV30, RV29, RH15, RH14 -> semaforo2e3RC1
+
+CARRO 2 x CARRO 4
+RC_14: RH02, RH01, RV05, RV04, RV03, RV02, RV01, RH26, RH27, RV11 -> semaforo2e4RC1
+
+CARRO 2 x CARRO 5
+RC_15: RH19 -> semaforo2e5RC1
+RC_16: RV29, RV30, RH05, RH04, RH03 -> semaforo2e5RC2
+
+CARRO 2 x CARRO 6
+RC_17: RH14, RH15 -> semaforo2e6RC1
+RC_18: RV26, RH30, RH29 -> semaforo2e6RC2
+RC_19: RV11 -> semaforo2e6RC3
+
+CARRO 2 x CARRO 7
+RC_20: RH03 -> semaforo2e7RC1
+RC_21: RH15 -> semaforo2e7RC2
+RC_22: RV22 -> semaforo2e7RC3
+RC_23: RV16 -> semaforo2e7RC4
+RC_24: RV11 -> semaforo2e7RC5
+RC_25: RV03 -> semaforo2e7RC6
+
+CARRO 2 x CARRO 8
+RC_26: RH02, RH01, RV05, RV04 -> semaforo2e8RC1
+RC_27: RH23, RV16, RH29, RH30, RV26 -> semaforo2e8RC2
+RC_28: RH14 -> semaforo2e8RC3
+
+-----------------------------------------------------------------------------------------------------------------
+
+CARRO 3 x CARRO 4
+RC_29: RH02, RH01, RV05, RV04 -> semaforo3e4RC1
+
+CARRO 3 x CARRO 5
+RC_30: RV29, RV30, RH05, RH04, RH03 -> semaforo3e5RC1
+
+CARRO 3 x CARRO 6
+RC_31: RH15, RH14, RH13 -> semaforo3e6RC1
+
+CARRO 3 x CARRO 7
+RC_32: RH03 -> semaforo3e7RC1
+RC_33: RH15 -> semaforo3e7RC2
+RC_34: RH11 -> semaforo3e7RC3
+
+CARRO 3 x CARRO 8
+RC_35: RH02, RH02, RV05, RV04, RH11 -> semaforo3e8RC1
+RC_36: RH14 -> semaforo3e8RC2
+
+-----------------------------------------------------------------------------------------------------------------
+
+CARRO 4 x CARRO 5
+RC_37: RV15, RV14, RV13
+
+CARRO 4 x CARRO 6
+RC_38: RV11, RV12, RV13
+
+CARRO 4 x CARRO 7
+RC_39: RV03
+RC_40: RV11
+RC_41: RV15
+
+CARRO 4 x CARRO 8
+RC_42: RV04, RV05, RH01, RH02
+RC_43: RV12, RV15
+
+-----------------------------------------------------------------------------------------------------------------
+
+CARRO 5 x CARRO 6
+RC_44: RV13
+RC_45: RV28
+
+CARRO 5 x CARRO 7
+RC_46: RV15, RH20
+RC_47: RH03
+RC_48: RV28
+
+CARRO 5 x CARRO 8
+RC_49: RV15, RH20
+
+-----------------------------------------------------------------------------------------------------------------
+
+CARRO 6 x CARRO 7
+RC_50: RH15
+RC_51: RV28
+RC_52: RH28
+RC_53: RV11
+
+CARRO 6 x CARRO 8
+RC_54: RV26, RV27, RH29, RH30
+RC_55: RV12, RH14
+
+-----------------------------------------------------------------------------------------------------------------
+
+CARRO 7 x CARRO 8
+RC_56: RV15, RH20
+RC_57: RV16, RH11
+
+-----------------------------------------------------------------------------------------------------------------
+
+TOTAL: 57 REGIÕES CRÍTICAS
+TOTAL DE SEMÁFOROS: 57
