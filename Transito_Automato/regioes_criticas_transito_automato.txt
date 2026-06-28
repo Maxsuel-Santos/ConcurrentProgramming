@@ -117,7 +117,7 @@ RC_51: RH28, RV11 -> semaforo6e7RC2
 
 CARRO 6 x CARRO 8
 RC_52: RH14 -> semaforo6e8RC1
-RC_53: RV12 -> semaforo6e8RC1
+RC_53: RV12 -> semaforo6e8RC2
 RC_54: RH29, RH30, RV26, RV27 -> semaforo6e8RC3
 
 -----------------------------------------------------------------------------------------------------------------
