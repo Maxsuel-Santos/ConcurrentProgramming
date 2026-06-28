@@ -81,51 +81,51 @@ RC_36: RH14 -> semaforo3e8RC2
 -----------------------------------------------------------------------------------------------------------------
 
 CARRO 4 x CARRO 5
-RC_37: RV15, RV14, RV13
+RC_37: RV15, RV14, RV13 -> semaforo4e5RC1
 
 CARRO 4 x CARRO 6
-RC_38: RV11, RV12, RV13
+RC_38: RV11, RV12, RV13 -> semaforo4e6RC1
 
 CARRO 4 x CARRO 7
-RC_39: RV03
-RC_40: RV11
-RC_41: RV15
+RC_39: RV03 -> semaforo4e7RC1
+RC_40: RV11 -> semaforo4e7RC2
+RC_41: RV15 -> semaforo4e7RC3
 
 CARRO 4 x CARRO 8
-RC_42: RV04, RV05, RH01, RH02
-RC_43: RV12, RV15
+RC_42: RV15, RH02, RH01, RV05, RV04 -> semaforo4e8RC1
+RC_43: RV12 -> semaforo4e8RC2
 
 -----------------------------------------------------------------------------------------------------------------
 
 CARRO 5 x CARRO 6
-RC_44: RV13
-RC_45: RV28
+RC_44: RV13 -> semaforo5e6RC1
+RC_45: RV28 -> semaforo5e6RC2
 
 CARRO 5 x CARRO 7
-RC_46: RV15, RH20
-RC_47: RH03
-RC_48: RV28
+RC_46: RV15, RH03 -> semaforo5e7RC1
+RC_47: RV28, RH20 -> semaforo5e7RC2
 
 CARRO 5 x CARRO 8
-RC_49: RV15, RH20
+RC_48: RH20 -> semaforo5e8RC1
+RC_49: RV15 -> semaforo5e8RC2
 
 -----------------------------------------------------------------------------------------------------------------
 
 CARRO 6 x CARRO 7
-RC_50: RH15
-RC_51: RV28
-RC_52: RH28
-RC_53: RV11
+RC_50: RH15, RV28 -> semaforo6e7RC1
+RC_51: RH28, RV11 -> semaforo6e7RC2
 
 CARRO 6 x CARRO 8
-RC_54: RV26, RV27, RH29, RH30
-RC_55: RV12, RH14
+RC_52: RH14 -> semaforo6e8RC1
+RC_53: RV12 -> semaforo6e8RC1
+RC_54: RH29, RH30, RV26, RV27 -> semaforo6e8RC3
 
 -----------------------------------------------------------------------------------------------------------------
 
 CARRO 7 x CARRO 8
-RC_56: RV15, RH20
-RC_57: RV16, RH11
+RC_55: RH11 -> semaforo7e8RC1
+RC_56: RV16 -> semaforo7e8RC2
+RC_57: RH20 -> semaforo7e8RC3
 
 -----------------------------------------------------------------------------------------------------------------
 
