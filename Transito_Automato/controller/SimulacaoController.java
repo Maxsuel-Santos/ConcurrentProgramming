@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 23/06/2026
-* Ultima alteracao.: 24/06/2026
+* Ultima alteracao.: 28/06/2026
 * Nome.............: SimulacaoController.java
 * Funcao...........: Controller da tela (fxml) Simulacao.
 *
