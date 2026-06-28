@@ -2,14 +2,18 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 23/06/2026
-* Ultima alteracao.: 23/06/2026
+* Ultima alteracao.: 28/06/2026
 * Nome.............: Grid.java
 * Funcao...........: Monta a malha completa de vertices (cruzamentos) e
 *                    arestas (trechos RHxx/RVxx) da quadra 5x5, a partir
-*                    do mapa de coordenadas definido em Constantes. Cada
-*                    Aresta criada aqui ja vem associada ao seu Semaphore
-*                    (quando o trecho for regiao critica), por meio do
-*                    GerenciadorSemaforos recebido no construtor.
+*                    do mapa de coordenadas definido em Constantes.
+*
+*                    Cada Aresta criada aqui e' apenas geometria (nome +
+*                    extremos) - a informacao de ZONA CRITICA (semaforo)
+*                    fica em model.Percurso, pois um mesmo trecho pode
+*                    ser o INICIO da zona para um carro e o MEIO da zona
+*                    para outro, dependendo de onde cada percurso entra
+*                    naquela regiao.
 *
 *                    Tambem calcula a posicao em pixel de cada vertice,
 *                    para que os Carros (e o Controller) saibam onde
@@ -22,7 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import util.Constantes;
-import util.GerenciadorSemaforos;
 
 public class Grid {
 
@@ -35,15 +38,13 @@ public class Grid {
     private final double origemY;
     private final double tamanhoQuadra;
 
-    public Grid(GerenciadorSemaforos gerenciadorSemaforos,
-                double origemX, double origemY, double tamanhoQuadra) {
-
+    public Grid(double origemX, double origemY, double tamanhoQuadra) {
         this.origemX = origemX;
         this.origemY = origemY;
         this.tamanhoQuadra = tamanhoQuadra;
 
         criarVertices();
-        criarArestas(gerenciadorSemaforos);
+        criarArestas();
     }
 
     /* ***************************************************************
@@ -67,12 +68,11 @@ public class Grid {
     /* ***************************************************************
     * Metodo: criarArestas
     * Funcao: Le o mapa de trechos definido em Constantes e cria uma
-    *         Aresta para cada um, associando o Semaphore correto
-    *         quando o trecho for regiao critica.
-    * Parametros: @param gerenciadorSemaforos fonte dos semaforos
+    *         Aresta (apenas geometria) para cada um.
+    * Parametros: nenhum
     * Retorno: sem retorno
     *************************************************************** */
-    private void criarArestas(GerenciadorSemaforos gerenciadorSemaforos) {
+    private void criarArestas() {
         Map<String, int[][]> mapa = Constantes.montarMapaArestas();
 
         for (Map.Entry<String, int[][]> entrada : mapa.entrySet()) {
@@ -82,14 +82,7 @@ public class Grid {
             Vertice origem = getVertice(pontos[0][0], pontos[0][1]);
             Vertice destino = getVertice(pontos[1][0], pontos[1][1]);
 
-            Aresta aresta = new Aresta(
-                nome,
-                origem,
-                destino,
-                gerenciadorSemaforos.getSemaforo(nome) // null se nao for regiao critica
-            );
-
-            arestas.put(nome, aresta);
+            arestas.put(nome, new Aresta(nome, origem, destino));
         }
     }
 

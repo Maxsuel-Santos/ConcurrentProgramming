@@ -2,18 +2,16 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 21/06/2026
-* Ultima alteracao.: 23/06/2026
+* Ultima alteracao.: 28/06/2026
 * Nome.............: GerenciadorSemaforos.java
-* Funcao...........: Cria e centraliza os Semaphore(1) de cada trecho
-*                    compartilhado da malha (regiao critica). Cada
-*                    trecho RHxx/RVxx que e' usado por 2 ou mais carros
+* Funcao...........: Cria e centraliza os Semaphore(1) de cada REGIAO
+*                    CRITICA da malha, seguindo as 57 RCs descritas em
+*                    regioes_criticas_transito_automato.txt. Cada RC
 *                    ganha exatamente UM semaforo, devolvido sempre pela
-*                    mesma instancia para quem perguntar pelo mesmo
-*                    nome - e' isso que garante exclusao mutua entre os
-*                    carros que disputam aquele pedaco de rua.
+*                    mesma instancia para quem perguntar pelo mesmo nome.
 *
 *                    Tambem oferece reiniciarTodos(), usado pelo RESET,
-*                    para garantir que nenhum carro fique com um
+*                    para garantir que nenhuma zona fique com um
 *                    semaforo "presa" (permits != 1) apos um reinicio.
 ************************************************************************ */
 
@@ -28,25 +26,28 @@ public class GerenciadorSemaforos {
     private final Map<String, Semaphore> semaforos = new LinkedHashMap<>();
 
     public GerenciadorSemaforos() {
-        for (String trecho : Constantes.TRECHOS_COMPARTILHADOS) {
-            // Semaphore(1) = no maximo 1 carro por vez no trecho (exclusao mutua)
-            semaforos.put(trecho, new Semaphore(1, true)); // fair=true: respeita ordem de chegada
+        for (String nomeRegiao : Constantes.NOMES_REGIOES_CRITICAS) {
+            // Semaphore(1) = no maximo 1 carro por vez dentro da RC (exclusao mutua)
+            semaforos.put(nomeRegiao, new Semaphore(1, true)); // fair=true: respeita ordem de chegada
         }
     }
 
     /* ***************************************************************
     * Metodo: getSemaforo
-    * Funcao: Devolve o Semaphore associado a um trecho da malha.
-    * Parametros: @param nomeTrecho nome do trecho (ex: "RH01")
-    * Retorno: @return Semaphore correspondente, ou null se o trecho
-    *          nao for uma regiao critica (uso exclusivo de um carro)
+    * Funcao: Devolve o Semaphore associado a uma regiao critica.
+    * Parametros: @param nomeRegiao nome da RC (ex: "RC_01"), ou null
+    * Retorno: @return Semaphore correspondente, ou null se nomeRegiao for
+    *          null (trecho de uso exclusivo, sem regiao critica)
     *************************************************************** */
-    public Semaphore getSemaforo(String nomeTrecho) {
-        return semaforos.get(nomeTrecho);
+    public Semaphore getSemaforo(String nomeRegiao) {
+        if (nomeRegiao == null) {
+            return null;
+        }
+        return semaforos.get(nomeRegiao);
     }
 
-    public boolean ehRegiaoCritica(String nomeTrecho) {
-        return semaforos.containsKey(nomeTrecho);
+    public boolean ehRegiaoValida(String nomeRegiao) {
+        return nomeRegiao != null && semaforos.containsKey(nomeRegiao);
     }
 
     /* ***************************************************************

@@ -16,8 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import controller.TelaInicialController;
-import controller.SimulacaoController;
+import controller.*;
 
 @SuppressWarnings("unused")
 public class Principal extends Application {

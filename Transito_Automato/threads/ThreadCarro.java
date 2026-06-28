@@ -2,45 +2,52 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 23/06/2026
-* Ultima alteracao.: 23/06/2026
+* Ultima alteracao.: 28/06/2026
 * Nome.............: ThreadCarro.java
 * Funcao...........: Thread responsavel por mover um unico Carro ao
 *                    longo do seu Percurso, em loop infinito, respeitando
 *                    pausa/retomada e velocidade individuais.
 *
-*                    Sincronizacao (regioes criticas): antes de entrar em
-*                    cada trecho (Aresta), a thread tenta adquirir o
-*                    Semaphore daquele trecho (se ele for uma regiao
-*                    critica compartilhada com outro carro). So' libera o
-*                    semaforo do trecho ANTERIOR depois de garantir o do
-*                    trecho atual - isso evita que dois carros fiquem
-*                    "se esperando" em arestas diferentes (livre de
-*                    deadlock, pois cada thread so' tenta adquirir UM
-*                    semaforo novo por vez, nunca dois ao mesmo tempo).
+*                    SINCRONIZACAO POR REGIAO CRITICA: ao se aproximar
+*                    de um trecho que e' ENTRADA de uma ou mais RCs, a
+*                    thread adquire os semaforos dessas RCs ANTES de
+*                    avancar. Ela so' libera cada semaforo ao concluir o
+*                    trecho que e' SAIDA daquela mesma RC. Assim a
+*                    verificacao acontece por regiao critica do arquivo,
+*                    nao por aresta individual.
 *
-*                    Quando o trecho nao e' regiao critica (uso
-*                    exclusivo daquele carro), nao ha' nenhuma espera:
-*                    o carro passa direto.
+*                    Quando o trecho nao pertence a nenhuma zona (uso
+*                    exclusivo daquele carro), nao ha' nenhuma espera: o
+*                    carro passa direto.
 ************************************************************************ */
 
 package threads;
 
 import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import model.Aresta;
 import model.Carro;
+import model.Percurso;
 import model.Vertice;
+import util.GerenciadorSemaforos;
 
 public class ThreadCarro extends Thread {
 
     private final Carro carro;
+    private final Percurso percurso;
+    private final GerenciadorSemaforos gerenciadorSemaforos;
     private final Consumer<Carro> aoMover; // callback: avisa a UI que ha' um novo trecho (origem->destino) para animar
-    private Semaphore semaforoOcupadoAtualmente = null;
 
-    public ThreadCarro(Carro carro, Consumer<Carro> aoMover) {
+    private final Map<String, Semaphore> regioesOcupadasAtualmente = new LinkedHashMap<>();
+
+    public ThreadCarro(Carro carro, GerenciadorSemaforos gerenciadorSemaforos, Consumer<Carro> aoMover) {
         super("ThreadCarro-" + carro.getNumero());
         this.carro = carro;
+        this.percurso = carro.getPercurso();
+        this.gerenciadorSemaforos = gerenciadorSemaforos;
         this.aoMover = aoMover;
         setDaemon(true); // nao impede o encerramento da aplicacao
     }
@@ -50,17 +57,19 @@ public class ThreadCarro extends Thread {
         try {
             while (carro.isAtivo() && !isInterrupted()) {
 
-                Aresta proximaAresta = carro.getProximaAresta();
+                int indiceAtual = carro.getIndiceCicloAtual();
                 Vertice destino = carro.getVerticeDestino();
 
-                entrarNoTrecho(proximaAresta);
+                garantirRegioesDoTrecho(indiceAtual);
 
                 if (!carro.isAtivo()) {
-                    liberarSemaforoAtual();
+                    liberarTodasAsRegioes();
                     break;
                 }
 
                 moverParaVertice(destino);
+
+                liberarRegioesSeForSaida(indiceAtual);
 
                 carro.avancarUmTrecho();
 
@@ -69,41 +78,57 @@ public class ThreadCarro extends Thread {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
-            liberarSemaforoAtual();
+            liberarTodasAsRegioes();
         }
     }
 
     /* ***************************************************************
-    * Metodo: entrarNoTrecho
-    * Funcao: Adquire o semaforo do trecho informado (bloqueando ate'
-    *         que ele esteja livre, se for uma regiao critica ocupada
-    *         por outro carro) e, somente depois de garanti-lo, libera
-    *         o semaforo do trecho anterior. Se o trecho nao for regiao
-    *         critica, nao faz nada (passagem livre).
-    * Parametros: @param aresta trecho que o carro vai percorrer agora
+    * Metodo: garantirRegioesDoTrecho
+    * Funcao: Adquire todos os semaforos das RCs que protegem o indice
+    *         informado, antes de o carro entrar naquele trecho. Isso
+    *         tambem cobre carros que iniciam a simulacao no meio de
+    *         uma RC circular.
+    * Parametros: @param indice posicao atual do carro no ciclo
     * Retorno: sem retorno
     * Excecoes: InterruptedException se a espera for interrompida
     *************************************************************** */
-    private void entrarNoTrecho(Aresta aresta) throws InterruptedException {
-        Semaphore semaforoNovo = aresta.getSemaforo();
+    private void garantirRegioesDoTrecho(int indice) throws InterruptedException {
+        List<String> regioesDoTrecho = percurso.getRegioesDoTrecho(indice);
+        for (String nomeRegiao : regioesDoTrecho) {
+            if (regioesOcupadasAtualmente.containsKey(nomeRegiao)) {
+                continue;
+            }
 
-        if (semaforoNovo != null) {
-            semaforoNovo.acquire(); // aguarda o trecho ficar livre
+            Semaphore semaforo = gerenciadorSemaforos.getSemaforo(nomeRegiao);
+            if (semaforo != null) {
+                semaforo.acquire();
+                regioesOcupadasAtualmente.put(nomeRegiao, semaforo);
+            }
         }
-
-        // so' libera o trecho anterior depois de garantir o novo:
-        // evita um instante em que o carro "solta tudo" e outro
-        // carro avanca para uma posicao que ainda nao deveria estar livre
-        liberarSemaforoAtual();
-
-        semaforoOcupadoAtualmente = semaforoNovo;
     }
 
-    private void liberarSemaforoAtual() {
-        if (semaforoOcupadoAtualmente != null) {
-            semaforoOcupadoAtualmente.release();
-            semaforoOcupadoAtualmente = null;
+    /* ***************************************************************
+    * Metodo: liberarRegioesSeForSaida
+    * Funcao: Libera todos os semaforos das RCs que terminam no indice
+    *         informado.
+    * Parametros: @param indice posicao do trecho que acabou de ser
+    *             concluido
+    * Retorno: sem retorno
+    *************************************************************** */
+    private void liberarRegioesSeForSaida(int indice) {
+        for (String nomeRegiao : percurso.getRegioesSaida(indice)) {
+            Semaphore semaforo = regioesOcupadasAtualmente.remove(nomeRegiao);
+            if (semaforo != null) {
+                semaforo.release();
+            }
         }
+    }
+
+    private void liberarTodasAsRegioes() {
+        for (Semaphore semaforo : regioesOcupadasAtualmente.values()) {
+            semaforo.release();
+        }
+        regioesOcupadasAtualmente.clear();
     }
 
     /* ***************************************************************

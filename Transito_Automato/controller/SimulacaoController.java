@@ -6,22 +6,23 @@
 * Nome.............: SimulacaoController.java
 * Funcao...........: Controller da tela (fxml) Simulacao.
 *
-*                    ETAPA ATUAL: Carro 1 (P05_SA) e Carro 2 (P03_SA)
-*                    estao implementados de fato, incluindo os 17
-*                    trechos compartilhados entre eles (regioes
-*                    criticas/semaforos). Os sliders e botoes dos
-*                    Carros 3 a 8 ja existem na FXML (paineis visuais
-*                    completos) mas ainda nao tem Carro/Thread por tras
-*                    - por isso ficam desabilitados, so' para nao travar
-*                    a aplicacao com erro de referencia nula. Conforme
-*                    cada carro for migrado para o novo formato de
-*                    Constantes (ordem de trechos ja' na sequencia real
-*                    de movimento), basta adiciona-lo ao array
-*                    DEFINICOES (e mapear seus campos @FXML em
-*                    montarSlots()) - todo o resto (animacao, rotacao,
-*                    pausa, velocidade, exibicao de quadra, RESET) e'
-*                    generico e funciona automaticamente para qualquer
-*                    carro presente na lista.
+*                    ETAPA ATUAL: Carro 1 (P05_SA), Carro 2 (P03_SA) e
+*                    Carro 3 (P07_SH) estao implementados de fato,
+*                    incluindo todos os trechos compartilhados entre
+*                    eles (regioes criticas/semaforos). Os sliders e
+*                    botoes dos Carros 4 a 8 ja existem na FXML
+*                    (paineis visuais completos) mas ainda nao tem
+*                    Carro/Thread por tras - por isso ficam
+*                    desabilitados, so' para nao travar a aplicacao com
+*                    erro de referencia nula. Conforme cada carro for
+*                    migrado para o novo formato de Constantes (ordem
+*                    de trechos ja' na sequencia real de movimento),
+*                    basta adiciona-lo ao array DEFINICOES (e mapear
+*                    seus campos @FXML em montarSlots()) - todo o resto
+*                    (animacao, rotacao, pausa, velocidade, exibicao de
+*                    quadra, RESET) e' generico e funciona
+*                    automaticamente para qualquer carro presente na
+*                    lista.
 *
 *                    Geometria do percurso (REPOSICIONAR AQUI): cada
 *                    carro tem sua PROPRIA imagem de fundo (quadra), e
@@ -35,9 +36,18 @@
 *                    Posicionamento no ciclo: Constantes.
 *                    CARRO_INDICE_CICLO_INICIAL define em qual trecho de
 *                    CARRO_x_TRECHOS cada carro comeca a se mover (0 =
-*                    primeiro trecho da lista). O Carro 2, por exemplo,
-*                    comeca no trecho RV18 (indice 16), nao no primeiro
-*                    RV05 da lista.
+*                    primeiro trecho da lista). O Carro 2 comeca no
+*                    trecho RV18 (indice 16); o Carro 3 comeca no
+*                    trecho RH12 (indice 10).
+*
+*                    SINCRONIZACAO: a partir desta versao, as regioes
+*                    criticas sao protegidas por ZONA (sequencia
+*                    contigua de 1+ trechos sempre usada pelo mesmo
+*                    conjunto de carros), nao mais por trecho individual
+*                    - ver util.Constantes (CARRO_x_ZONAS) e
+*                    threads.ThreadCarro. Essa mudanca elimina o
+*                    deadlock que ocorria com 3+ carros se cruzando na
+*                    versao anterior (1 semaforo por trecho).
 *
 *                    Animacao: o movimento entre dois cruzamentos e'
 *                    interpolado de forma LINEAR e continua por uma
@@ -137,6 +147,7 @@ public class SimulacaoController implements Initializable {
         // numero, margemX, margemY, larguraImagem, alturaImagem, ajusteAnguloSprite
         new DefinicaoCarro(1, 22.0, 13.0, 767.0, 710.0, 90.0),
         new DefinicaoCarro(2, 20.0, 13.0, 767.0, 710.0, 90.0),
+        new DefinicaoCarro(3, 20.0, 13.0, 735.0, 735.0, 90.0),
     };
 
     // ----------------------------------------------------------------
@@ -158,24 +169,30 @@ public class SimulacaoController implements Initializable {
     @FXML private Button btnShowRouteCar2;
 
     // ----------------------------------------------------------------
-    // Injecoes FXML - Carros 3 a 8 (paineis ja' existem na tela, mas
+    // Injecoes FXML - Carro 3
+    // ----------------------------------------------------------------
+    @FXML private ImageView quadraCarro3;
+    @FXML private ImageView imgCarro3;
+    @FXML private Slider sliderCarro3;
+    @FXML private Button btnPauseCar3;
+    @FXML private Button btnShowRouteCar3;
+
+    // ----------------------------------------------------------------
+    // Injecoes FXML - Carros 4 a 8 (paineis ja' existem na tela, mas
     // ainda sem Carro/Thread correspondente; ficam desabilitados)
     // ----------------------------------------------------------------
-    @FXML private Slider sliderCarro3;
     @FXML private Slider sliderCarro4;
     @FXML private Slider sliderCarro5;
     @FXML private Slider sliderCarro6;
     @FXML private Slider sliderCarro7;
     @FXML private Slider sliderCarro8;
 
-    @FXML private Button btnPauseCar3;
     @FXML private Button btnPauseCar4;
     @FXML private Button btnPauseCar5;
     @FXML private Button btnPauseCar6;
     @FXML private Button btnPauseCar7;
     @FXML private Button btnPauseCar8;
 
-    @FXML private Button btnShowRouteCar3;
     @FXML private Button btnShowRouteCar4;
     @FXML private Button btnShowRouteCar5;
     @FXML private Button btnShowRouteCar6;
@@ -264,6 +281,13 @@ public class SimulacaoController implements Initializable {
                     btnPause = btnPauseCar2;
                     btnShowRoute = btnShowRouteCar2;
                     break;
+                case 3:
+                    quadra = quadraCarro3;
+                    sprite = imgCarro3;
+                    slider = sliderCarro3;
+                    btnPause = btnPauseCar3;
+                    btnShowRoute = btnShowRouteCar3;
+                    break;
                 default:
                     throw new IllegalStateException(
                         "Carro " + def.numero + " esta em DEFINICOES mas nao tem "
@@ -300,22 +324,26 @@ public class SimulacaoController implements Initializable {
 
             // Cada carro tem sua propria imagem de fundo, logo seu
             // proprio Grid (mesma malha logica 6x6, mas calibrada para
-            // a geometria daquela imagem especifica).
+            // a geometria daquela imagem especifica). O Grid agora e'
+            // so' geometria - nao recebe mais o GerenciadorSemaforos,
+            // pois o semaforo passou a ser por ZONA (ver Percurso),
+            // nao por trecho/Aresta individual.
             Grid gridDoCarro = new Grid(
-                gerenciadorSemaforos,
                 slot.definicao.margemX,
                 slot.definicao.margemY,
                 tamanhoQuadra
             );
 
             // CARRO_x_TRECHOS ja' esta' na ordem real de deslocamento
-            // (sentido SA/SH validado geometricamente) - por isso
-            // usamos o construtor de Percurso que NAO faz inversao.
+            // (sentido SA/SH validado geometricamente). O Percurso usa
+            // o numero do carro para encaixar as 57 RCs do arquivo de
+            // regioes criticas e marcar os pontos de entrada/saida.
             Percurso percurso = new Percurso(
                 gridDoCarro,
                 Constantes.CARRO_PERCURSO_NOME[idx],
                 Constantes.CARRO_SENTIDO[idx],
-                Constantes.CARRO_TRECHOS[idx]
+                Constantes.CARRO_TRECHOS[idx],
+                slot.definicao.numero
             );
 
             int indiceInicial = Constantes.CARRO_INDICE_CICLO_INICIAL[idx];
@@ -324,7 +352,10 @@ public class SimulacaoController implements Initializable {
 
             posicionarSpriteInicial(slot);
 
-            slot.thread = new ThreadCarro(slot.carro, c -> atualizarPosicaoNaTela(slot));
+            // A ThreadCarro agora recebe o GerenciadorSemaforos (unico,
+            // compartilhado por todos os carros) para poder adquirir/
+            // liberar o semaforo da ZONA inteira ao entrar/saiir dela.
+            slot.thread = new ThreadCarro(slot.carro, gerenciadorSemaforos, c -> atualizarPosicaoNaTela(slot));
             slot.thread.start();
         }
     }
@@ -440,11 +471,11 @@ public class SimulacaoController implements Initializable {
     * Retorno: sem retorno
     *************************************************************** */
     private void desabilitarControlesDosCarrosInativos() {
-        Slider[] sliders = { sliderCarro3, sliderCarro4,
+        Slider[] sliders = { sliderCarro4,
             sliderCarro5, sliderCarro6, sliderCarro7, sliderCarro8 };
-        Button[] botoesPause = { btnPauseCar3, btnPauseCar4,
+        Button[] botoesPause = { btnPauseCar4,
             btnPauseCar5, btnPauseCar6, btnPauseCar7, btnPauseCar8 };
-        Button[] botoesShowRoute = { btnShowRouteCar3, btnShowRouteCar4,
+        Button[] botoesShowRoute = { btnShowRouteCar4,
             btnShowRouteCar5, btnShowRouteCar6, btnShowRouteCar7, btnShowRouteCar8 };
 
         for (Slider s : sliders) {

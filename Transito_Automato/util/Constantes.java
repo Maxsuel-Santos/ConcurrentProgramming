@@ -2,13 +2,14 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 21/06/2026
-* Ultima alteracao.: 24/06/2026
+* Ultima alteracao.: 28/06/2026
 * Nome.............: Constantes.java
 * Funcao...........: Centraliza todas as constantes do problema: a malha
 *                    de ruas (6x6 vertices), os 8 percursos sorteados
-*                    (cada um como uma sequencia de trechos RHxx/RVxx) e
-*                    a lista dos trechos compartilhados entre carros, que
-*                    precisarao de semaforo (regiao critica).
+*                    (cada um como uma sequencia de trechos RHxx/RVxx,
+*                    JA' na ordem real de deslocamento) e as ZONAS
+*                    CRITICAS (regioes formadas por um ou mais trechos
+*                    CONSECUTIVOS, protegidas por um unico semaforo).
 *
 *                    Numeracao da malha (ver imagem backbone.png):
 *                    - RH (Rua Horizontal): RH01..RH30. A rua RHxx liga o
@@ -23,6 +24,23 @@
 *                      de baixo (linha 5) para cima (linha 0), e os
 *                      blocos seguem da coluna 0 (esquerda) para a
 *                      coluna 5 (direita).
+*
+*                    HISTORICO - MUDANCA DE GRANULARIDADE DAS REGIOES
+*                    CRITICAS: a primeira versao usava 1 semaforo por
+*                    TRECHO individual (RHxx/RVxx). Isso causava deadlock
+*                    com 3+ carros se cruzando: cada thread fazia varias
+*                    trocas rapidas de semaforo (release/acquire) dentro
+*                    de uma mesma sequencia longa compartilhada, e o
+*                    entrelacamento de 3 threads trocando semaforos finos
+*                    nos mesmos pontos formava esperas circulares.
+*
+*                    SOLUCAO ATUAL: as regioes criticas seguem
+*                    diretamente o arquivo
+*                    regioes_criticas_transito_automato.txt: 57 regioes
+*                    por PAR de carros, cada uma com seu proprio
+*                    Semaphore(1). Cada carro adquire o semaforo da RC
+*                    ao entrar no primeiro trecho daquela regiao, e
+*                    libera ao concluir o ultimo trecho dela.
 ************************************************************************ */
 
 package util;
@@ -80,11 +98,13 @@ public class Constantes {
     //
     // Carro 2 (P03_SA): comeca no trecho RV18 (indice 16 da lista
     // CARRO_2_TRECHOS), conforme posicionamento definido para a tela.
+    // Carro 3 (P07_SH): comeca no trecho RH12 (indice 10 da lista
+    // CARRO_3_TRECHOS), conforme posicionamento definido para a tela.
     // -----------------------------------------------------------------
     public static final int[] CARRO_INDICE_CICLO_INICIAL = {
         0,  // Carro 1
         16, // Carro 2 - comeca em RV18
-        0,  // Carro 3
+        10, // Carro 3 - comeca em RH12
         0,  // Carro 4
         0,  // Carro 5
         0,  // Carro 6
@@ -94,17 +114,12 @@ public class Constantes {
 
     // -----------------------------------------------------------------
     // Sequencia de trechos (arestas RHxx/RVxx) que compoem o ciclo de
-    // cada percurso.
-    //
-    // ATENCAO - dois formatos coexistem nesta etapa do trabalho:
-    // - CARRO_1_TRECHOS e CARRO_2_TRECHOS: JA' estao na ORDEM REAL de
-    //   deslocamento (sentido SA/SH validado geometricamente).
-    //   model.Percurso NAO deve inverter estas listas.
-    // - CARRO_3_TRECHOS .. CARRO_8_TRECHOS: ainda estao na ordem de
-    //   REFERENCIA (sentido horario na tela); serao atualizados para o
-    //   mesmo formato dos Carros 1 e 2 conforme cada carro for
-    //   implementado. Por ora nao sao usados (Simulacao.fxml so' tem
-    //   os Carros 1 e 2).
+    // cada percurso, JA' na ordem real de deslocamento do carro (o
+    // sentido SA/SH informado em CARRO_SENTIDO e' apenas descritivo;
+    // a ordem abaixo e' sempre percorrida de forma direta, sem
+    // inversao - ver model.Percurso). Validado: todos os 8 ciclos
+    // fecham corretamente e a orientacao geometrica de cada lista
+    // bate com o sentido declarado.
     // -----------------------------------------------------------------
     public static final String[] CARRO_1_TRECHOS = {
         "RV05","RV04","RV03","RV02","RV01",
@@ -128,15 +143,15 @@ public class Constantes {
     };
 
     public static final String[] CARRO_4_TRECHOS = {
-        "RH01","RH02","RV15","RV14","RV13",
-        "RV12","RV11","RH27","RH26","RV01",
-        "RV02","RV03","RV04","RV05"
+        "RV05","RV04","RV03","RV02","RV01",
+        "RH26","RH27","RV11","RV12","RV13",
+        "RV14","RV15","RH02","RH01"
     };
 
     public static final String[] CARRO_5_TRECHOS = {
-        "RH03","RH04","RH05","RV30","RV29",
-        "RV28","RH20","RH19","RH18","RV13",
-        "RV14","RV15"
+        "RV15","RV14","RV13","RH18","RH19",
+        "RH20","RV28","RV29","RV30","RH05",
+        "RH04","RH03"
     };
 
     public static final String[] CARRO_6_TRECHOS = {
@@ -153,10 +168,10 @@ public class Constantes {
     };
 
     public static final String[] CARRO_8_TRECHOS = {
-        "RH01","RH02","RV15","RH08","RV19",
-        "RH14","RV23","RH20","RV27","RV26",
-        "RH30","RH29","RV16","RH23","RV12",
-        "RH17","RV08","RH11","RV04","RV05"
+        "RV05","RV04","RH11","RV08","RH17",
+        "RV12","RH23","RV16","RH29","RH30",
+        "RV26","RV27","RH20","RV23","RH14",
+        "RV19","RH08","RV15","RH02","RH01"
     };
 
     // Indexado por (numero do carro - 1)
@@ -165,22 +180,91 @@ public class Constantes {
         CARRO_5_TRECHOS, CARRO_6_TRECHOS, CARRO_7_TRECHOS, CARRO_8_TRECHOS
     };
 
-    // -----------------------------------------------------------------
-    // Trechos compartilhados por 2 ou mais carros (= precisam de
-    // semaforo). Calculado a partir da intersecao dos 8 percursos
-    // acima e conferido manualmente com a tabela de pares fornecida
-    // pelo aluno (28 combinacoes, todas batendo).
-    // Total: 34 trechos compartilhados, de 52 trechos distintos usados.
-    // -----------------------------------------------------------------
-    public static final String[] TRECHOS_COMPARTILHADOS = {
-        "RH01","RH02","RH03","RH04","RH05",
-        "RH11","RH13","RH14","RH15","RH19",
-        "RH20","RH23","RH26","RH27","RH28",
-        "RH29","RH30",
-        "RV01","RV02","RV03","RV04","RV05",
-        "RV11","RV12","RV13","RV14","RV15",
-        "RV16","RV22","RV26","RV27","RV28",
-        "RV29","RV30"
+    // ===================================================================
+    // REGIOES CRITICAS (regioes protegidas por semaforo)
+    // ===================================================================
+    // Cada entrada abaixo corresponde a uma linha RC_xx do arquivo
+    // regioes_criticas_transito_automato.txt.
+    // RC_35 foi ajustada para RH02, RH01, RV05, RV04, RH11: no TXT ha'
+    // "RH02, RH02", mas essa repeticao nao existe como sequencia em
+    // nenhum dos dois percursos; a forma corrigida casa com os carros
+    // 3 e 8 e preserva a regiao descrita.
+    public static final String[] NOMES_REGIOES_CRITICAS = {
+        "RC_01", "RC_02", "RC_03", "RC_04", "RC_05", "RC_06", "RC_07", "RC_08", "RC_09", "RC_10",
+        "RC_11", "RC_12", "RC_13", "RC_14", "RC_15", "RC_16", "RC_17", "RC_18", "RC_19", "RC_20",
+        "RC_21", "RC_22", "RC_23", "RC_24", "RC_25", "RC_26", "RC_27", "RC_28", "RC_29", "RC_30",
+        "RC_31", "RC_32", "RC_33", "RC_34", "RC_35", "RC_36", "RC_37", "RC_38", "RC_39", "RC_40",
+        "RC_41", "RC_42", "RC_43", "RC_44", "RC_45", "RC_46", "RC_47", "RC_48", "RC_49", "RC_50",
+        "RC_51", "RC_52", "RC_53", "RC_54", "RC_55", "RC_56", "RC_57"
+    };
+
+    public static final int[][] CARROS_REGIOES_CRITICAS = {
+        {1, 2}, {1, 2}, {1, 3}, {1, 4}, {1, 5}, {1, 6}, {1, 7}, {1, 7}, {1, 7}, {1, 7},
+        {1, 8}, {1, 8}, {2, 3}, {2, 4}, {2, 5}, {2, 5}, {2, 6}, {2, 6}, {2, 6}, {2, 7},
+        {2, 7}, {2, 7}, {2, 7}, {2, 7}, {2, 7}, {2, 8}, {2, 8}, {2, 8}, {3, 4}, {3, 5},
+        {3, 6}, {3, 7}, {3, 7}, {3, 7}, {3, 8}, {3, 8}, {4, 5}, {4, 6}, {4, 7}, {4, 7},
+        {4, 7}, {4, 8}, {4, 8}, {5, 6}, {5, 6}, {5, 7}, {5, 7}, {5, 8}, {5, 8}, {6, 7},
+        {6, 7}, {6, 8}, {6, 8}, {6, 8}, {7, 8}, {7, 8}, {7, 8}
+    };
+
+    public static final String[][] TRECHOS_REGIOES_CRITICAS = {
+        {"RV29","RV30","RH05","RH04","RH03","RH02","RH01","RV05","RV04","RV03","RV02","RV01","RH26","RH27"},
+        {"RH29","RH30","RV26"},
+        {"RV04","RV05","RH01","RH02","RH03","RH04","RH05","RV30","RV29"},
+        {"RH02","RH01","RV05","RV04","RV03","RV02","RV01","RH26","RH27"},
+        {"RV28","RV29","RV30","RH05","RH04","RH03"},
+        {"RV28","RV27","RV26","RH30","RH29","RH28"},
+        {"RH03"},
+        {"RV28"},
+        {"RH28"},
+        {"RV03"},
+        {"RH02","RH01","RV05","RV04"},
+        {"RH29","RH30","RV26","RV27"},
+        {"RV04","RV05","RH01","RH02","RH03","RH04","RH05","RV30","RV29","RH15","RH14"},
+        {"RH02","RH01","RV05","RV04","RV03","RV02","RV01","RH26","RH27","RV11"},
+        {"RH19"},
+        {"RV29","RV30","RH05","RH04","RH03"},
+        {"RH14","RH15"},
+        {"RV26","RH30","RH29"},
+        {"RV11"},
+        {"RH03"},
+        {"RH15"},
+        {"RV22"},
+        {"RV16"},
+        {"RV11"},
+        {"RV03"},
+        {"RH02","RH01","RV05","RV04"},
+        {"RH23","RV16","RH29","RH30","RV26"},
+        {"RH14"},
+        {"RH02","RH01","RV05","RV04"},
+        {"RV29","RV30","RH05","RH04","RH03"},
+        {"RH15","RH14","RH13"},
+        {"RH03"},
+        {"RH15"},
+        {"RH11"},
+        {"RH02","RH01","RV05","RV04","RH11"},
+        {"RH14"},
+        {"RV15","RV14","RV13"},
+        {"RV11","RV12","RV13"},
+        {"RV03"},
+        {"RV11"},
+        {"RV15"},
+        {"RV15","RH02","RH01","RV05","RV04"},
+        {"RV12"},
+        {"RV13"},
+        {"RV28"},
+        {"RV15","RH03"},
+        {"RV28","RH20"},
+        {"RH20"},
+        {"RV15"},
+        {"RH15","RV28"},
+        {"RH28","RV11"},
+        {"RH14"},
+        {"RV12"},
+        {"RH29","RH30","RV26","RV27"},
+        {"RH11"},
+        {"RV16"},
+        {"RH20"}
     };
 
     // -----------------------------------------------------------------

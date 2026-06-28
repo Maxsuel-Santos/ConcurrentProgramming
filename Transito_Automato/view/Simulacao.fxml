@@ -59,6 +59,12 @@
          </image>
       </ImageView>
 
+      <ImageView fx:id="quadraCarro3" fitHeight="786.0" fitWidth="723.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/P07_SH.png" />
+         </image>
+      </ImageView>
+
       <Button fx:id="btnReset" layoutX="1213.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="62.0" styleClass="btn-reset-simulation" />
 
       <ImageView fx:id="imgCarro1" fitHeight="40.0" fitWidth="40.0" pickOnBounds="false" preserveRatio="true">
@@ -69,6 +75,11 @@
       <ImageView fx:id="imgCarro2" fitHeight="40.0" fitWidth="40.0" layoutX="415.0" layoutY="412.0" pickOnBounds="false" preserveRatio="true">
          <image>
             <Image url="@../img/carro2.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="imgCarro3" fitHeight="40.0" fitWidth="40.0" layoutX="415.0" layoutY="412.0" pickOnBounds="false" preserveRatio="true">
+         <image>
+            <Image url="@../img/carro3.png" />
          </image>
       </ImageView>
 
