@@ -26,8 +26,9 @@ package threads;
 import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import model.Carro;
 import model.Percurso;
@@ -60,7 +61,7 @@ public class ThreadCarro extends Thread {
                 int indiceAtual = carro.getIndiceCicloAtual();
                 Vertice destino = carro.getVerticeDestino();
 
-                garantirRegioesDoTrecho(indiceAtual);
+                garantirRegioesDoTrechoAtualEProximo(indiceAtual);
 
                 if (!carro.isAtivo()) {
                     liberarTodasAsRegioes();
@@ -69,11 +70,11 @@ public class ThreadCarro extends Thread {
 
                 moverParaVertice(destino);
 
+                carro.dormirComPausa(carro.getTempoPassoMs());
+
                 liberarRegioesSeForSaida(indiceAtual);
 
                 carro.avancarUmTrecho();
-
-                carro.dormirComPausa(carro.getTempoPassoMs());
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -83,18 +84,23 @@ public class ThreadCarro extends Thread {
     }
 
     /* ***************************************************************
-    * Metodo: garantirRegioesDoTrecho
-    * Funcao: Adquire todos os semaforos das RCs que protegem o indice
-    *         informado, antes de o carro entrar naquele trecho. Isso
-    *         tambem cobre carros que iniciam a simulacao no meio de
-    *         uma RC circular.
+    * Metodo: garantirRegioesDoTrechoAtualEProximo
+    * Funcao: Adquire todos os semaforos das RCs que protegem o trecho
+    *         atual e o proximo trecho antes de o carro sair do ponto em
+    *         que esta'. Esse lookahead evita que o carro avance ate' o
+    *         centro de um cruzamento para so' entao descobrir que deve
+    *         esperar: ele para no vertice anterior, preservando a
+    *         animacao reta original.
     * Parametros: @param indice posicao atual do carro no ciclo
     * Retorno: sem retorno
     * Excecoes: InterruptedException se a espera for interrompida
     *************************************************************** */
-    private void garantirRegioesDoTrecho(int indice) throws InterruptedException {
-        List<String> regioesDoTrecho = percurso.getRegioesDoTrecho(indice);
-        for (String nomeRegiao : regioesDoTrecho) {
+    private void garantirRegioesDoTrechoAtualEProximo(int indice) throws InterruptedException {
+        Set<String> regioesNecessarias = new TreeSet<>();
+        regioesNecessarias.addAll(percurso.getRegioesDoTrecho(indice));
+        regioesNecessarias.addAll(percurso.getRegioesDoTrecho(indice + 1));
+
+        for (String nomeRegiao : regioesNecessarias) {
             if (regioesOcupadasAtualmente.containsKey(nomeRegiao)) {
                 continue;
             }
