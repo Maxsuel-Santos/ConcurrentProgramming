@@ -102,13 +102,15 @@ public class Constantes {
     // CARRO_3_TRECHOS), conforme posicionamento definido para a tela.
     // Carro 4 (P11_SA): comeca no trecho RV12 (indice 8 da lista
     // CARRO_4_TRECHOS), conforme posicionamento definido para a tela.
+    // Carro 5 (P16_SA): comeca no trecho RH18 (indice 3 da lista
+    // CARRO_5_TRECHOS), conforme posicionamento definido para a tela.
     // -----------------------------------------------------------------
     public static final int[] CARRO_INDICE_CICLO_INICIAL = {
         0,  // Carro 1
         16, // Carro 2 - comeca em RV18
         10, // Carro 3 - comeca em RH12
         8,  // Carro 4 - comeca em RV12
-        0,  // Carro 5
+        3,  // Carro 5 - comeca em RH18
         0,  // Carro 6
         0,  // Carro 7
         0   // Carro 8
@@ -330,6 +332,7 @@ public class Constantes {
     public static final double VELOCIDADE_MIN = 0.25;
     public static final double VELOCIDADE_MAX = 3.0;
     public static final double VELOCIDADE_PADRAO = 1.0;
+    public static final double RECUO_ESPERA_REGIAO_CRITICA_PX = 32.0;
 
     private Constantes() {
         // classe utilitaria: nao deve ser instanciada

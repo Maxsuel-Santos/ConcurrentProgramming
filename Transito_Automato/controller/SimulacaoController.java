@@ -7,10 +7,11 @@
 * Funcao...........: Controller da tela (fxml) Simulacao.
 *
 *                    ETAPA ATUAL: Carro 1 (P05_SA), Carro 2 (P03_SA),
-*                    Carro 3 (P07_SH) e Carro 4 (P11_SA) estao implementados de fato,
+*                    Carro 3 (P07_SH), Carro 4 (P11_SA) e Carro 5
+*                    (P16_SA) estao implementados de fato,
 *                    incluindo todos os trechos compartilhados entre
 *                    eles (regioes criticas/semaforos). Os sliders e
-*                    botoes dos Carros 5 a 8 ja existem na FXML
+*                    botoes dos Carros 6 a 8 ja existem na FXML
 *                    (paineis visuais completos) mas ainda nao tem
 *                    Carro/Thread por tras - por isso ficam
 *                    desabilitados, so' para nao travar a aplicacao com
@@ -149,6 +150,7 @@ public class SimulacaoController implements Initializable {
         new DefinicaoCarro(2, 20.0, 13.0, 767.0, 710.0, 90.0),
         new DefinicaoCarro(3, 20.0, 13.0, 735.0, 735.0, 90.0),
         new DefinicaoCarro(4, 24.0, 18.0, 735.0, 735.0, 90.0),
+        new DefinicaoCarro(5, 22.0, 13.0, 767.0, 710.0, 90.0),
     };
 
     // ----------------------------------------------------------------
@@ -188,20 +190,26 @@ public class SimulacaoController implements Initializable {
     @FXML private Button btnShowRouteCar4;
 
     // ----------------------------------------------------------------
-    // Injecoes FXML - Carros 5 a 8 (paineis ja' existem na tela, mas
+    // Injecoes FXML - Carro 5
+    // ----------------------------------------------------------------
+    @FXML private ImageView quadraCarro5;
+    @FXML private ImageView imgCarro5;
+    @FXML private Slider sliderCarro5;
+    @FXML private Button btnPauseCar5;
+    @FXML private Button btnShowRouteCar5;
+
+    // ----------------------------------------------------------------
+    // Injecoes FXML - Carros 6 a 8 (paineis ja' existem na tela, mas
     // ainda sem Carro/Thread correspondente; ficam desabilitados)
     // ----------------------------------------------------------------
-    @FXML private Slider sliderCarro5;
     @FXML private Slider sliderCarro6;
     @FXML private Slider sliderCarro7;
     @FXML private Slider sliderCarro8;
 
-    @FXML private Button btnPauseCar5;
     @FXML private Button btnPauseCar6;
     @FXML private Button btnPauseCar7;
     @FXML private Button btnPauseCar8;
 
-    @FXML private Button btnShowRouteCar5;
     @FXML private Button btnShowRouteCar6;
     @FXML private Button btnShowRouteCar7;
     @FXML private Button btnShowRouteCar8;
@@ -301,6 +309,13 @@ public class SimulacaoController implements Initializable {
                     slider = sliderCarro4;
                     btnPause = btnPauseCar4;
                     btnShowRoute = btnShowRouteCar4;
+                    break;
+                case 5:
+                    quadra = quadraCarro5;
+                    sprite = imgCarro5;
+                    slider = sliderCarro5;
+                    btnPause = btnPauseCar5;
+                    btnShowRoute = btnShowRouteCar5;
                     break;
                 default:
                     throw new IllegalStateException(
@@ -496,9 +511,9 @@ public class SimulacaoController implements Initializable {
     * Retorno: sem retorno
     *************************************************************** */
     private void desabilitarControlesDosCarrosInativos() {
-        Slider[] sliders = { sliderCarro5, sliderCarro6, sliderCarro7, sliderCarro8 };
-        Button[] botoesPause = { btnPauseCar5, btnPauseCar6, btnPauseCar7, btnPauseCar8 };
-        Button[] botoesShowRoute = { btnShowRouteCar5, btnShowRouteCar6, btnShowRouteCar7, btnShowRouteCar8 };
+        Slider[] sliders = { sliderCarro6, sliderCarro7, sliderCarro8 };
+        Button[] botoesPause = { btnPauseCar6, btnPauseCar7, btnPauseCar8 };
+        Button[] botoesShowRoute = { btnShowRouteCar6, btnShowRouteCar7, btnShowRouteCar8 };
 
         for (Slider s : sliders) {
             if (s != null) {
