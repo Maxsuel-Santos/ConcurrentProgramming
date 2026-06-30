@@ -332,7 +332,6 @@ public class Constantes {
     public static final double VELOCIDADE_MIN = 0.25;
     public static final double VELOCIDADE_MAX = 3.0;
     public static final double VELOCIDADE_PADRAO = 1.0;
-    public static final double RECUO_ESPERA_REGIAO_CRITICA_PX = 32.0;
 
     private Constantes() {
         // classe utilitaria: nao deve ser instanciada

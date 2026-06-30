@@ -25,9 +25,7 @@ package threads;
 
 import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,7 +33,6 @@ import java.util.TreeSet;
 import model.Carro;
 import model.Percurso;
 import model.Vertice;
-import util.Constantes;
 import util.GerenciadorSemaforos;
 
 public class ThreadCarro extends Thread {
@@ -103,32 +100,6 @@ public class ThreadCarro extends Thread {
         regioesNecessarias.addAll(percurso.getRegioesDoTrecho(indice));
         regioesNecessarias.addAll(percurso.getRegioesDoTrecho(indice + 1));
 
-        List<String> adquiridasNestaTentativa = new ArrayList<>();
-        boolean precisouEsperar = false;
-
-        for (String nomeRegiao : regioesNecessarias) {
-            if (regioesOcupadasAtualmente.containsKey(nomeRegiao)) {
-                continue;
-            }
-
-            Semaphore semaforo = gerenciadorSemaforos.getSemaforo(nomeRegiao);
-            if (semaforo != null) {
-                if (semaforo.tryAcquire()) {
-                    regioesOcupadasAtualmente.put(nomeRegiao, semaforo);
-                    adquiridasNestaTentativa.add(nomeRegiao);
-                    continue;
-                }
-
-                precisouEsperar = true;
-                liberarRegioesAdquiridasNaTentativa(adquiridasNestaTentativa);
-                break;
-            }
-        }
-
-        if (precisouEsperar) {
-            moverParaPontoDeEspera(indice);
-        }
-
         for (String nomeRegiao : regioesNecessarias) {
             if (regioesOcupadasAtualmente.containsKey(nomeRegiao)) {
                 continue;
@@ -139,37 +110,6 @@ public class ThreadCarro extends Thread {
                 semaforo.acquire();
                 regioesOcupadasAtualmente.put(nomeRegiao, semaforo);
             }
-        }
-    }
-
-    private void liberarRegioesAdquiridasNaTentativa(List<String> nomesRegioes) {
-        for (String nomeRegiao : nomesRegioes) {
-            Semaphore semaforo = regioesOcupadasAtualmente.remove(nomeRegiao);
-            if (semaforo != null) {
-                semaforo.release();
-            }
-        }
-    }
-
-    private void moverParaPontoDeEspera(int indice) {
-        Vertice entrada = percurso.getVertice(indice);
-        Vertice destino = percurso.getVertice(indice + 1);
-
-        double dx = destino.getX() - entrada.getX();
-        double dy = destino.getY() - entrada.getY();
-        double distancia = Math.sqrt(dx * dx + dy * dy);
-
-        if (distancia == 0) {
-            return;
-        }
-
-        double recuo = Constantes.RECUO_ESPERA_REGIAO_CRITICA_PX;
-        double xEspera = entrada.getX() - (dx / distancia) * recuo;
-        double yEspera = entrada.getY() - (dy / distancia) * recuo;
-
-        carro.setPosicaoAtual(xEspera, yEspera);
-        if (aoMover != null) {
-            aoMover.accept(carro);
         }
     }
 
