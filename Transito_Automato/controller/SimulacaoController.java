@@ -148,7 +148,7 @@ public class SimulacaoController implements Initializable {
         new DefinicaoCarro(1, 22.0, 13.0, 767.0, 710.0, 90.0),
         new DefinicaoCarro(2, 20.0, 13.0, 767.0, 710.0, 90.0),
         new DefinicaoCarro(3, 20.0, 13.0, 735.0, 735.0, 90.0),
-        new DefinicaoCarro(4, 20.0, 13.0, 735.0, 735.0, 90.0),
+        new DefinicaoCarro(4, 24.0, 18.0, 735.0, 735.0, 90.0),
     };
 
     // ----------------------------------------------------------------
