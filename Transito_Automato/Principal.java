@@ -32,6 +32,17 @@ public class Principal extends Application {
 
   private static MediaPlayer musicaFundo;
   private static Clip musicaFundoWav;
+
+  /*
+   * Estas referencias garantem que "javac Principal.java" tambem compile
+   * os controllers usados apenas via FXML. Sem isso, o FXMLLoader pode
+   * falhar em tempo de execucao com ClassNotFoundException.
+   */
+  @SuppressWarnings("unused")
+  private static final Class<?>[] CONTROLLERS_FXML = {
+      TelaInicialController.class,
+      SimulacaoController.class
+  };
     
   /* ***************************************************************
   * Metodo: start
