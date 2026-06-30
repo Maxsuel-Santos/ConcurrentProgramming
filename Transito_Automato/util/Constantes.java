@@ -100,12 +100,14 @@ public class Constantes {
     // CARRO_2_TRECHOS), conforme posicionamento definido para a tela.
     // Carro 3 (P07_SH): comeca no trecho RH12 (indice 10 da lista
     // CARRO_3_TRECHOS), conforme posicionamento definido para a tela.
+    // Carro 4 (P11_SA): comeca no trecho RV12 (indice 8 da lista
+    // CARRO_4_TRECHOS), conforme posicionamento definido para a tela.
     // -----------------------------------------------------------------
     public static final int[] CARRO_INDICE_CICLO_INICIAL = {
         0,  // Carro 1
         16, // Carro 2 - comeca em RV18
         10, // Carro 3 - comeca em RH12
-        0,  // Carro 4
+        8,  // Carro 4 - comeca em RV12
         0,  // Carro 5
         0,  // Carro 6
         0,  // Carro 7

@@ -6,11 +6,11 @@
 * Nome.............: SimulacaoController.java
 * Funcao...........: Controller da tela (fxml) Simulacao.
 *
-*                    ETAPA ATUAL: Carro 1 (P05_SA), Carro 2 (P03_SA) e
-*                    Carro 3 (P07_SH) estao implementados de fato,
+*                    ETAPA ATUAL: Carro 1 (P05_SA), Carro 2 (P03_SA),
+*                    Carro 3 (P07_SH) e Carro 4 (P11_SA) estao implementados de fato,
 *                    incluindo todos os trechos compartilhados entre
 *                    eles (regioes criticas/semaforos). Os sliders e
-*                    botoes dos Carros 4 a 8 ja existem na FXML
+*                    botoes dos Carros 5 a 8 ja existem na FXML
 *                    (paineis visuais completos) mas ainda nao tem
 *                    Carro/Thread por tras - por isso ficam
 *                    desabilitados, so' para nao travar a aplicacao com
@@ -148,6 +148,7 @@ public class SimulacaoController implements Initializable {
         new DefinicaoCarro(1, 22.0, 13.0, 767.0, 710.0, 90.0),
         new DefinicaoCarro(2, 20.0, 13.0, 767.0, 710.0, 90.0),
         new DefinicaoCarro(3, 20.0, 13.0, 735.0, 735.0, 90.0),
+        new DefinicaoCarro(4, 20.0, 13.0, 735.0, 735.0, 90.0),
     };
 
     // ----------------------------------------------------------------
@@ -178,22 +179,28 @@ public class SimulacaoController implements Initializable {
     @FXML private Button btnShowRouteCar3;
 
     // ----------------------------------------------------------------
-    // Injecoes FXML - Carros 4 a 8 (paineis ja' existem na tela, mas
+    // Injecoes FXML - Carro 4
+    // ----------------------------------------------------------------
+    @FXML private ImageView quadraCarro4;
+    @FXML private ImageView imgCarro4;
+    @FXML private Slider sliderCarro4;
+    @FXML private Button btnPauseCar4;
+    @FXML private Button btnShowRouteCar4;
+
+    // ----------------------------------------------------------------
+    // Injecoes FXML - Carros 5 a 8 (paineis ja' existem na tela, mas
     // ainda sem Carro/Thread correspondente; ficam desabilitados)
     // ----------------------------------------------------------------
-    @FXML private Slider sliderCarro4;
     @FXML private Slider sliderCarro5;
     @FXML private Slider sliderCarro6;
     @FXML private Slider sliderCarro7;
     @FXML private Slider sliderCarro8;
 
-    @FXML private Button btnPauseCar4;
     @FXML private Button btnPauseCar5;
     @FXML private Button btnPauseCar6;
     @FXML private Button btnPauseCar7;
     @FXML private Button btnPauseCar8;
 
-    @FXML private Button btnShowRouteCar4;
     @FXML private Button btnShowRouteCar5;
     @FXML private Button btnShowRouteCar6;
     @FXML private Button btnShowRouteCar7;
@@ -242,8 +249,8 @@ public class SimulacaoController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         montarSlots();
-        ligarControlesDosCarrosAtivos();
         desabilitarControlesDosCarrosInativos();
+        ligarControlesDosCarrosAtivos();
         ligarBotaoReset();
         iniciarSimulacao();
     }
@@ -287,6 +294,13 @@ public class SimulacaoController implements Initializable {
                     slider = sliderCarro3;
                     btnPause = btnPauseCar3;
                     btnShowRoute = btnShowRouteCar3;
+                    break;
+                case 4:
+                    quadra = quadraCarro4;
+                    sprite = imgCarro4;
+                    slider = sliderCarro4;
+                    btnPause = btnPauseCar4;
+                    btnShowRoute = btnShowRouteCar4;
                     break;
                 default:
                     throw new IllegalStateException(
@@ -439,6 +453,17 @@ public class SimulacaoController implements Initializable {
     *************************************************************** */
     private void ligarControlesDosCarrosAtivos() {
         for (SlotCarro slot : slots) {
+            slot.quadra.setMouseTransparent(true);
+            slot.sprite.setMouseTransparent(true);
+
+            slot.slider.setDisable(false);
+            slot.btnPause.setDisable(false);
+            slot.btnShowRoute.setDisable(false);
+
+            slot.slider.toFront();
+            slot.btnPause.toFront();
+            slot.btnShowRoute.toFront();
+
             slot.slider.valueProperty().addListener((obs, antigo, novo) -> {
                 if (slot.carro != null) {
                     slot.carro.setVelocidade(novo.doubleValue());
@@ -471,12 +496,9 @@ public class SimulacaoController implements Initializable {
     * Retorno: sem retorno
     *************************************************************** */
     private void desabilitarControlesDosCarrosInativos() {
-        Slider[] sliders = { sliderCarro4,
-            sliderCarro5, sliderCarro6, sliderCarro7, sliderCarro8 };
-        Button[] botoesPause = { btnPauseCar4,
-            btnPauseCar5, btnPauseCar6, btnPauseCar7, btnPauseCar8 };
-        Button[] botoesShowRoute = { btnShowRouteCar4,
-            btnShowRouteCar5, btnShowRouteCar6, btnShowRouteCar7, btnShowRouteCar8 };
+        Slider[] sliders = { sliderCarro5, sliderCarro6, sliderCarro7, sliderCarro8 };
+        Button[] botoesPause = { btnPauseCar5, btnPauseCar6, btnPauseCar7, btnPauseCar8 };
+        Button[] botoesShowRoute = { btnShowRouteCar5, btnShowRouteCar6, btnShowRouteCar7, btnShowRouteCar8 };
 
         for (Slider s : sliders) {
             if (s != null) {
