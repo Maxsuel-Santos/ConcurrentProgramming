@@ -18,6 +18,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.net.URL;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -90,7 +92,7 @@ public class Principal extends Application {
 
   private boolean tentarTocarMp3() {
     try {
-      var recursoMusica = getClass().getResource(
+      URL recursoMusica = getClass().getResource(
           "/sound/GTA_San_Andreas_Main_Theme.mp3"
       );
 
@@ -112,7 +114,7 @@ public class Principal extends Application {
 
   private void tocarWavFallback() {
     try {
-      var recursoMusica = getClass().getResource(
+      URL recursoMusica = getClass().getResource(
           "/sound/GTA_San_Andreas_Main_Theme.wav"
       );
 
