@@ -46,6 +46,47 @@
       <Button fx:id="btnPauseCar8" layoutX="1204.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
       <Button fx:id="btnShowRouteCar8" layoutX="1146.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
 
+      <ImageView fx:id="semaforoCarro1" fitHeight="35.0" fitWidth="35.0" layoutX="799.0" layoutY="104.0" pickOnBounds="false" preserveRatio="true">
+         <image>
+            <Image url="@../img/semaforo_bloqueado.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="semaforoCarro2" fitHeight="35.0" fitWidth="35.0" layoutX="1089.0" layoutY="104.0" pickOnBounds="false" preserveRatio="true">
+         <image>
+            <Image url="@../img/semaforo_bloqueado.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="semaforoCarro3" fitHeight="35.0" fitWidth="35.0" layoutX="799.0" layoutY="286.0" pickOnBounds="false" preserveRatio="true">
+         <image>
+            <Image url="@../img/semaforo_bloqueado.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="semaforoCarro4" fitHeight="35.0" fitWidth="35.0" layoutX="1089.0" layoutY="286.0" pickOnBounds="false" preserveRatio="true">
+         <image>
+            <Image url="@../img/semaforo_bloqueado.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="semaforoCarro5" fitHeight="35.0" fitWidth="35.0" layoutX="799.0" layoutY="468.0" pickOnBounds="false" preserveRatio="true">
+         <image>
+            <Image url="@../img/semaforo_bloqueado.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="semaforoCarro6" fitHeight="35.0" fitWidth="35.0" layoutX="1089.0" layoutY="468.0" pickOnBounds="false" preserveRatio="true">
+         <image>
+            <Image url="@../img/semaforo_bloqueado.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="semaforoCarro7" fitHeight="35.0" fitWidth="35.0" layoutX="799.0" layoutY="650.0" pickOnBounds="false" preserveRatio="true">
+         <image>
+            <Image url="@../img/semaforo_bloqueado.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="semaforoCarro8" fitHeight="35.0" fitWidth="35.0" layoutX="1089.0" layoutY="650.0" pickOnBounds="false" preserveRatio="true">
+         <image>
+            <Image url="@../img/semaforo_bloqueado.png" />
+         </image>
+      </ImageView>
+
       <ImageView fx:id="quadraCarro1" fitHeight="786.0" fitWidth="723.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../img/P05_SA.png" />

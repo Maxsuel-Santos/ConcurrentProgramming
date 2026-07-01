@@ -75,6 +75,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
@@ -161,6 +162,7 @@ public class SimulacaoController implements Initializable {
     @FXML private Slider sliderCarro1;
     @FXML private Button btnPauseCar1;
     @FXML private Button btnShowRouteCar1;
+    @FXML private ImageView semaforoCarro1;
 
     // ----------------------------------------------------------------
     // Injecoes FXML - Carro 2
@@ -170,6 +172,7 @@ public class SimulacaoController implements Initializable {
     @FXML private Slider sliderCarro2;
     @FXML private Button btnPauseCar2;
     @FXML private Button btnShowRouteCar2;
+    @FXML private ImageView semaforoCarro2;
 
     // ----------------------------------------------------------------
     // Injecoes FXML - Carro 3
@@ -179,6 +182,7 @@ public class SimulacaoController implements Initializable {
     @FXML private Slider sliderCarro3;
     @FXML private Button btnPauseCar3;
     @FXML private Button btnShowRouteCar3;
+    @FXML private ImageView semaforoCarro3;
 
     // ----------------------------------------------------------------
     // Injecoes FXML - Carro 4
@@ -188,6 +192,7 @@ public class SimulacaoController implements Initializable {
     @FXML private Slider sliderCarro4;
     @FXML private Button btnPauseCar4;
     @FXML private Button btnShowRouteCar4;
+    @FXML private ImageView semaforoCarro4;
 
     // ----------------------------------------------------------------
     // Injecoes FXML - Carro 5
@@ -197,6 +202,7 @@ public class SimulacaoController implements Initializable {
     @FXML private Slider sliderCarro5;
     @FXML private Button btnPauseCar5;
     @FXML private Button btnShowRouteCar5;
+    @FXML private ImageView semaforoCarro5;
 
     // ----------------------------------------------------------------
     // Injecoes FXML - Carros 6 a 8 (paineis ja' existem na tela, mas
@@ -213,6 +219,10 @@ public class SimulacaoController implements Initializable {
     @FXML private Button btnShowRouteCar6;
     @FXML private Button btnShowRouteCar7;
     @FXML private Button btnShowRouteCar8;
+
+    @FXML private ImageView semaforoCarro6;
+    @FXML private ImageView semaforoCarro7;
+    @FXML private ImageView semaforoCarro8;
 
     @FXML private Button btnReset;
 
@@ -232,19 +242,22 @@ public class SimulacaoController implements Initializable {
         final Slider slider;
         final Button btnPause;
         final Button btnShowRoute;
+        final ImageView semaforo;
 
         Carro carro;
         ThreadCarro thread;
         Timeline animacao;
 
         SlotCarro(DefinicaoCarro definicao, ImageView quadra, ImageView sprite,
-                  Slider slider, Button btnPause, Button btnShowRoute) {
+                  Slider slider, Button btnPause, Button btnShowRoute,
+                  ImageView semaforo) {
             this.definicao = definicao;
             this.quadra = quadra;
             this.sprite = sprite;
             this.slider = slider;
             this.btnPause = btnPause;
             this.btnShowRoute = btnShowRoute;
+            this.semaforo = semaforo;
         }
     }
 
@@ -258,9 +271,12 @@ public class SimulacaoController implements Initializable {
     private static final String CLASSE_PLAY = "btn-pause-car-play";
     private static final String CLASSE_ROTA_ON = "btn-route-on";
     private static final String CLASSE_ROTA_OFF = "btn-route-off";
+    private Image imagemSemaforoLivre;
+    private Image imagemSemaforoBloqueado;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        carregarImagensSemaforo();
         montarSlots();
         desabilitarControlesDosCarrosInativos();
         ligarControlesDosCarrosAtivos();
@@ -285,6 +301,7 @@ public class SimulacaoController implements Initializable {
             Slider slider;
             Button btnPause;
             Button btnShowRoute;
+            ImageView semaforo;
 
             switch (def.numero) {
                 case 1:
@@ -293,6 +310,7 @@ public class SimulacaoController implements Initializable {
                     slider = sliderCarro1;
                     btnPause = btnPauseCar1;
                     btnShowRoute = btnShowRouteCar1;
+                    semaforo = semaforoCarro1;
                     break;
                 case 2:
                     quadra = quadraCarro2;
@@ -300,6 +318,7 @@ public class SimulacaoController implements Initializable {
                     slider = sliderCarro2;
                     btnPause = btnPauseCar2;
                     btnShowRoute = btnShowRouteCar2;
+                    semaforo = semaforoCarro2;
                     break;
                 case 3:
                     quadra = quadraCarro3;
@@ -307,6 +326,7 @@ public class SimulacaoController implements Initializable {
                     slider = sliderCarro3;
                     btnPause = btnPauseCar3;
                     btnShowRoute = btnShowRouteCar3;
+                    semaforo = semaforoCarro3;
                     break;
                 case 4:
                     quadra = quadraCarro4;
@@ -314,6 +334,7 @@ public class SimulacaoController implements Initializable {
                     slider = sliderCarro4;
                     btnPause = btnPauseCar4;
                     btnShowRoute = btnShowRouteCar4;
+                    semaforo = semaforoCarro4;
                     break;
                 case 5:
                     quadra = quadraCarro5;
@@ -321,6 +342,7 @@ public class SimulacaoController implements Initializable {
                     slider = sliderCarro5;
                     btnPause = btnPauseCar5;
                     btnShowRoute = btnShowRouteCar5;
+                    semaforo = semaforoCarro5;
                     break;
                 default:
                     throw new IllegalStateException(
@@ -330,7 +352,7 @@ public class SimulacaoController implements Initializable {
                     );
             }
 
-            slots.add(new SlotCarro(def, quadra, sprite, slider, btnPause, btnShowRoute));
+            slots.add(new SlotCarro(def, quadra, sprite, slider, btnPause, btnShowRoute, semaforo));
         }
     }
 
@@ -386,6 +408,7 @@ public class SimulacaoController implements Initializable {
             slot.carro.setVelocidade(slot.slider.getValue());
             slot.carro.setQuadraVisivel(false);
             slot.quadra.setVisible(false);
+            atualizarSemaforo(slot, false);
 
             atualizarImagemBotaoPausa(slot);
             atualizarImagemBotaoRota(slot);
@@ -457,6 +480,8 @@ public class SimulacaoController implements Initializable {
         KeyFrame quadroFinal = new KeyFrame(duracaoPasso, avancoX, avancoY);
 
         slot.animacao = new Timeline(quadroFinal);
+        slot.animacao.setOnFinished(evento -> atualizarSemaforo(slot, false));
+        atualizarSemaforo(slot, true);
         slot.animacao.play();
     }
 
@@ -481,6 +506,7 @@ public class SimulacaoController implements Initializable {
         for (SlotCarro slot : slots) {
             slot.quadra.setMouseTransparent(true);
             slot.sprite.setMouseTransparent(true);
+            slot.semaforo.setMouseTransparent(true);
 
             configurarSlider(slot.slider);
             slot.slider.setDisable(false);
@@ -492,6 +518,7 @@ public class SimulacaoController implements Initializable {
             slot.slider.toFront();
             slot.btnPause.toFront();
             slot.btnShowRoute.toFront();
+            slot.semaforo.toFront();
 
             slot.slider.valueProperty().addListener((obs, antigo, novo) -> {
                 if (slot.carro != null) {
@@ -542,6 +569,19 @@ public class SimulacaoController implements Initializable {
         botao.getStyleClass().add(classeAtiva);
     }
 
+    private void carregarImagensSemaforo() {
+        imagemSemaforoLivre = new Image(getClass().getResource(
+            Constantes.CAMINHO_IMG + "semaforo_livre.png"
+        ).toExternalForm());
+        imagemSemaforoBloqueado = new Image(getClass().getResource(
+            Constantes.CAMINHO_IMG + "semaforo_bloqueado.png"
+        ).toExternalForm());
+    }
+
+    private void atualizarSemaforo(SlotCarro slot, boolean andando) {
+        slot.semaforo.setImage(andando ? imagemSemaforoLivre : imagemSemaforoBloqueado);
+    }
+
     /* ***************************************************************
     * Metodo: desabilitarControlesDosCarrosInativos
     * Funcao: Os paineis dos carros que ainda nao estao em DEFINICOES
@@ -556,6 +596,7 @@ public class SimulacaoController implements Initializable {
         Slider[] sliders = { sliderCarro6, sliderCarro7, sliderCarro8 };
         Button[] botoesPause = { btnPauseCar6, btnPauseCar7, btnPauseCar8 };
         Button[] botoesShowRoute = { btnShowRouteCar6, btnShowRouteCar7, btnShowRouteCar8 };
+        ImageView[] semaforos = { semaforoCarro6, semaforoCarro7, semaforoCarro8 };
 
         for (Slider s : sliders) {
             if (s != null) {
@@ -571,6 +612,13 @@ public class SimulacaoController implements Initializable {
         for (Button b : botoesShowRoute) {
             if (b != null) {
                 b.setDisable(true);
+            }
+        }
+        for (ImageView semaforo : semaforos) {
+            if (semaforo != null) {
+                semaforo.setImage(imagemSemaforoBloqueado);
+                semaforo.setMouseTransparent(true);
+                semaforo.toFront();
             }
         }
     }
@@ -611,6 +659,7 @@ public class SimulacaoController implements Initializable {
             slot.quadra.setVisible(false);
             slot.slider.setValue(Constantes.VELOCIDADE_PADRAO);
             slot.sprite.setRotate(0);
+            atualizarSemaforo(slot, false);
         }
 
         if (gerenciadorSemaforos != null) {
