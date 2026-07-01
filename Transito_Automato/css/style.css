@@ -113,8 +113,24 @@
     -fx-background-image: url("../img/pause_button.png");
 }
 
+.btn-pause-car-pause {
+    -fx-background-image: url("../img/pause_button.png");
+}
+
+.btn-pause-car-play {
+    -fx-background-image: url("../img/play_button.png");
+}
+
 .btn-show-route-car {
     -fx-background-image: url("../img/routon_button.png");
+}
+
+.btn-route-on {
+    -fx-background-image: url("../img/routon_button.png");
+}
+
+.btn-route-off {
+    -fx-background-image: url("../img/routoff_button.png");
 }
 
 .btn-reset-simulation {

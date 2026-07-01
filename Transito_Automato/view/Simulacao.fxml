@@ -14,13 +14,13 @@
          </image>
       </ImageView>
       <Slider fx:id="sliderCarro1" layoutX="778.0" layoutY="69.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
-      <Slider fx:id="sliderCarro2" layoutX="1068.0" layoutY="69.0" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" />
-      <Slider fx:id="sliderCarro3" layoutX="778.0" layoutY="250.0" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" />
-      <Slider fx:id="sliderCarro4" layoutX="1068.0" layoutY="250.0" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" />
-      <Slider fx:id="sliderCarro5" layoutX="778.0" layoutY="432.0" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" />
-      <Slider fx:id="sliderCarro6" layoutX="1068.0" layoutY="432.0" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" />
-      <Slider fx:id="sliderCarro7" layoutX="778.0" layoutY="617.0" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" />
-      <Slider fx:id="sliderCarro8" layoutX="1068.0" layoutY="617.0" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" />
+      <Slider fx:id="sliderCarro2" layoutX="1068.0" layoutY="69.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro3" layoutX="778.0" layoutY="250.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro4" layoutX="1068.0" layoutY="250.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro5" layoutX="778.0" layoutY="432.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro6" layoutX="1068.0" layoutY="432.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro7" layoutX="778.0" layoutY="617.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro8" layoutX="1068.0" layoutY="617.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
       
       <Button fx:id="btnPauseCar1" layoutX="914.0" layoutY="104.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
       <Button fx:id="btnShowRouteCar1" layoutX="856.0" layoutY="104.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
@@ -46,31 +46,31 @@
       <Button fx:id="btnPauseCar8" layoutX="1204.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
       <Button fx:id="btnShowRouteCar8" layoutX="1146.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
 
-      <ImageView fx:id="quadraCarro1" fitHeight="786.0" fitWidth="723.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="quadraCarro1" fitHeight="786.0" fitWidth="723.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../img/P05_SA.png" />
          </image>
       </ImageView>
 
-      <ImageView fx:id="quadraCarro2" fitHeight="786.0" fitWidth="723.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="quadraCarro2" fitHeight="786.0" fitWidth="723.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../img/P03_SA.png" />
          </image>
       </ImageView>
 
-      <ImageView fx:id="quadraCarro3" fitHeight="786.0" fitWidth="723.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="quadraCarro3" fitHeight="786.0" fitWidth="723.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../img/P07_SH.png" />
          </image>
       </ImageView>
 
-      <ImageView fx:id="quadraCarro4" fitHeight="720.0" fitWidth="311.0" layoutX="4.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="quadraCarro4" fitHeight="720.0" fitWidth="311.0" layoutX="4.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../img/P11_SA.png" />
          </image>
       </ImageView>
 
-      <ImageView fx:id="quadraCarro5" fitHeight="444.0" fitWidth="447.0" layoutX="280.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="quadraCarro5" fitHeight="444.0" fitWidth="447.0" layoutX="280.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image>
             <Image url="@../img/P16_SA.png" />
          </image>

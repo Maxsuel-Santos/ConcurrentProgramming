@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 23/06/2026
-* Ultima alteracao.: 28/06/2026
+* Ultima alteracao.: 01/07/2026
 * Nome.............: SimulacaoController.java
 * Funcao...........: Controller da tela (fxml) Simulacao.
 *
@@ -254,6 +254,11 @@ public class SimulacaoController implements Initializable {
     private GerenciadorSemaforos gerenciadorSemaforos;
     private List<SlotCarro> slots;
 
+    private static final String CLASSE_PAUSE = "btn-pause-car-pause";
+    private static final String CLASSE_PLAY = "btn-pause-car-play";
+    private static final String CLASSE_ROTA_ON = "btn-route-on";
+    private static final String CLASSE_ROTA_OFF = "btn-route-off";
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         montarSlots();
@@ -378,6 +383,12 @@ public class SimulacaoController implements Initializable {
             int indiceInicial = Constantes.CARRO_INDICE_CICLO_INICIAL[idx];
 
             slot.carro = new Carro(slot.definicao.numero, percurso, indiceInicial);
+            slot.carro.setVelocidade(slot.slider.getValue());
+            slot.carro.setQuadraVisivel(false);
+            slot.quadra.setVisible(false);
+
+            atualizarImagemBotaoPausa(slot);
+            atualizarImagemBotaoRota(slot);
 
             posicionarSpriteInicial(slot);
 
@@ -471,9 +482,12 @@ public class SimulacaoController implements Initializable {
             slot.quadra.setMouseTransparent(true);
             slot.sprite.setMouseTransparent(true);
 
+            configurarSlider(slot.slider);
             slot.slider.setDisable(false);
             slot.btnPause.setDisable(false);
             slot.btnShowRoute.setDisable(false);
+            definirClasseEstado(slot.btnPause, CLASSE_PLAY, CLASSE_PAUSE, CLASSE_PAUSE);
+            definirClasseEstado(slot.btnShowRoute, CLASSE_ROTA_ON, CLASSE_ROTA_OFF, CLASSE_ROTA_ON);
 
             slot.slider.toFront();
             slot.btnPause.toFront();
@@ -488,6 +502,7 @@ public class SimulacaoController implements Initializable {
             slot.btnPause.setOnAction(evento -> {
                 if (slot.carro != null) {
                     slot.carro.alternarPausa();
+                    atualizarImagemBotaoPausa(slot);
                 }
             });
 
@@ -495,9 +510,36 @@ public class SimulacaoController implements Initializable {
                 if (slot.carro != null) {
                     slot.carro.alternarVisibilidadeQuadra();
                     slot.quadra.setVisible(slot.carro.isQuadraVisivel());
+                    atualizarImagemBotaoRota(slot);
                 }
             });
         }
+    }
+
+    private void configurarSlider(Slider slider) {
+        slider.setMin(Constantes.VELOCIDADE_MIN);
+        slider.setMax(Constantes.VELOCIDADE_MAX);
+        slider.setValue(Constantes.VELOCIDADE_PADRAO);
+    }
+
+    private void atualizarImagemBotaoPausa(SlotCarro slot) {
+        String classeAtiva = slot.carro != null && slot.carro.isPausado()
+            ? CLASSE_PLAY
+            : CLASSE_PAUSE;
+        definirClasseEstado(slot.btnPause, CLASSE_PLAY, CLASSE_PAUSE, classeAtiva);
+    }
+
+    private void atualizarImagemBotaoRota(SlotCarro slot) {
+        String classeAtiva = slot.carro != null && slot.carro.isQuadraVisivel()
+            ? CLASSE_ROTA_OFF
+            : CLASSE_ROTA_ON;
+        definirClasseEstado(slot.btnShowRoute, CLASSE_ROTA_ON, CLASSE_ROTA_OFF, classeAtiva);
+    }
+
+    private void definirClasseEstado(Button botao, String classeA, String classeB, String classeAtiva) {
+        botao.getStyleClass().remove(classeA);
+        botao.getStyleClass().remove(classeB);
+        botao.getStyleClass().add(classeAtiva);
     }
 
     /* ***************************************************************
@@ -517,6 +559,7 @@ public class SimulacaoController implements Initializable {
 
         for (Slider s : sliders) {
             if (s != null) {
+                configurarSlider(s);
                 s.setDisable(true);
             }
         }
@@ -565,7 +608,7 @@ public class SimulacaoController implements Initializable {
                 slot.animacao.stop();
             }
 
-            slot.quadra.setVisible(true);
+            slot.quadra.setVisible(false);
             slot.slider.setValue(Constantes.VELOCIDADE_PADRAO);
             slot.sprite.setRotate(0);
         }
