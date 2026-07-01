@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 22/06/2026
-* Ultima alteracao.: 22/06/2026
+* Ultima alteracao.: 01/07/2026
 * Nome.............: Principal.java
 * Funcao...........: Ponto de entrada da aplicacao JavaFX.
 *                    Carrega a tela inicial (TelaInicial.fxml) e
@@ -12,8 +12,6 @@
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -30,7 +28,6 @@ import controller.*;
 @SuppressWarnings("unused")
 public class Principal extends Application {
 
-  private static MediaPlayer musicaFundo;
   private static Clip musicaFundoWav;
 
   /*
@@ -64,9 +61,6 @@ public class Principal extends Application {
 
     // Encerra JVM e threads daemon ao fechar a janela
     stage.setOnCloseRequest(e -> {
-      if (musicaFundo != null) {
-        musicaFundo.stop();
-      }
       if (musicaFundoWav != null) {
         musicaFundoWav.stop();
         musicaFundoWav.close();
@@ -84,46 +78,19 @@ public class Principal extends Application {
   /* ***************************************************************
   * Metodo: iniciarMusicaFundo
   * Funcao: Carrega e toca em loop a trilha sonora da pasta sound.
-  *         Tenta MP3 primeiro; se o JavaFX Media nao conseguir criar o
-  *         player neste ambiente, usa o WAV como fallback.
+  *         Usa apenas o arquivo WAV, evitando o carregamento do MP3.
   * Parametros: nenhum
   * Retorno: sem retorno
   *************************************************************** */
   private void iniciarMusicaFundo() {
-    if (musicaFundo != null || musicaFundoWav != null) {
+    if (musicaFundoWav != null) {
       return;
     }
 
-    if (tentarTocarMp3()) {
-      return;
-    }
-
-    tocarWavFallback();
+    tocarWav();
   }
 
-  private boolean tentarTocarMp3() {
-    try {
-      URL recursoMusica = getClass().getResource(
-          "/sound/GTA_San_Andreas_Main_Theme.mp3"
-      );
-
-      if (recursoMusica == null) {
-        return false;
-      }
-
-      Media media = new Media(recursoMusica.toExternalForm());
-      musicaFundo = new MediaPlayer(media);
-      musicaFundo.setCycleCount(MediaPlayer.INDEFINITE);
-      musicaFundo.setVolume(0.35);
-      musicaFundo.play();
-      return true;
-    } catch (RuntimeException e) {
-      musicaFundo = null;
-      return false;
-    }
-  }
-
-  private void tocarWavFallback() {
+  private void tocarWav() {
     try {
       URL recursoMusica = getClass().getResource(
           "/sound/GTA_San_Andreas_Main_Theme.wav"
