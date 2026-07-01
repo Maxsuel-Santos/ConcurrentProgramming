@@ -75,7 +75,7 @@ RC_33: RH15 -> semaforo3e7RC2
 RC_34: RH11 -> semaforo3e7RC3
 
 CARRO 3 x CARRO 8
-RC_35: RH02, RH02, RV05, RV04, RH11 -> semaforo3e8RC1
+RC_35: RH02, RH01, RV05, RV04, RH11 -> semaforo3e8RC1
 RC_36: RH14 -> semaforo3e8RC2
 
 -----------------------------------------------------------------------------------------------------------------
@@ -124,10 +124,11 @@ RC_54: RH29, RH30, RV26, RV27 -> semaforo6e8RC3
 
 CARRO 7 x CARRO 8
 RC_55: RH11 -> semaforo7e8RC1
-RC_56: RV16 -> semaforo7e8RC2
-RC_57: RH20 -> semaforo7e8RC3
+RC_57: RV15 -> semaforo7e8RC2
+RC_56: RV16 -> semaforo7e8RC3
+RC_58: RH20 -> semaforo7e8RC4
 
 -----------------------------------------------------------------------------------------------------------------
 
-TOTAL: 57 REGIÕES CRÍTICAS
-TOTAL DE SEMÁFOROS: 57
+TOTAL: 58 REGIÕES CRÍTICAS
+TOTAL DE SEMÁFOROS: 58
