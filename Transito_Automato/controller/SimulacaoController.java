@@ -392,7 +392,7 @@ public class SimulacaoController implements Initializable {
 
             // CARRO_x_TRECHOS ja' esta' na ordem real de deslocamento
             // (sentido SA/SH validado geometricamente). O Percurso usa
-            // o numero do carro para encaixar as 57 RCs do arquivo de
+            // o numero do carro para encaixar as 58 RCs do arquivo de
             // regioes criticas e marcar os pontos de entrada/saida.
             Percurso percurso = new Percurso(
                 gridDoCarro,

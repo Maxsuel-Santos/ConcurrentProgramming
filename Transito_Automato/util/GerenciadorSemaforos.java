@@ -2,10 +2,10 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 21/06/2026
-* Ultima alteracao.: 28/06/2026
+* Ultima alteracao.: 01/07/2026
 * Nome.............: GerenciadorSemaforos.java
 * Funcao...........: Cria e centraliza os Semaphore(1) de cada REGIAO
-*                    CRITICA da malha, seguindo as 57 RCs descritas em
+*                    CRITICA da malha, seguindo as 58 RCs descritas em
 *                    regioes_criticas_transito_automato.txt. Cada RC
 *                    ganha exatamente UM semaforo, devolvido sempre pela
 *                    mesma instancia para quem perguntar pelo mesmo nome.

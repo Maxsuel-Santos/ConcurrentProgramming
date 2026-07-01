@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 21/06/2026
-* Ultima alteracao.: 28/06/2026
+* Ultima alteracao.: 01/07/2026
 * Nome.............: Constantes.java
 * Funcao...........: Centraliza todas as constantes do problema: a malha
 *                    de ruas (6x6 vertices), os 8 percursos sorteados
@@ -36,7 +36,7 @@
 *
 *                    SOLUCAO ATUAL: as regioes criticas seguem
 *                    diretamente o arquivo
-*                    regioes_criticas_transito_automato.txt: 57 regioes
+*                    regioes_criticas_transito_automato.txt: 58 regioes
 *                    por PAR de carros, cada uma com seu proprio
 *                    Semaphore(1). Cada carro adquire o semaforo da RC
 *                    ao entrar no primeiro trecho daquela regiao, e
@@ -189,17 +189,13 @@ public class Constantes {
     // ===================================================================
     // Cada entrada abaixo corresponde a uma linha RC_xx do arquivo
     // regioes_criticas_transito_automato.txt.
-    // RC_35 foi ajustada para RH02, RH01, RV05, RV04, RH11: no TXT ha'
-    // "RH02, RH02", mas essa repeticao nao existe como sequencia em
-    // nenhum dos dois percursos; a forma corrigida casa com os carros
-    // 3 e 8 e preserva a regiao descrita.
     public static final String[] NOMES_REGIOES_CRITICAS = {
         "RC_01", "RC_02", "RC_03", "RC_04", "RC_05", "RC_06", "RC_07", "RC_08", "RC_09", "RC_10",
         "RC_11", "RC_12", "RC_13", "RC_14", "RC_15", "RC_16", "RC_17", "RC_18", "RC_19", "RC_20",
         "RC_21", "RC_22", "RC_23", "RC_24", "RC_25", "RC_26", "RC_27", "RC_28", "RC_29", "RC_30",
         "RC_31", "RC_32", "RC_33", "RC_34", "RC_35", "RC_36", "RC_37", "RC_38", "RC_39", "RC_40",
         "RC_41", "RC_42", "RC_43", "RC_44", "RC_45", "RC_46", "RC_47", "RC_48", "RC_49", "RC_50",
-        "RC_51", "RC_52", "RC_53", "RC_54", "RC_55", "RC_56", "RC_57"
+        "RC_51", "RC_52", "RC_53", "RC_54", "RC_55", "RC_56", "RC_57", "RC_58"
     };
 
     public static final int[][] CARROS_REGIOES_CRITICAS = {
@@ -208,7 +204,7 @@ public class Constantes {
         {2, 7}, {2, 7}, {2, 7}, {2, 7}, {2, 7}, {2, 8}, {2, 8}, {2, 8}, {3, 4}, {3, 5},
         {3, 6}, {3, 7}, {3, 7}, {3, 7}, {3, 8}, {3, 8}, {4, 5}, {4, 6}, {4, 7}, {4, 7},
         {4, 7}, {4, 8}, {4, 8}, {5, 6}, {5, 6}, {5, 7}, {5, 7}, {5, 8}, {5, 8}, {6, 7},
-        {6, 7}, {6, 8}, {6, 8}, {6, 8}, {7, 8}, {7, 8}, {7, 8}
+        {6, 7}, {6, 8}, {6, 8}, {6, 8}, {7, 8}, {7, 8}, {7, 8}, {7, 8}
     };
 
     public static final String[][] TRECHOS_REGIOES_CRITICAS = {
@@ -268,6 +264,7 @@ public class Constantes {
         {"RH29","RH30","RV26","RV27"},
         {"RH11"},
         {"RV16"},
+        {"RV15"},
         {"RH20"}
     };
 

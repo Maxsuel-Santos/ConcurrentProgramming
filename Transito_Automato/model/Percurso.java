@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 23/06/2026
-* Ultima alteracao.: 28/06/2026
+* Ultima alteracao.: 01/07/2026
 * Nome.............: Percurso.java
 * Funcao...........: Representa o ciclo fechado de um carro: a sequencia
 *                    ORDENADA de Arestas que ele percorre repetidamente,
@@ -15,7 +15,7 @@
 *                    validado geometricamente) - nao ha' mais inversao
 *                    de ordem por sentido nesta versao.
 *
-*                    Constantes.TRECHOS_REGIOES_CRITICAS lista as 57
+*                    Constantes.TRECHOS_REGIOES_CRITICAS lista as 58
 *                    RCs do arquivo original. Este Percurso encaixa cada
 *                    RC no ciclo do carro correspondente, inclusive
 *                    quando a ordem aparece invertida ou atravessa a
