@@ -1,0 +1,370 @@
+INVENTÁRIO COMPLETO DAS REGIÕES CRÍTICAS E DOS SEMÁFOROS
+PROJETO: TRÂNSITO AUTÔMATO - 8 CARROS
+============================================================================
+
+1. RESUMO GERAL
+----------------------------------------------------------------------------
+Quantidade de carros:                         8
+Regiões críticas físicas:                    67
+  - Trechos/segmentos críticos:              34
+  - Cruzamentos críticos:                    33
+Segmentos com tráfego em sentidos opostos:   27
+Zonas que conflitam com o carro 8:           35
+
+SEMÁFOROS:
+  - Semáforos físicos de segmentos:          34
+  - Semáforos físicos de cruzamentos:        33
+  - Semáforo PORTARIA-CORREDORES:            1
+  - Semáforo interno portariaReservas:       1
+  - Total no mapa "semaforos":               68
+  - TOTAL DE INSTÂNCIAS java.util.concurrent.Semaphore: 69
+
+Todos os semáforos são binários, iniciados com 1 permissão e com justiça
+habilitada: new Semaphore(1, true).
+
+IMPORTANTE: as 67 regiões físicas correspondem a 67 semáforos físicos.
+PORTARIA-CORREDORES e portariaReservas são mecanismos adicionais de
+coordenação; eles não representam um trecho ou cruzamento da imagem.
+
+2. PERCURSOS
+----------------------------------------------------------------------------
+  - Carro 1: P05_SA - 20 trechos
+  - Carro 2: P03_SA - 26 trechos
+  - Carro 3: P07_SH - 14 trechos
+  - Carro 4: P11_SA - 14 trechos
+  - Carro 5: P16_SA - 12 trechos
+  - Carro 6: P18_SH - 12 trechos
+  - Carro 7: P20_SH - 20 trechos
+  - Carro 8: P23_SA - 20 trechos
+
+3. SEMÁFOROS/REGIÕES CRÍTICAS DE TRECHOS - 34
+----------------------------------------------------------------------------
+Cada nome abaixo é simultaneamente o identificador da região física e a
+chave do seu Semaphore no GerenciadorSemaforos.
+
+  - SEG-RH01     | carros [1, 2, 3, 4, 8]
+  - SEG-RH02     | carros [1, 2, 3, 4, 8]
+  - SEG-RH03     | carros [1, 2, 3, 5, 7]
+  - SEG-RH04     | carros [1, 2, 3, 5]
+  - SEG-RH05     | carros [1, 2, 3, 5]
+  - SEG-RH11     | carros [3, 7, 8]
+  - SEG-RH13     | carros [3, 6]
+  - SEG-RH14     | carros [2, 3, 6, 8]
+  - SEG-RH15     | carros [2, 3, 6, 7]
+  - SEG-RH19     | carros [2, 5]
+  - SEG-RH20     | carros [5, 7, 8]
+  - SEG-RH23     | carros [2, 8]
+  - SEG-RH26     | carros [1, 2, 4]
+  - SEG-RH27     | carros [1, 2, 4]
+  - SEG-RH28     | carros [1, 6, 7]
+  - SEG-RH29     | carros [1, 2, 6, 8]
+  - SEG-RH30     | carros [1, 2, 6, 8]
+  - SEG-RV01     | carros [1, 2, 4]
+  - SEG-RV02     | carros [1, 2, 4]
+  - SEG-RV03     | carros [1, 2, 4, 7]
+  - SEG-RV04     | carros [1, 2, 3, 4, 8]
+  - SEG-RV05     | carros [1, 2, 3, 4, 8]
+  - SEG-RV11     | carros [2, 4, 6, 7]
+  - SEG-RV12     | carros [4, 6, 8]
+  - SEG-RV13     | carros [4, 5, 6]
+  - SEG-RV14     | carros [4, 5]
+  - SEG-RV15     | carros [4, 5, 7, 8]
+  - SEG-RV16     | carros [2, 7, 8]
+  - SEG-RV22     | carros [2, 7]
+  - SEG-RV26     | carros [1, 2, 6, 8]
+  - SEG-RV27     | carros [1, 6, 8]
+  - SEG-RV28     | carros [1, 5, 6, 7]
+  - SEG-RV29     | carros [1, 2, 3, 5]
+  - SEG-RV30     | carros [1, 2, 3, 5]
+
+4. SEMÁFOROS/REGIÕES CRÍTICAS DE CRUZAMENTOS - 33
+----------------------------------------------------------------------------
+A chave CRUZ-linha,coluna identifica um vértice da malha lógica 6 x 6.
+
+  - CRUZ-0,0     | carros [1, 2, 3, 4, 8]
+  - CRUZ-0,1     | carros [1, 2, 3, 4, 8]
+  - CRUZ-0,2     | carros [1, 2, 3, 4, 5, 7, 8]
+  - CRUZ-0,3     | carros [1, 2, 3, 5, 7]
+  - CRUZ-0,4     | carros [1, 2, 3, 5]
+  - CRUZ-0,5     | carros [1, 2, 3, 5]
+  - CRUZ-1,0     | carros [1, 2, 3, 4, 8]
+  - CRUZ-1,2     | carros [4, 5, 7, 8]
+  - CRUZ-1,3     | carros [7, 8]
+  - CRUZ-1,5     | carros [1, 2, 3, 5]
+  - CRUZ-2,0     | carros [1, 2, 3, 4, 7, 8]
+  - CRUZ-2,1     | carros [3, 7, 8]
+  - CRUZ-2,2     | carros [3, 4, 5, 6]
+  - CRUZ-2,3     | carros [2, 3, 6, 8]
+  - CRUZ-2,4     | carros [2, 3, 6, 7, 8]
+  - CRUZ-2,5     | carros [1, 2, 3, 5, 6, 7]
+  - CRUZ-3,0     | carros [1, 2, 4, 7]
+  - CRUZ-3,1     | carros [7, 8]
+  - CRUZ-3,2     | carros [4, 5, 6, 8]
+  - CRUZ-3,3     | carros [2, 5]
+  - CRUZ-3,4     | carros [2, 5, 7, 8]
+  - CRUZ-3,5     | carros [1, 5, 6, 7, 8]
+  - CRUZ-4,0     | carros [1, 2, 4]
+  - CRUZ-4,2     | carros [2, 4, 6, 7, 8]
+  - CRUZ-4,3     | carros [2, 7, 8]
+  - CRUZ-4,4     | carros [2, 7]
+  - CRUZ-4,5     | carros [1, 2, 6, 8]
+  - CRUZ-5,0     | carros [1, 2, 4]
+  - CRUZ-5,1     | carros [1, 2, 4]
+  - CRUZ-5,2     | carros [1, 2, 4, 6, 7]
+  - CRUZ-5,3     | carros [1, 2, 6, 7, 8]
+  - CRUZ-5,4     | carros [1, 2, 6, 8]
+  - CRUZ-5,5     | carros [1, 2, 6, 8]
+
+5. SEMÁFOROS ADICIONAIS DE COORDENAÇÃO - 2
+----------------------------------------------------------------------------
+  1. PORTARIA-CORREDORES
+     - Tipo: Semaphore(1, true).
+     - Armazenado dentro do mapa "semaforos".
+     - Evita a entrada simultânea incompatível nos corredores que possuem
+       carros percorrendo os mesmos trechos em sentidos opostos.
+
+  2. portariaReservas
+     - Tipo: Semaphore(1, true).
+     - Campo interno separado do mapa "semaforos".
+     - Torna atômica a atualização das reservas, pedidos pendentes,
+       aquisições all-or-none e liberações.
+     - Também protege o anúncio e a reserva das janelas do carro 8.
+
+6. LISTA COMPLETA DO MAPA "semaforos" - 68 CHAVES
+----------------------------------------------------------------------------
+O mapa contém 67 semáforos físicos e PORTARIA-CORREDORES.
+portariaReservas não aparece nesta lista porque é um campo separado.
+
+  01. CRUZ-0,0
+  02. CRUZ-0,1
+  03. CRUZ-0,2
+  04. CRUZ-0,3
+  05. CRUZ-0,4
+  06. CRUZ-0,5
+  07. CRUZ-1,0
+  08. CRUZ-1,2
+  09. CRUZ-1,3
+  10. CRUZ-1,5
+  11. CRUZ-2,0
+  12. CRUZ-2,1
+  13. CRUZ-2,2
+  14. CRUZ-2,3
+  15. CRUZ-2,4
+  16. CRUZ-2,5
+  17. CRUZ-3,0
+  18. CRUZ-3,1
+  19. CRUZ-3,2
+  20. CRUZ-3,3
+  21. CRUZ-3,4
+  22. CRUZ-3,5
+  23. CRUZ-4,0
+  24. CRUZ-4,2
+  25. CRUZ-4,3
+  26. CRUZ-4,4
+  27. CRUZ-4,5
+  28. CRUZ-5,0
+  29. CRUZ-5,1
+  30. CRUZ-5,2
+  31. CRUZ-5,3
+  32. CRUZ-5,4
+  33. CRUZ-5,5
+  34. PORTARIA-CORREDORES
+  35. SEG-RH01
+  36. SEG-RH02
+  37. SEG-RH03
+  38. SEG-RH04
+  39. SEG-RH05
+  40. SEG-RH11
+  41. SEG-RH13
+  42. SEG-RH14
+  43. SEG-RH15
+  44. SEG-RH19
+  45. SEG-RH20
+  46. SEG-RH23
+  47. SEG-RH26
+  48. SEG-RH27
+  49. SEG-RH28
+  50. SEG-RH29
+  51. SEG-RH30
+  52. SEG-RV01
+  53. SEG-RV02
+  54. SEG-RV03
+  55. SEG-RV04
+  56. SEG-RV05
+  57. SEG-RV11
+  58. SEG-RV12
+  59. SEG-RV13
+  60. SEG-RV14
+  61. SEG-RV15
+  62. SEG-RV16
+  63. SEG-RV22
+  64. SEG-RV26
+  65. SEG-RV27
+  66. SEG-RV28
+  67. SEG-RV29
+  68. SEG-RV30
+
+7. SEGMENTOS COM SENTIDOS OPOSTOS - 27
+----------------------------------------------------------------------------
+Esses segmentos já possuem seus próprios semáforos físicos e, nas janelas
+de corredor, utilizam também PORTARIA-CORREDORES.
+
+  - SEG-RH01     | carros [1, 2, 3, 4, 8]
+  - SEG-RH02     | carros [1, 2, 3, 4, 8]
+  - SEG-RH03     | carros [1, 2, 3, 5, 7]
+  - SEG-RH04     | carros [1, 2, 3, 5]
+  - SEG-RH05     | carros [1, 2, 3, 5]
+  - SEG-RH11     | carros [3, 7, 8]
+  - SEG-RH13     | carros [3, 6]
+  - SEG-RH14     | carros [2, 3, 6, 8]
+  - SEG-RH15     | carros [2, 3, 6, 7]
+  - SEG-RH19     | carros [2, 5]
+  - SEG-RH20     | carros [5, 7, 8]
+  - SEG-RH28     | carros [1, 6, 7]
+  - SEG-RH29     | carros [1, 2, 6, 8]
+  - SEG-RH30     | carros [1, 2, 6, 8]
+  - SEG-RV03     | carros [1, 2, 4, 7]
+  - SEG-RV04     | carros [1, 2, 3, 4, 8]
+  - SEG-RV05     | carros [1, 2, 3, 4, 8]
+  - SEG-RV12     | carros [4, 6, 8]
+  - SEG-RV13     | carros [4, 5, 6]
+  - SEG-RV14     | carros [4, 5]
+  - SEG-RV15     | carros [4, 5, 7, 8]
+  - SEG-RV22     | carros [2, 7]
+  - SEG-RV26     | carros [1, 2, 6, 8]
+  - SEG-RV27     | carros [1, 6, 8]
+  - SEG-RV28     | carros [1, 5, 6, 7]
+  - SEG-RV29     | carros [1, 2, 3, 5]
+  - SEG-RV30     | carros [1, 2, 3, 5]
+
+8. ZONAS DE CONFLITO DO CARRO 8 - 35
+----------------------------------------------------------------------------
+São 15 segmentos e 20 cruzamentos. Elas são subconjunto das 67 regiões
+críticas físicas e não criam 35 semáforos extras. O carro 8 reserva, de
+forma atômica, todas as zonas necessárias até alcançar o próximo ponto
+privado/seguro.
+
+  - CRUZ-0,0     | carros [1, 2, 3, 4, 8]
+  - CRUZ-0,1     | carros [1, 2, 3, 4, 8]
+  - CRUZ-0,2     | carros [1, 2, 3, 4, 5, 7, 8]
+  - CRUZ-1,0     | carros [1, 2, 3, 4, 8]
+  - CRUZ-1,2     | carros [4, 5, 7, 8]
+  - CRUZ-1,3     | carros [7, 8]
+  - CRUZ-2,0     | carros [1, 2, 3, 4, 7, 8]
+  - CRUZ-2,1     | carros [3, 7, 8]
+  - CRUZ-2,3     | carros [2, 3, 6, 8]
+  - CRUZ-2,4     | carros [2, 3, 6, 7, 8]
+  - CRUZ-3,1     | carros [7, 8]
+  - CRUZ-3,2     | carros [4, 5, 6, 8]
+  - CRUZ-3,4     | carros [2, 5, 7, 8]
+  - CRUZ-3,5     | carros [1, 5, 6, 7, 8]
+  - CRUZ-4,2     | carros [2, 4, 6, 7, 8]
+  - CRUZ-4,3     | carros [2, 7, 8]
+  - CRUZ-4,5     | carros [1, 2, 6, 8]
+  - CRUZ-5,3     | carros [1, 2, 6, 7, 8]
+  - CRUZ-5,4     | carros [1, 2, 6, 8]
+  - CRUZ-5,5     | carros [1, 2, 6, 8]
+  - SEG-RH01     | carros [1, 2, 3, 4, 8]
+  - SEG-RH02     | carros [1, 2, 3, 4, 8]
+  - SEG-RH11     | carros [3, 7, 8]
+  - SEG-RH14     | carros [2, 3, 6, 8]
+  - SEG-RH20     | carros [5, 7, 8]
+  - SEG-RH23     | carros [2, 8]
+  - SEG-RH29     | carros [1, 2, 6, 8]
+  - SEG-RH30     | carros [1, 2, 6, 8]
+  - SEG-RV04     | carros [1, 2, 3, 4, 8]
+  - SEG-RV05     | carros [1, 2, 3, 4, 8]
+  - SEG-RV12     | carros [4, 6, 8]
+  - SEG-RV15     | carros [4, 5, 7, 8]
+  - SEG-RV16     | carros [2, 7, 8]
+  - SEG-RV26     | carros [1, 2, 6, 8]
+  - SEG-RV27     | carros [1, 6, 8]
+
+9. CONFLITOS POR PAR DE CARROS
+----------------------------------------------------------------------------
+A contagem inclui tanto segmentos compartilhados quanto cruzamentos comuns.
+
+  - C1-C2: 36 zonas (17 segmentos + 19 cruzamentos)
+      Segmentos: SEG-RH01, SEG-RH02, SEG-RH03, SEG-RH04, SEG-RH05, SEG-RH26, SEG-RH27, SEG-RH29, SEG-RH30, SEG-RV01, SEG-RV02, SEG-RV03, SEG-RV04, SEG-RV05, SEG-RV26, SEG-RV29, SEG-RV30
+      Cruzamentos: CRUZ-0,0, CRUZ-0,1, CRUZ-0,2, CRUZ-0,3, CRUZ-0,4, CRUZ-0,5, CRUZ-1,0, CRUZ-1,5, CRUZ-2,0, CRUZ-2,5, CRUZ-3,0, CRUZ-4,0, CRUZ-4,5, CRUZ-5,0, CRUZ-5,1, CRUZ-5,2, CRUZ-5,3, CRUZ-5,4, CRUZ-5,5
+  - C1-C3: 19 zonas (9 segmentos + 10 cruzamentos)
+      Segmentos: SEG-RH01, SEG-RH02, SEG-RH03, SEG-RH04, SEG-RH05, SEG-RV04, SEG-RV05, SEG-RV29, SEG-RV30
+      Cruzamentos: CRUZ-0,0, CRUZ-0,1, CRUZ-0,2, CRUZ-0,3, CRUZ-0,4, CRUZ-0,5, CRUZ-1,0, CRUZ-1,5, CRUZ-2,0, CRUZ-2,5
+  - C1-C4: 19 zonas (9 segmentos + 10 cruzamentos)
+      Segmentos: SEG-RH01, SEG-RH02, SEG-RH26, SEG-RH27, SEG-RV01, SEG-RV02, SEG-RV03, SEG-RV04, SEG-RV05
+      Cruzamentos: CRUZ-0,0, CRUZ-0,1, CRUZ-0,2, CRUZ-1,0, CRUZ-2,0, CRUZ-3,0, CRUZ-4,0, CRUZ-5,0, CRUZ-5,1, CRUZ-5,2
+  - C1-C5: 13 zonas (6 segmentos + 7 cruzamentos)
+      Segmentos: SEG-RH03, SEG-RH04, SEG-RH05, SEG-RV28, SEG-RV29, SEG-RV30
+      Cruzamentos: CRUZ-0,2, CRUZ-0,3, CRUZ-0,4, CRUZ-0,5, CRUZ-1,5, CRUZ-2,5, CRUZ-3,5
+  - C1-C6: 13 zonas (6 segmentos + 7 cruzamentos)
+      Segmentos: SEG-RH28, SEG-RH29, SEG-RH30, SEG-RV26, SEG-RV27, SEG-RV28
+      Cruzamentos: CRUZ-2,5, CRUZ-3,5, CRUZ-4,5, CRUZ-5,2, CRUZ-5,3, CRUZ-5,4, CRUZ-5,5
+  - C1-C7: 12 zonas (4 segmentos + 8 cruzamentos)
+      Segmentos: SEG-RH03, SEG-RH28, SEG-RV03, SEG-RV28
+      Cruzamentos: CRUZ-0,2, CRUZ-0,3, CRUZ-2,0, CRUZ-2,5, CRUZ-3,0, CRUZ-3,5, CRUZ-5,2, CRUZ-5,3
+  - C1-C8: 18 zonas (8 segmentos + 10 cruzamentos)
+      Segmentos: SEG-RH01, SEG-RH02, SEG-RH29, SEG-RH30, SEG-RV04, SEG-RV05, SEG-RV26, SEG-RV27
+      Cruzamentos: CRUZ-0,0, CRUZ-0,1, CRUZ-0,2, CRUZ-1,0, CRUZ-2,0, CRUZ-3,5, CRUZ-4,5, CRUZ-5,3, CRUZ-5,4, CRUZ-5,5
+  - C2-C3: 23 zonas (11 segmentos + 12 cruzamentos)
+      Segmentos: SEG-RH01, SEG-RH02, SEG-RH03, SEG-RH04, SEG-RH05, SEG-RH14, SEG-RH15, SEG-RV04, SEG-RV05, SEG-RV29, SEG-RV30
+      Cruzamentos: CRUZ-0,0, CRUZ-0,1, CRUZ-0,2, CRUZ-0,3, CRUZ-0,4, CRUZ-0,5, CRUZ-1,0, CRUZ-1,5, CRUZ-2,0, CRUZ-2,3, CRUZ-2,4, CRUZ-2,5
+  - C2-C4: 21 zonas (10 segmentos + 11 cruzamentos)
+      Segmentos: SEG-RH01, SEG-RH02, SEG-RH26, SEG-RH27, SEG-RV01, SEG-RV02, SEG-RV03, SEG-RV04, SEG-RV05, SEG-RV11
+      Cruzamentos: CRUZ-0,0, CRUZ-0,1, CRUZ-0,2, CRUZ-1,0, CRUZ-2,0, CRUZ-3,0, CRUZ-4,0, CRUZ-4,2, CRUZ-5,0, CRUZ-5,1, CRUZ-5,2
+  - C2-C5: 14 zonas (6 segmentos + 8 cruzamentos)
+      Segmentos: SEG-RH03, SEG-RH04, SEG-RH05, SEG-RH19, SEG-RV29, SEG-RV30
+      Cruzamentos: CRUZ-0,2, CRUZ-0,3, CRUZ-0,4, CRUZ-0,5, CRUZ-1,5, CRUZ-2,5, CRUZ-3,3, CRUZ-3,4
+  - C2-C6: 15 zonas (6 segmentos + 9 cruzamentos)
+      Segmentos: SEG-RH14, SEG-RH15, SEG-RH29, SEG-RH30, SEG-RV11, SEG-RV26
+      Cruzamentos: CRUZ-2,3, CRUZ-2,4, CRUZ-2,5, CRUZ-4,2, CRUZ-4,5, CRUZ-5,2, CRUZ-5,3, CRUZ-5,4, CRUZ-5,5
+  - C2-C7: 18 zonas (6 segmentos + 12 cruzamentos)
+      Segmentos: SEG-RH03, SEG-RH15, SEG-RV03, SEG-RV11, SEG-RV16, SEG-RV22
+      Cruzamentos: CRUZ-0,2, CRUZ-0,3, CRUZ-2,0, CRUZ-2,4, CRUZ-2,5, CRUZ-3,0, CRUZ-3,4, CRUZ-4,2, CRUZ-4,3, CRUZ-4,4, CRUZ-5,2, CRUZ-5,3
+  - C2-C8: 24 zonas (10 segmentos + 14 cruzamentos)
+      Segmentos: SEG-RH01, SEG-RH02, SEG-RH14, SEG-RH23, SEG-RH29, SEG-RH30, SEG-RV04, SEG-RV05, SEG-RV16, SEG-RV26
+      Cruzamentos: CRUZ-0,0, CRUZ-0,1, CRUZ-0,2, CRUZ-1,0, CRUZ-2,0, CRUZ-2,3, CRUZ-2,4, CRUZ-3,4, CRUZ-4,2, CRUZ-4,3, CRUZ-4,5, CRUZ-5,3, CRUZ-5,4, CRUZ-5,5
+  - C3-C4: 10 zonas (4 segmentos + 6 cruzamentos)
+      Segmentos: SEG-RH01, SEG-RH02, SEG-RV04, SEG-RV05
+      Cruzamentos: CRUZ-0,0, CRUZ-0,1, CRUZ-0,2, CRUZ-1,0, CRUZ-2,0, CRUZ-2,2
+  - C3-C5: 12 zonas (5 segmentos + 7 cruzamentos)
+      Segmentos: SEG-RH03, SEG-RH04, SEG-RH05, SEG-RV29, SEG-RV30
+      Cruzamentos: CRUZ-0,2, CRUZ-0,3, CRUZ-0,4, CRUZ-0,5, CRUZ-1,5, CRUZ-2,2, CRUZ-2,5
+  - C3-C6: 7 zonas (3 segmentos + 4 cruzamentos)
+      Segmentos: SEG-RH13, SEG-RH14, SEG-RH15
+      Cruzamentos: CRUZ-2,2, CRUZ-2,3, CRUZ-2,4, CRUZ-2,5
+  - C3-C7: 9 zonas (3 segmentos + 6 cruzamentos)
+      Segmentos: SEG-RH03, SEG-RH11, SEG-RH15
+      Cruzamentos: CRUZ-0,2, CRUZ-0,3, CRUZ-2,0, CRUZ-2,1, CRUZ-2,4, CRUZ-2,5
+  - C3-C8: 14 zonas (6 segmentos + 8 cruzamentos)
+      Segmentos: SEG-RH01, SEG-RH02, SEG-RH11, SEG-RH14, SEG-RV04, SEG-RV05
+      Cruzamentos: CRUZ-0,0, CRUZ-0,1, CRUZ-0,2, CRUZ-1,0, CRUZ-2,0, CRUZ-2,1, CRUZ-2,3, CRUZ-2,4
+  - C4-C5: 7 zonas (3 segmentos + 4 cruzamentos)
+      Segmentos: SEG-RV13, SEG-RV14, SEG-RV15
+      Cruzamentos: CRUZ-0,2, CRUZ-1,2, CRUZ-2,2, CRUZ-3,2
+  - C4-C6: 7 zonas (3 segmentos + 4 cruzamentos)
+      Segmentos: SEG-RV11, SEG-RV12, SEG-RV13
+      Cruzamentos: CRUZ-2,2, CRUZ-3,2, CRUZ-4,2, CRUZ-5,2
+  - C4-C7: 9 zonas (3 segmentos + 6 cruzamentos)
+      Segmentos: SEG-RV03, SEG-RV11, SEG-RV15
+      Cruzamentos: CRUZ-0,2, CRUZ-1,2, CRUZ-2,0, CRUZ-3,0, CRUZ-4,2, CRUZ-5,2
+  - C4-C8: 14 zonas (6 segmentos + 8 cruzamentos)
+      Segmentos: SEG-RH01, SEG-RH02, SEG-RV04, SEG-RV05, SEG-RV12, SEG-RV15
+      Cruzamentos: CRUZ-0,0, CRUZ-0,1, CRUZ-0,2, CRUZ-1,0, CRUZ-1,2, CRUZ-2,0, CRUZ-3,2, CRUZ-4,2
+  - C5-C6: 6 zonas (2 segmentos + 4 cruzamentos)
+      Segmentos: SEG-RV13, SEG-RV28
+      Cruzamentos: CRUZ-2,2, CRUZ-2,5, CRUZ-3,2, CRUZ-3,5
+  - C5-C7: 10 zonas (4 segmentos + 6 cruzamentos)
+      Segmentos: SEG-RH03, SEG-RH20, SEG-RV15, SEG-RV28
+      Cruzamentos: CRUZ-0,2, CRUZ-0,3, CRUZ-1,2, CRUZ-2,5, CRUZ-3,4, CRUZ-3,5
+  - C5-C8: 7 zonas (2 segmentos + 5 cruzamentos)
+      Segmentos: SEG-RH20, SEG-RV15
+      Cruzamentos: CRUZ-0,2, CRUZ-1,2, CRUZ-3,2, CRUZ-3,4, CRUZ-3,5
+  - C6-C7: 10 zonas (4 segmentos + 6 cruzamentos)
+      Segmentos: SEG-RH15, SEG-RH28, SEG-RV11, SEG-RV28
+      Cruzamentos: CRUZ-2,4, CRUZ-2,5, CRUZ-3,5, CRUZ-4,2, CRUZ-5,2, CRUZ-5,3
+  - C6-C8: 15 zonas (6 segmentos + 9 cruzamentos)
+      Segmentos: SEG-RH14, SEG-RH29, SEG-RH30, SEG-RV12, SEG-RV26, SEG-RV27
+      Cruzamentos: CRUZ-2,3, CRUZ-2,4, CRUZ-3,2, CRUZ-3,5, CRUZ-4,2, CRUZ-4,5, CRUZ-5,3, CRUZ-5,4, CRUZ-5,5
+  - C7-C8: 16 zonas (4 segmentos + 12 cruzamentos)
+      Segmentos: SEG-RH11, SEG-RH20, SEG-RV15, SEG-RV16
+      Cruzamentos: CRUZ-0,2, CRUZ-1,2, CRUZ-1,3, CRUZ-2,0, CRUZ-2,1, CRUZ-2,4, CRUZ-3,1, CRUZ-3,4, CRUZ-3,5, CRUZ-4,2, CRUZ-4,3, CRUZ-5,3
