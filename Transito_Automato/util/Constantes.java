@@ -1,9 +1,20 @@
+/* ***************************************************************
+* Autor............: Maxsuel Aparecido Lima Santos
+* Matricula........: 202511587
+* Inicio...........: 25/06/2026
+* Ultima alteracao.: 12/07/2026
+* Nome.............: Constantes.java
+* Funcao...........: Centraliza as constantes e os mapas usados pela simulacao.
+************************************************************************ */
 package util;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Constantes da etapa final com os carros 1 a 8. */
+/* ***************************************************************
+* Classe: Constantes
+* Funcao: Centraliza as constantes e os mapas usados pela simulacao.
+*************************************************************** */
 public final class Constantes {
 
     public static final int TAMANHO_MALHA = 5;
@@ -28,10 +39,7 @@ public final class Constantes {
         SENTIDO_ANTI_HORARIO
     };
 
-    /*
-     * Todos os carros nascem no meio de trechos diferentes.
-     * Os pontos foram escolhidos longe dos cruzamentos e sem sobreposicao.
-     */
+    // Todos os carros nascem no meio de trechos diferentes
     public static final int[] INDICES_INICIAIS = {
         6,  // C1 em RH27
         13, // C2 em RH25
@@ -112,30 +120,16 @@ public final class Constantes {
     public static final double VELOCIDADE_MAX = 3.0;
     public static final double VELOCIDADE_PADRAO = 1.0;
 
-    /*
-     * Posicionamento da malha logica sobre a imagem de fundo.
-     * ORIGEM_GRID_X/Y movem todos os carros ao mesmo tempo.
-     * TAMANHO_QUADRA_PX altera a distancia entre os cruzamentos.
-     */
+    // Posicionamento da malha logica sobre a imagem de fundo.
+    // TAMANHO_QUADRA_PX altera a distancia entre os cruzamentos.
     public static final double ORIGEM_GRID_X = 10.0;
     public static final double ORIGEM_GRID_Y = 10.0;
     public static final double TAMANHO_QUADRA_PX = 140.0;
 
-    /*
-     * Quanto o ponto de parada fica a frente do meio do trecho, sempre no
-     * sentido em que o carro esta andando. Aumente pouco a pouco para os
-     * carros pararem mais perto do proximo cruzamento.
-     *
-     * Faixa recomendada: 0.0 a 15.0 pixels.
-     */
+    
+    // Quanto o ponto de parada fica a frente do meio do trecho, sempre no sentido em que o carro esta andando.
     public static final double AVANCO_PONTO_PARADA_PX = 10.0;
 
-    /*
-     * Ajustes pequenos, apenas visuais, para cada sprite.
-     * A posicao 0 pertence ao carro 1, a posicao 1 ao carro 2 e assim por
-     * diante. Valores positivos movem para direita/baixo; negativos movem
-     * para esquerda/cima. Esses valores nao alteram rotas nem semaforos.
-     */
     public static final double[] AJUSTE_VISUAL_CARRO_X = {
         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
     };
@@ -148,6 +142,12 @@ public final class Constantes {
 
     public static final String CAMINHO_IMG = "/img/";
 
+    /* ***************************************************************
+    * Metodo: montarMapaArestas
+    * Funcao: Monta o mapa completo das arestas da malha.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public static Map<String, int[][]> montarMapaArestas() {
         Map<String, int[][]> mapa = new LinkedHashMap<>();
 
@@ -178,6 +178,12 @@ public final class Constantes {
         return mapa;
     }
 
+    /* ***************************************************************
+    * Metodo: Constantes
+    * Funcao: Inicializa uma nova instancia de Constantes.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     private Constantes() {
     }
 }

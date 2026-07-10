@@ -2,13 +2,13 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 23/06/2026
-* Ultima alteracao.: 28/06/2026
+* Ultima alteracao.: 10/07/2026
 * Nome.............: Grid.java
 * Funcao...........: Monta a malha completa de vertices (cruzamentos) e
 *                    arestas (trechos RHxx/RVxx) da quadra 5x5, a partir
 *                    do mapa de coordenadas definido em Constantes.
 *
-*                    Cada Aresta criada aqui e' apenas geometria (nome +
+*                    Cada Aresta criada aqui eh apenas geometria (nome +
 *                    extremos) - a informacao de ZONA CRITICA (semaforo)
 *                    fica em model.Percurso, pois um mesmo trecho pode
 *                    ser o INICIO da zona para um carro e o MEIO da zona
@@ -27,6 +27,10 @@ import java.util.Map;
 
 import util.Constantes;
 
+/* ***************************************************************
+* Classe: Grid
+* Funcao: Constroi e disponibiliza a malha de vertices e arestas.
+*************************************************************** */
 public class Grid {
 
     private final Map<String, Vertice> vertices = new LinkedHashMap<>();
@@ -38,6 +42,12 @@ public class Grid {
     private final double origemY;
     private final double tamanhoQuadra;
 
+    /* ***************************************************************
+    * Metodo: Grid
+    * Funcao: Inicializa uma nova instancia de Grid.
+    * Parametros: origemX parametro origemX; origemY parametro origemY; tamanhoQuadra parametro tamanhoQuadra
+    * Retorno: sem retorno
+    *************************************************************** */
     public Grid(double origemX, double origemY, double tamanhoQuadra) {
         this.origemX = origemX;
         this.origemY = origemY;
@@ -86,10 +96,22 @@ public class Grid {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: getVertice
+    * Funcao: Retorna vertice.
+    * Parametros: linha parametro linha; coluna parametro coluna
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Vertice getVertice(int linha, int coluna) {
         return vertices.get(Vertice.chave(linha, coluna));
     }
 
+    /* ***************************************************************
+    * Metodo: getAresta
+    * Funcao: Retorna aresta.
+    * Parametros: nome parametro nome
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Aresta getAresta(String nome) {
         Aresta a = arestas.get(nome);
         if (a == null) {
@@ -98,10 +120,22 @@ public class Grid {
         return a;
     }
 
+    /* ***************************************************************
+    * Metodo: getVertices
+    * Funcao: Retorna vertices.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Map<String, Vertice> getVertices() {
         return vertices;
     }
 
+    /* ***************************************************************
+    * Metodo: getArestas
+    * Funcao: Retorna arestas.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Map<String, Aresta> getArestas() {
         return arestas;
     }

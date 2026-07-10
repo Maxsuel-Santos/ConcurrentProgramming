@@ -1,3 +1,11 @@
+/* ***************************************************************
+* Autor............: Maxsuel Aparecido Lima Santos
+* Matricula........: 202511587
+* Inicio...........: 26/07/2026
+* Ultima alteracao.: 12/07/2026
+* Nome.............: GerenciadorSemaforos.java
+* Funcao...........: Controla as reservas das zonas compartilhadas pelos carros.
+************************************************************************ */
 package util;
 
 import java.util.ArrayList;
@@ -18,14 +26,10 @@ import model.Grid;
 import model.Percurso;
 import model.Vertice;
 
-/**
- * Gerenciador simples de semaforos para os oito carros.
- *
- * Os carros 1 a 7 usam o protocolo fisico validado na etapa anterior. O carro
- * 8, que possui pontos privados em P23_SA, anda de um ponto privado ao proximo.
- * Antes de sair, reserva atomicamente todas as zonas compartilhadas daquela
- * janela. Quem ja esta dentro termina de sair; quem esta fora espera.
- */
+/* ***************************************************************
+* Classe: GerenciadorSemaforos
+* Funcao: Controla as reservas das zonas compartilhadas pelos carros.
+*************************************************************** */
 public class GerenciadorSemaforos {
 
     private static final int CARROS_BASE = 7;
@@ -51,6 +55,12 @@ public class GerenciadorSemaforos {
     private volatile long reservasConcedidas;
     private volatile long tentativasNegadas;
 
+    /* ***************************************************************
+    * Metodo: GerenciadorSemaforos
+    * Funcao: Inicializa uma nova instancia de GerenciadorSemaforos.
+    * Parametros: grid parametro grid
+    * Retorno: sem retorno
+    *************************************************************** */
     public GerenciadorSemaforos(Grid grid) {
         Percurso[] todos = criarPercursos(grid, Constantes.N_CARROS);
         Percurso[] base = criarPercursos(grid, CARROS_BASE);
@@ -77,19 +87,42 @@ public class GerenciadorSemaforos {
         semaforos.put(PORTARIA_CORREDORES, new Semaphore(1, true));
     }
 
-    /** Mantido por compatibilidade; a exclusao do C8 ocorre por janela. */
+    /* ***************************************************************
+    * Metodo: iniciarVolta
+    * Funcao: Inicia volta.
+    * Parametros: carro parametro carro
+    * Retorno: sem retorno
+    *************************************************************** */
     public void iniciarVolta(Carro carro) throws InterruptedException {
         // Nenhuma acao.
     }
 
+    /* ***************************************************************
+    * Metodo: finalizarVolta
+    * Funcao: Finaliza volta.
+    * Parametros: carro parametro carro
+    * Retorno: sem retorno
+    *************************************************************** */
     public void finalizarVolta(Carro carro) {
         // Nenhuma acao.
     }
 
+    /* ***************************************************************
+    * Metodo: registrarMovimentoConcluido
+    * Funcao: Registra movimento concluido.
+    * Parametros: carro parametro carro
+    * Retorno: sem retorno
+    *************************************************************** */
     public void registrarMovimentoConcluido(Carro carro) {
         // Usado apenas como ponto de instrumentacao pelos testes.
     }
 
+    /* ***************************************************************
+    * Metodo: registrarPosicaoInicial
+    * Funcao: Registra posicao inicial.
+    * Parametros: carro parametro carro
+    * Retorno: sem retorno
+    *************************************************************** */
     public void registrarPosicaoInicial(Carro carro) throws InterruptedException {
         if (carro.getNumero() == CARRO_8) {
             return;
@@ -99,6 +132,12 @@ public class GerenciadorSemaforos {
         );
     }
 
+    /* ***************************************************************
+    * Metodo: reservarJanela
+    * Funcao: Reserva janela.
+    * Parametros: carro parametro carro; indicesDestino parametro indicesDestino
+    * Retorno: sem retorno
+    *************************************************************** */
     public void reservarJanela(Carro carro, List<Integer> indicesDestino)
             throws InterruptedException {
         if (carro.getNumero() == CARRO_8) {
@@ -110,6 +149,12 @@ public class GerenciadorSemaforos {
         );
     }
 
+    /* ***************************************************************
+    * Metodo: reservarJanelaDeCorredor
+    * Funcao: Reserva janela de corredor.
+    * Parametros: carro parametro carro; indicesDestino parametro indicesDestino
+    * Retorno: sem retorno
+    *************************************************************** */
     public void reservarJanelaDeCorredor(Carro carro, List<Integer> indicesDestino)
             throws InterruptedException {
         if (carro.getNumero() == CARRO_8) {
@@ -121,6 +166,12 @@ public class GerenciadorSemaforos {
         atualizarReservaAteConseguir(carro.getNumero(), desejadas);
     }
 
+    /* ***************************************************************
+    * Metodo: tentarReservarJanela
+    * Funcao: Executa a operacao tentar reservar janela.
+    * Parametros: carro parametro carro; indicesDestino parametro indicesDestino
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     public boolean tentarReservarJanela(Carro carro, List<Integer> indicesDestino)
             throws InterruptedException {
         if (carro.getNumero() == CARRO_8) {
@@ -131,6 +182,12 @@ public class GerenciadorSemaforos {
         );
     }
 
+    /* ***************************************************************
+    * Metodo: finalizarJanela
+    * Funcao: Finaliza janela.
+    * Parametros: carro parametro carro; manterPortaria parametro manterPortaria
+    * Retorno: sem retorno
+    *************************************************************** */
     public void finalizarJanela(Carro carro, boolean manterPortaria) {
         if (carro.getNumero() == CARRO_8) {
             liberarJanelaDoCarro8();
@@ -143,6 +200,12 @@ public class GerenciadorSemaforos {
         atualizarSomenteLiberando(carro.getNumero(), desejadas);
     }
 
+    /* ***************************************************************
+    * Metodo: reservarJanelaDoCarro8
+    * Funcao: Reserva janela do carro8.
+    * Parametros: carro parametro carro; indicesDestino parametro indicesDestino
+    * Retorno: sem retorno
+    *************************************************************** */
     private void reservarJanelaDoCarro8(Carro carro, List<Integer> indicesDestino)
             throws InterruptedException {
         List<String> zonasFisicas = zonasDaJanelaCompleta(carro, indicesDestino);
@@ -193,10 +256,6 @@ public class GerenciadorSemaforos {
                     portariaReservas.release();
                 }
 
-                /* A prioridade do C8 e temporaria. Se os carros base formarem
-                 * uma fila fechada enquanto esvaziam a janela, a cancela abre
-                 * por alguns milissegundos. O protocolo dos 7 carros desfaz a
-                 * fila e o C8 tenta novamente, sem possuir recurso parcial. */
                 long aguardandoMs = (System.nanoTime() - inicioCiclo) / 1_000_000L;
                 if (aguardandoMs >= 120L) {
                     portariaReservas.acquire();
@@ -235,6 +294,12 @@ public class GerenciadorSemaforos {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: liberarJanelaDoCarro8
+    * Funcao: Libera janela do carro8.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     private void liberarJanelaDoCarro8() {
         portariaReservas.acquireUninterruptibly();
         try {
@@ -250,6 +315,12 @@ public class GerenciadorSemaforos {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: liberarCarro
+    * Funcao: Libera carro.
+    * Parametros: numeroCarro parametro numeroCarro
+    * Retorno: sem retorno
+    *************************************************************** */
     public void liberarCarro(int numeroCarro) {
         portariaReservas.acquireUninterruptibly();
         try {
@@ -266,6 +337,12 @@ public class GerenciadorSemaforos {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: paradaSegura
+    * Funcao: Executa a operacao parada segura.
+    * Parametros: carro parametro carro; indiceTrecho parametro indiceTrecho
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     public boolean paradaSegura(Carro carro, int indiceTrecho) {
         if (carro.getNumero() == CARRO_8) {
             return zonasDoMeioTrecho(carro.getPercurso().getAresta(indiceTrecho)).isEmpty();
@@ -273,6 +350,12 @@ public class GerenciadorSemaforos {
         return !estaEmCorredorDeSentidoOposto(carro, indiceTrecho);
     }
 
+    /* ***************************************************************
+    * Metodo: estaEmCorredorDeSentidoOposto
+    * Funcao: Executa a operacao esta em corredor de sentido oposto.
+    * Parametros: carro parametro carro; indiceTrecho parametro indiceTrecho
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     public boolean estaEmCorredorDeSentidoOposto(Carro carro, int indiceTrecho) {
         if (carro.getNumero() == CARRO_8) {
             return false;
@@ -282,6 +365,12 @@ public class GerenciadorSemaforos {
         return inseguros != null && inseguros.contains(zona);
     }
 
+    /* ***************************************************************
+    * Metodo: trechoPrivadoDoCarro8
+    * Funcao: Executa a operacao trecho privado do carro8.
+    * Parametros: carro parametro carro; indiceTrecho parametro indiceTrecho
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     public boolean trechoPrivadoDoCarro8(Carro carro, int indiceTrecho) {
         if (carro.getNumero() != CARRO_8) {
             return false;
@@ -290,6 +379,12 @@ public class GerenciadorSemaforos {
         return !zonasConflitoCarro8.contains(zona);
     }
 
+    /* ***************************************************************
+    * Metodo: zonasDoMeioTrecho
+    * Funcao: Executa a operacao zonas do meio trecho.
+    * Parametros: trecho parametro trecho
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public List<String> zonasDoMeioTrecho(Aresta trecho) {
         String zona = nomeSegmento(trecho);
         if (!zonasCriticas.contains(zona)) {
@@ -298,6 +393,12 @@ public class GerenciadorSemaforos {
         return Collections.singletonList(zona);
     }
 
+    /* ***************************************************************
+    * Metodo: zonasDaTravessia
+    * Funcao: Executa a operacao zonas da travessia.
+    * Parametros: percurso parametro percurso; indiceAtual parametro indiceAtual
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public List<String> zonasDaTravessia(Percurso percurso, int indiceAtual) {
         List<String> zonas = new ArrayList<>();
         adicionarSeCritica(zonas, nomeSegmento(percurso.getAresta(indiceAtual)), zonasCriticas);
@@ -306,8 +407,20 @@ public class GerenciadorSemaforos {
         return ordenarSemRepetir(zonas);
     }
 
+    /* ***************************************************************
+    * Metodo: getZonasCriticas
+    * Funcao: Retorna zonas criticas.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Set<String> getZonasCriticas() { return zonasCriticas; }
 
+    /* ***************************************************************
+    * Metodo: getSegmentosCriticos
+    * Funcao: Retorna segmentos criticos.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Set<String> getSegmentosCriticos() {
         Set<String> resultado = new LinkedHashSet<>();
         for (String zona : zonasCriticas) {
@@ -318,6 +431,12 @@ public class GerenciadorSemaforos {
         return Collections.unmodifiableSet(resultado);
     }
 
+    /* ***************************************************************
+    * Metodo: getCruzamentosCriticos
+    * Funcao: Retorna cruzamentos criticos.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Set<String> getCruzamentosCriticos() {
         Set<String> resultado = new LinkedHashSet<>();
         for (String zona : zonasCriticas) {
@@ -328,9 +447,27 @@ public class GerenciadorSemaforos {
         return Collections.unmodifiableSet(resultado);
     }
 
+    /* ***************************************************************
+    * Metodo: getSegmentosSentidoOposto
+    * Funcao: Retorna segmentos sentido oposto.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Set<String> getSegmentosSentidoOposto() { return segmentosOpostosTodos; }
+    /* ***************************************************************
+    * Metodo: getZonasConflitoCarro8
+    * Funcao: Retorna zonas conflito carro8.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Set<String> getZonasConflitoCarro8() { return zonasConflitoCarro8; }
 
+    /* ***************************************************************
+    * Metodo: todosLivres
+    * Funcao: Indica se todos os semaforos e reservas estao livres.
+    * Parametros: nenhum
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     public boolean todosLivres() {
         portariaReservas.acquireUninterruptibly();
         try {
@@ -349,9 +486,27 @@ public class GerenciadorSemaforos {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: getReservasConcedidas
+    * Funcao: Retorna reservas concedidas.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public long getReservasConcedidas() { return reservasConcedidas; }
+    /* ***************************************************************
+    * Metodo: getTentativasNegadas
+    * Funcao: Retorna tentativas negadas.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public long getTentativasNegadas() { return tentativasNegadas; }
 
+    /* ***************************************************************
+    * Metodo: descreverEstado
+    * Funcao: Gera uma descricao textual do estado das reservas.
+    * Parametros: nenhum
+    * Retorno: texto resultante
+    *************************************************************** */
     public String descreverEstado() {
         boolean adquiriu = false;
         try {
@@ -376,6 +531,12 @@ public class GerenciadorSemaforos {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: atualizarReservaAteConseguir
+    * Funcao: Atualiza reserva ate conseguir.
+    * Parametros: carro parametro carro; desejadas parametro desejadas
+    * Retorno: sem retorno
+    *************************************************************** */
     private void atualizarReservaAteConseguir(int carro, List<String> desejadas)
             throws InterruptedException {
         long espera = 1L;
@@ -387,6 +548,12 @@ public class GerenciadorSemaforos {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: tentarAtualizarReserva
+    * Funcao: Executa a operacao tentar atualizar reserva.
+    * Parametros: carro parametro carro; desejadas parametro desejadas
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     private boolean tentarAtualizarReserva(int carro, List<String> desejadas)
             throws InterruptedException {
         portariaReservas.acquire();
@@ -453,6 +620,12 @@ public class GerenciadorSemaforos {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: atualizarSomenteLiberando
+    * Funcao: Atualiza somente liberando.
+    * Parametros: carro parametro carro; desejadas parametro desejadas
+    * Retorno: sem retorno
+    *************************************************************** */
     private void atualizarSomenteLiberando(int carro, List<String> desejadas) {
         portariaReservas.acquireUninterruptibly();
         try {
@@ -490,6 +663,12 @@ public class GerenciadorSemaforos {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: zonasDaParadaBase
+    * Funcao: Executa a operacao zonas da parada base.
+    * Parametros: trecho parametro trecho
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private List<String> zonasDaParadaBase(Aresta trecho) {
         List<String> zonas = new ArrayList<>();
         String zona = nomeSegmento(trecho);
@@ -499,6 +678,12 @@ public class GerenciadorSemaforos {
         return zonas;
     }
 
+    /* ***************************************************************
+    * Metodo: zonasDaJanelaBase
+    * Funcao: Executa a operacao zonas da janela base.
+    * Parametros: carro parametro carro; indicesDestino parametro indicesDestino
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private List<String> zonasDaJanelaBase(Carro carro, List<Integer> indicesDestino) {
         List<String> zonas = new ArrayList<>();
         Percurso percurso = carro.getPercurso();
@@ -513,6 +698,12 @@ public class GerenciadorSemaforos {
         return ordenarSemRepetir(zonas);
     }
 
+    /* ***************************************************************
+    * Metodo: zonasDaJanelaCompleta
+    * Funcao: Executa a operacao zonas da janela completa.
+    * Parametros: carro parametro carro; indicesDestino parametro indicesDestino
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private List<String> zonasDaJanelaCompleta(Carro carro, List<Integer> indicesDestino) {
         List<String> zonas = new ArrayList<>();
         Percurso percurso = carro.getPercurso();
@@ -526,12 +717,24 @@ public class GerenciadorSemaforos {
         return ordenarSemRepetir(zonas);
     }
 
+    /* ***************************************************************
+    * Metodo: adicionarSeGerenciada
+    * Funcao: Adiciona se gerenciada.
+    * Parametros: zonas parametro zonas; zona parametro zona
+    * Retorno: sem retorno
+    *************************************************************** */
     private void adicionarSeGerenciada(List<String> zonas, String zona) {
         if (zonasAtivasBase.contains(zona) || zonasConflitoCarro8.contains(zona)) {
             zonas.add(zona);
         }
     }
 
+    /* ***************************************************************
+    * Metodo: existePedidoAnteriorPronto
+    * Funcao: Executa a operacao existe pedido anterior pronto.
+    * Parametros: carroAtual parametro carroAtual
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     private boolean existePedidoAnteriorPronto(int carroAtual) {
         for (Map.Entry<Integer, List<String>> entrada : pedidosPendentes.entrySet()) {
             if (entrada.getKey() == carroAtual) {
@@ -544,6 +747,12 @@ public class GerenciadorSemaforos {
         return false;
     }
 
+    /* ***************************************************************
+    * Metodo: pedidoPronto
+    * Funcao: Executa a operacao pedido pronto.
+    * Parametros: carro parametro carro; desejadas parametro desejadas
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     private boolean pedidoPronto(int carro, List<String> desejadas) {
         Set<String> atuais = reservasPorCarro.get(carro);
         if (atuais == null) {
@@ -571,6 +780,12 @@ public class GerenciadorSemaforos {
         return true;
     }
 
+    /* ***************************************************************
+    * Metodo: compartilha
+    * Funcao: Executa a operacao compartilha.
+    * Parametros: a parametro a; b parametro b
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     private boolean compartilha(Set<String> a, Set<String> b) {
         for (String zona : a) {
             if (b.contains(zona)) {
@@ -580,6 +795,12 @@ public class GerenciadorSemaforos {
         return false;
     }
 
+    /* ***************************************************************
+    * Metodo: liberar
+    * Funcao: Libera .
+    * Parametros: zonas parametro zonas
+    * Retorno: sem retorno
+    *************************************************************** */
     private void liberar(List<String> zonas) {
         List<String> reversa = new ArrayList<>(zonas);
         Collections.reverse(reversa);
@@ -591,12 +812,24 @@ public class GerenciadorSemaforos {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: adicionarSeCritica
+    * Funcao: Adiciona se critica.
+    * Parametros: zonas parametro zonas; zona parametro zona; conjunto parametro conjunto
+    * Retorno: sem retorno
+    *************************************************************** */
     private void adicionarSeCritica(List<String> zonas, String zona, Set<String> conjunto) {
         if (conjunto.contains(zona)) {
             zonas.add(zona);
         }
     }
 
+    /* ***************************************************************
+    * Metodo: calcularZonasCriticas
+    * Funcao: Calcula zonas criticas.
+    * Parametros: percursos parametro percursos
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private Set<String> calcularZonasCriticas(Percurso[] percursos) {
         Map<String, Set<Integer>> donos = calcularDonos(percursos);
         Set<String> resultado = new LinkedHashSet<>();
@@ -608,6 +841,12 @@ public class GerenciadorSemaforos {
         return resultado;
     }
 
+    /* ***************************************************************
+    * Metodo: calcularZonasConflitoComCarro8
+    * Funcao: Calcula zonas conflito com carro8.
+    * Parametros: percursos parametro percursos
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private Set<String> calcularZonasConflitoComCarro8(Percurso[] percursos) {
         Map<String, Set<Integer>> donos = calcularDonos(percursos);
         Set<String> resultado = new LinkedHashSet<>();
@@ -620,6 +859,12 @@ public class GerenciadorSemaforos {
         return resultado;
     }
 
+    /* ***************************************************************
+    * Metodo: calcularDonos
+    * Funcao: Calcula donos.
+    * Parametros: percursos parametro percursos
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private Map<String, Set<Integer>> calcularDonos(Percurso[] percursos) {
         Map<String, Set<Integer>> donos = new LinkedHashMap<>();
         for (int i = 0; i < percursos.length; i++) {
@@ -632,6 +877,12 @@ public class GerenciadorSemaforos {
         return donos;
     }
 
+    /* ***************************************************************
+    * Metodo: calcularSegmentosInseguros
+    * Funcao: Calcula segmentos inseguros.
+    * Parametros: percursos parametro percursos
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private Map<Integer, Set<String>> calcularSegmentosInseguros(Percurso[] percursos) {
         Map<String, Map<Integer, String>> direcoes = new HashMap<>();
         for (int i = 0; i < percursos.length; i++) {
@@ -658,6 +909,12 @@ public class GerenciadorSemaforos {
         return resultado;
     }
 
+    /* ***************************************************************
+    * Metodo: criarPercursos
+    * Funcao: Cria percursos.
+    * Parametros: grid parametro grid; quantidade parametro quantidade
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private Percurso[] criarPercursos(Grid grid, int quantidade) {
         Percurso[] percursos = new Percurso[quantidade];
         for (int i = 0; i < quantidade; i++) {
@@ -671,19 +928,54 @@ public class GerenciadorSemaforos {
         return percursos;
     }
 
+    /* ***************************************************************
+    * Metodo: registrarDono
+    * Funcao: Registra dono.
+    * Parametros: donos parametro donos; zona parametro zona; carro parametro carro
+    * Retorno: sem retorno
+    *************************************************************** */
     private void registrarDono(Map<String, Set<Integer>> donos, String zona, int carro) {
         donos.computeIfAbsent(zona, chave -> new LinkedHashSet<>()).add(carro);
     }
 
-    private String nomeSegmento(Aresta trecho) { return PREFIXO_SEGMENTO + trecho.getNome(); }
-    private String nomeCruzamento(Vertice vertice) { return PREFIXO_CRUZAMENTO + vertice.chave(); }
+    /* ***************************************************************
+    * Metodo: nomeSegmento
+    * Funcao: Executa a operacao nome segmento.
+    * Parametros: trecho parametro trecho
+    * Retorno: texto resultante
+    *************************************************************** */
+    private String nomeSegmento(Aresta trecho) { 
+        return PREFIXO_SEGMENTO + trecho.getNome(); 
+    }
 
+    /* ***************************************************************
+    * Metodo: nomeCruzamento
+    * Funcao: Executa a operacao nome cruzamento.
+    * Parametros: vertice parametro vertice
+    * Retorno: texto resultante
+    *************************************************************** */
+    private String nomeCruzamento(Vertice vertice) { 
+        return PREFIXO_CRUZAMENTO + vertice.chave(); 
+    }
+
+    /* ***************************************************************
+    * Metodo: ordenarSemRepetir
+    * Funcao: Executa a operacao ordenar sem repetir.
+    * Parametros: zonas parametro zonas
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private List<String> ordenarSemRepetir(List<String> zonas) {
         List<String> resultado = new ArrayList<>(new LinkedHashSet<>(zonas));
         Collections.sort(resultado);
         return resultado;
     }
 
+    /* ***************************************************************
+    * Metodo: diferenca
+    * Funcao: Executa a operacao diferenca.
+    * Parametros: origem parametro origem; remover parametro remover
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private List<String> diferenca(List<String> origem, Set<String> remover) {
         List<String> resultado = new ArrayList<>();
         for (String item : origem) {

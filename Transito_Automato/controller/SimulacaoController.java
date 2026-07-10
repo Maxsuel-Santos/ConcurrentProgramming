@@ -1,3 +1,11 @@
+/* ***************************************************************
+* Autor............: Maxsuel Aparecido Lima Santos
+* Matricula........: 202511587
+* Inicio...........: 23/06/2026
+* Ultima alteracao.: 12/07/2026
+* Nome.............: SimulacaoController.java
+* Funcao...........: Coordena a interface e a execucao da simulacao de transito.
+************************************************************************ */
 package controller;
 
 import java.net.URL;
@@ -25,7 +33,10 @@ import threads.ThreadCarro;
 import util.Constantes;
 import util.GerenciadorSemaforos;
 
-/** Controller da etapa final com os carros 1 a 8. */
+/* ***************************************************************
+* Classe: SimulacaoController
+* Funcao: Coordena a interface e a execucao da simulacao de transito.
+*************************************************************** */
 public class SimulacaoController implements Initializable {
 
     @FXML private ImageView quadraCarro1;
@@ -97,6 +108,10 @@ public class SimulacaoController implements Initializable {
     private Image imagemSemaforoLivre;
     private Image imagemSemaforoBloqueado;
 
+    /* ***************************************************************
+    * Classe: SlotCarro
+    * Funcao: Agrupa os componentes visuais e o estado de execucao de um carro.
+    *************************************************************** */
     private static final class SlotCarro {
         final int numero;
         final ImageView quadra;
@@ -110,6 +125,12 @@ public class SimulacaoController implements Initializable {
         ThreadCarro thread;
         Timeline animacao;
 
+        /* ***************************************************************
+        * Metodo: SlotCarro
+        * Funcao: Inicializa uma nova instancia de SlotCarro.
+        * Parametros: numero parametro numero; quadra parametro quadra; sprite parametro sprite; slider parametro slider; botaoPausa parametro botaoPausa; botaoRota parametro botaoRota; semaforo parametro semaforo
+        * Retorno: sem retorno
+        *************************************************************** */
         SlotCarro(int numero, ImageView quadra, ImageView sprite, Slider slider,
                   Button botaoPausa, Button botaoRota, ImageView semaforo) {
             this.numero = numero;
@@ -123,6 +144,12 @@ public class SimulacaoController implements Initializable {
     }
 
     @Override
+    /* ***************************************************************
+    * Metodo: initialize
+    * Funcao: Inicializa os componentes e inicia a simulacao.
+    * Parametros: location parametro location; resources parametro resources
+    * Retorno: sem retorno
+    *************************************************************** */
     public void initialize(URL location, ResourceBundle resources) {
         carregarImagensSemaforo();
 
@@ -164,6 +191,12 @@ public class SimulacaoController implements Initializable {
         iniciarSimulacao();
     }
 
+    /* ***************************************************************
+    * Metodo: configurarControles
+    * Funcao: Executa a operacao configurar controles.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     private void configurarControles() {
         for (SlotCarro slot : slots) {
             slot.slider.setMin(Constantes.VELOCIDADE_MIN);
@@ -197,6 +230,12 @@ public class SimulacaoController implements Initializable {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: iniciarSimulacao
+    * Funcao: Inicia simulacao.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     private void iniciarSimulacao() {
         Grid grid = new Grid(
             Constantes.ORIGEM_GRID_X,
@@ -250,12 +289,12 @@ public class SimulacaoController implements Initializable {
         }
     }
 
-    /**
-     * O carro se move do ponto seguro de um trecho ao ponto seguro do proximo.
-     * A Timeline possui duas metades e faz a curva no cruzamento. Como a
-     * thread espera o termino real da animacao, o semaforo so e liberado
-     * quando toda a imagem do carro ja alcancou um ponto seguro.
-     */
+    /* ***************************************************************
+    * Metodo: animarEEsperar
+    * Funcao: Anima o deslocamento do carro e aguarda sua conclusao.
+    * Parametros: slot parametro slot; carro parametro carro; duracaoMs parametro duracaoMs
+    * Retorno: sem retorno
+    *************************************************************** */
     private void animarEEsperar(SlotCarro slot, Carro carro, long duracaoMs)
             throws InterruptedException {
         CountDownLatch terminou = new CountDownLatch(1);
@@ -325,6 +364,12 @@ public class SimulacaoController implements Initializable {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: posicionarSprite
+    * Funcao: Executa a operacao posicionar sprite.
+    * Parametros: slot parametro slot
+    * Retorno: sem retorno
+    *************************************************************** */
     private void posicionarSprite(SlotCarro slot) {
         double metadeLargura = metadeLarguraRenderizada(slot.sprite);
         double metadeAltura = metadeAlturaRenderizada(slot.sprite);
@@ -339,22 +384,52 @@ public class SimulacaoController implements Initializable {
         );
     }
 
+    /* ***************************************************************
+    * Metodo: metadeLarguraRenderizada
+    * Funcao: Executa a operacao metade largura renderizada.
+    * Parametros: sprite parametro sprite
+    * Retorno: valor calculado
+    *************************************************************** */
     private double metadeLarguraRenderizada(ImageView sprite) {
         return sprite.getBoundsInLocal().getWidth() / 2.0;
     }
 
+    /* ***************************************************************
+    * Metodo: metadeAlturaRenderizada
+    * Funcao: Executa a operacao metade altura renderizada.
+    * Parametros: sprite parametro sprite
+    * Retorno: valor calculado
+    *************************************************************** */
     private double metadeAlturaRenderizada(ImageView sprite) {
         return sprite.getBoundsInLocal().getHeight() / 2.0;
     }
 
+    /* ***************************************************************
+    * Metodo: ajusteVisualX
+    * Funcao: Executa a operacao ajuste visual x.
+    * Parametros: slot parametro slot
+    * Retorno: valor calculado
+    *************************************************************** */
     private double ajusteVisualX(SlotCarro slot) {
         return Constantes.AJUSTE_VISUAL_CARRO_X[slot.numero - 1];
     }
 
+    /* ***************************************************************
+    * Metodo: ajusteVisualY
+    * Funcao: Executa a operacao ajuste visual y.
+    * Parametros: slot parametro slot
+    * Retorno: valor calculado
+    *************************************************************** */
     private double ajusteVisualY(SlotCarro slot) {
         return Constantes.AJUSTE_VISUAL_CARRO_Y[slot.numero - 1];
     }
 
+    /* ***************************************************************
+    * Metodo: reiniciarSimulacao
+    * Funcao: Executa a operacao reiniciar simulacao.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     private void reiniciarSimulacao() {
         pararSimulacaoAtual();
 
@@ -367,6 +442,12 @@ public class SimulacaoController implements Initializable {
         iniciarSimulacao();
     }
 
+    /* ***************************************************************
+    * Metodo: pararSimulacaoAtual
+    * Funcao: Executa a operacao parar simulacao atual.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     private void pararSimulacaoAtual() {
         for (SlotCarro slot : slots) {
             if (slot.carro != null) {
@@ -393,6 +474,12 @@ public class SimulacaoController implements Initializable {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: carregarImagensSemaforo
+    * Funcao: Executa a operacao carregar imagens semaforo.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     private void carregarImagensSemaforo() {
         imagemSemaforoLivre = new Image(
             getClass().getResource(Constantes.CAMINHO_IMG + "semaforo_livre.png").toExternalForm()
@@ -402,10 +489,22 @@ public class SimulacaoController implements Initializable {
         );
     }
 
+    /* ***************************************************************
+    * Metodo: atualizarSemaforo
+    * Funcao: Atualiza semaforo.
+    * Parametros: slot parametro slot; andando parametro andando
+    * Retorno: sem retorno
+    *************************************************************** */
     private void atualizarSemaforo(SlotCarro slot, boolean andando) {
         slot.semaforo.setImage(andando ? imagemSemaforoLivre : imagemSemaforoBloqueado);
     }
 
+    /* ***************************************************************
+    * Metodo: atualizarBotaoPausa
+    * Funcao: Atualiza botao pausa.
+    * Parametros: slot parametro slot
+    * Retorno: sem retorno
+    *************************************************************** */
     private void atualizarBotaoPausa(SlotCarro slot) {
         String classe = slot.carro != null && slot.carro.isPausado()
             ? CLASSE_PLAY
@@ -413,6 +512,12 @@ public class SimulacaoController implements Initializable {
         trocarClasse(slot.botaoPausa, CLASSE_PLAY, CLASSE_PAUSE, classe);
     }
 
+    /* ***************************************************************
+    * Metodo: atualizarBotaoRota
+    * Funcao: Atualiza botao rota.
+    * Parametros: slot parametro slot
+    * Retorno: sem retorno
+    *************************************************************** */
     private void atualizarBotaoRota(SlotCarro slot) {
         String classe = slot.carro != null && slot.carro.isPercursoVisivel()
             ? CLASSE_ROTA_OFF
@@ -420,6 +525,12 @@ public class SimulacaoController implements Initializable {
         trocarClasse(slot.botaoRota, CLASSE_ROTA_ON, CLASSE_ROTA_OFF, classe);
     }
 
+    /* ***************************************************************
+    * Metodo: trocarClasse
+    * Funcao: Executa a operacao trocar classe.
+    * Parametros: botao parametro botao; classeA parametro classeA; classeB parametro classeB; ativa parametro ativa
+    * Retorno: sem retorno
+    *************************************************************** */
     private void trocarClasse(Button botao, String classeA, String classeB, String ativa) {
         botao.getStyleClass().remove(classeA);
         botao.getStyleClass().remove(classeB);

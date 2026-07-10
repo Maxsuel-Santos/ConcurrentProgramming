@@ -1,3 +1,11 @@
+/* ***************************************************************
+* Autor............: Maxsuel Aparecido Lima Santos
+* Matricula........: 202511587
+* Inicio...........: 25/06/2026
+* Ultima alteracao.: 11/07/2026
+* Nome.............: ThreadCarro.java
+* Funcao...........: Executa o protocolo concorrente de movimento de um carro.
+************************************************************************ */
 package threads;
 
 import java.util.ArrayList;
@@ -7,13 +15,10 @@ import java.util.List;
 import model.Carro;
 import util.GerenciadorSemaforos;
 
-/**
- * Thread de um carro usando janelas de semaforos.
- *
- * Os carros 1 a 7 preservam o protocolo da etapa anterior. O carro 8 percorre
- * uma janela completa de P23_SA entre dois trechos privados, sem parar dentro
- * de uma zona compartilhada.
- */
+/* ***************************************************************
+* Classe: ThreadCarro
+* Funcao: Executa o protocolo concorrente de movimento de um carro.
+*************************************************************** */
 public class ThreadCarro extends Thread {
 
     private static final int CARRO_8 = 8;
@@ -28,6 +33,12 @@ public class ThreadCarro extends Thread {
     private volatile long ultimoProgressoNanos = System.nanoTime();
     private volatile long maiorEsperaReservaMs;
 
+    /* ***************************************************************
+    * Metodo: ThreadCarro
+    * Funcao: Inicializa uma nova instancia de ThreadCarro.
+    * Parametros: carro parametro carro; semaforos parametro semaforos; movimento parametro movimento
+    * Retorno: sem retorno
+    *************************************************************** */
     public ThreadCarro(Carro carro, GerenciadorSemaforos semaforos, MovimentoCarro movimento) {
         super("ThreadCarro-" + carro.getNumero());
         this.carro = carro;
@@ -36,7 +47,13 @@ public class ThreadCarro extends Thread {
         setDaemon(true);
     }
 
-    @Override
+    /* ***************************************************************
+    * Metodo: run
+    * Funcao: Executa continuamente o protocolo de movimento do carro.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
+   @Override
     public void run() {
         try {
             while (carro.isAtivo() && !isInterrupted()) {
@@ -90,6 +107,12 @@ public class ThreadCarro extends Thread {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: calcularProximaJanela
+    * Funcao: Calcula proxima janela.
+    * Parametros: emCorredor parametro emCorredor
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private Janela calcularProximaJanela(boolean emCorredor) {
         int quantidade = carro.getPercurso().getQuantidadeTrechos();
         int primeiro = normalizar(carro.getIndiceAtual() + 1, quantidade);
@@ -130,6 +153,12 @@ public class ThreadCarro extends Thread {
         return new Janela(destinos, true);
     }
 
+    /* ***************************************************************
+    * Metodo: reservarJanela
+    * Funcao: Reserva janela.
+    * Parametros: janela parametro janela
+    * Retorno: sem retorno
+    *************************************************************** */
     private void reservarJanela(Janela janela) throws InterruptedException {
         estadoDiagnostico = carro.getNumero() == CARRO_8
             ? "AGUARDANDO_JANELA_CARRO_8_" + janela.indicesDestino
@@ -149,21 +178,67 @@ public class ThreadCarro extends Thread {
         );
     }
 
+    /* ***************************************************************
+    * Metodo: normalizar
+    * Funcao: Normaliza .
+    * Parametros: indice parametro indice; quantidade parametro quantidade
+    * Retorno: valor calculado
+    *************************************************************** */
     private int normalizar(int indice, int quantidade) {
         int resultado = indice % quantidade;
         return resultado < 0 ? resultado + quantidade : resultado;
     }
 
+    /* ***************************************************************
+    * Metodo: getMovimentosConcluidos
+    * Funcao: Retorna movimentos concluidos.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public long getMovimentosConcluidos() { return movimentosConcluidos; }
+    /* ***************************************************************
+    * Metodo: getJanelasConcluidas
+    * Funcao: Retorna janelas concluidas.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public long getJanelasConcluidas() { return janelasConcluidas; }
+    /* ***************************************************************
+    * Metodo: getUltimoProgressoNanos
+    * Funcao: Retorna ultimo progresso nanos.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public long getUltimoProgressoNanos() { return ultimoProgressoNanos; }
+    /* ***************************************************************
+    * Metodo: getEstadoDiagnostico
+    * Funcao: Retorna estado diagnostico.
+    * Parametros: nenhum
+    * Retorno: texto resultante
+    *************************************************************** */
     public String getEstadoDiagnostico() { return estadoDiagnostico; }
+    /* ***************************************************************
+    * Metodo: getMaiorEsperaReservaMs
+    * Funcao: Retorna maior espera reserva ms.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public long getMaiorEsperaReservaMs() { return maiorEsperaReservaMs; }
 
+    /* ***************************************************************
+    * Classe: Janela
+    * Funcao: Agrupa os destinos e o uso de portaria de uma janela.
+    *************************************************************** */
     private static final class Janela {
         final List<Integer> indicesDestino;
         final boolean usaPortaria;
 
+        /* ***************************************************************
+        * Metodo: Janela
+        * Funcao: Inicializa uma nova instancia de Janela.
+        * Parametros: indicesDestino parametro indicesDestino; usaPortaria parametro usaPortaria
+        * Retorno: sem retorno
+        *************************************************************** */
         Janela(List<Integer> indicesDestino, boolean usaPortaria) {
             this.indicesDestino = indicesDestino;
             this.usaPortaria = usaPortaria;

@@ -20,16 +20,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/* ***************************************************************
+* Classe: TelaInicialController
+* Funcao: Coordena as acoes da tela inicial.
+*************************************************************** */
 public class TelaInicialController {
     
     /* ***************************************************************
-    * Metodo: iniciarJogo
-    * Funcao: Responsavel por redirecionar o usuario a tela de simulacao
-    *         do Transito Automato.
-    * Parametros: @param event evento de clique
+    * Metodo: iniciarTransito
+    * Funcao: Inicia transito.
+    * Parametros: event parametro event
     * Retorno: sem retorno
     *************************************************************** */
-    @FXML
+   @FXML
     private void iniciarTransito(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(
             getClass().getResource("/view/Simulacao.fxml")

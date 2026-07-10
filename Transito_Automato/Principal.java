@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 22/06/2026
-* Ultima alteracao.: 01/07/2026
+* Ultima alteracao.: 10/07/2026
 * Nome.............: Principal.java
 * Funcao...........: Ponto de entrada da aplicacao JavaFX.
 *                    Carrega a tela inicial (TelaInicial.fxml) e
@@ -26,6 +26,10 @@ import javax.sound.sampled.FloatControl;
 import controller.*;
 
 @SuppressWarnings("unused")
+/* ***************************************************************
+* Classe: Principal
+* Funcao: Define o ponto de entrada e o ciclo de vida da aplicacao JavaFX.
+*************************************************************** */
 public class Principal extends Application {
 
   private static Clip musicaFundoWav;
@@ -90,6 +94,12 @@ public class Principal extends Application {
     tocarWav();
   }
 
+  /* ***************************************************************
+  * Metodo: tocarWav
+  * Funcao: Executa a operacao tocar wav.
+  * Parametros: nenhum
+  * Retorno: sem retorno
+  *************************************************************** */
   private void tocarWav() {
     try {
       URL recursoMusica = getClass().getResource(

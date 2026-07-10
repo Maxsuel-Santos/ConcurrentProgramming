@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 23/06/2026
-* Ultima alteracao.: 28/06/2026
+* Ultima alteracao.: 01/07/2026
 * Nome.............: Aresta.java
 * Funcao...........: Representa um trecho de rua (RHxx ou RVxx) que liga
 *                    dois vertices da malha. Apenas a GEOMETRIA do
@@ -17,26 +17,54 @@
 
 package model;
 
+/* ***************************************************************
+* Classe: Aresta
+* Funcao: Representa um trecho que liga dois vertices da malha.
+*************************************************************** */
 public class Aresta {
 
     private final String nome;     // ex: "RH01", "RV30"
     private final Vertice origem;
     private final Vertice destino;
 
+    /* ***************************************************************
+    * Metodo: Aresta
+    * Funcao: Inicializa uma nova instancia de Aresta.
+    * Parametros: nome parametro nome; origem parametro origem; destino parametro destino
+    * Retorno: sem retorno
+    *************************************************************** */
     public Aresta(String nome, Vertice origem, Vertice destino) {
         this.nome = nome;
         this.origem = origem;
         this.destino = destino;
     }
 
+    /* ***************************************************************
+    * Metodo: getNome
+    * Funcao: Retorna nome.
+    * Parametros: nenhum
+    * Retorno: texto resultante
+    *************************************************************** */
     public String getNome() {
         return nome;
     }
 
+    /* ***************************************************************
+    * Metodo: getOrigem
+    * Funcao: Retorna origem.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Vertice getOrigem() {
         return origem;
     }
 
+    /* ***************************************************************
+    * Metodo: getDestino
+    * Funcao: Retorna destino.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Vertice getDestino() {
         return destino;
     }
@@ -63,6 +91,12 @@ public class Aresta {
     }
 
     @Override
+    /* ***************************************************************
+    * Metodo: toString
+    * Funcao: Gera a representacao textual do objeto.
+    * Parametros: nenhum
+    * Retorno: texto resultante
+    *************************************************************** */
     public String toString() {
         return nome + "[" + origem + " - " + destino + "]";
     }

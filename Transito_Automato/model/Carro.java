@@ -1,14 +1,19 @@
+/* ***************************************************************
+* Autor............: Maxsuel Aparecido Lima Santos
+* Matricula........: 202511587
+* Inicio...........: 23/06/2026
+* Ultima alteracao.: 10/07/2026
+* Nome.............: Carro.java
+* Funcao...........: Mantem o estado e os dados de movimento de um carro.
+************************************************************************ */
 package model;
 
 import util.Constantes;
 
-/**
- * Estado de um carro.
- *
- * O carro fica parado um pouco A FRENTE do meio de um trecho, nunca sobre um
- * cruzamento. Cada movimento vai do ponto seguro do trecho atual ate o ponto
- * seguro do proximo trecho, passando pelo vertice que liga os dois.
- */
+/* ***************************************************************
+* Classe: Carro
+* Funcao: Mantem o estado e os dados de movimento de um carro.
+*************************************************************** */
 public class Carro {
 
     private final int numero;
@@ -16,7 +21,7 @@ public class Carro {
     private final int indiceInicial;
     private final Object travaPausa = new Object();
 
-    /** Indice do trecho em cujo ponto seguro o carro esta parado. */
+    // Indice do trecho em cujo ponto seguro o carro esta parado.
     private volatile int indiceAtual;
     private volatile double velocidade = Constantes.VELOCIDADE_PADRAO;
     private volatile boolean pausado;
@@ -32,6 +37,12 @@ public class Carro {
     private volatile double anguloPrimeiraMetade;
     private volatile double anguloSegundaMetade;
 
+    /* ***************************************************************
+    * Metodo: Carro
+    * Funcao: Inicializa uma nova instancia de Carro.
+    * Parametros: numero parametro numero; percurso parametro percurso; indiceInicial parametro indiceInicial
+    * Retorno: sem retorno
+    *************************************************************** */
     public Carro(int numero, Percurso percurso, int indiceInicial) {
         this.numero = numero;
         this.percurso = percurso;
@@ -54,33 +65,62 @@ public class Carro {
         anguloSegundaMetade = anguloPrimeiraMetade;
     }
 
+    /* ***************************************************************
+    * Metodo: getNumero
+    * Funcao: Retorna numero.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public int getNumero() {
         return numero;
     }
 
+    /* ***************************************************************
+    * Metodo: getPercurso
+    * Funcao: Retorna percurso.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Percurso getPercurso() {
         return percurso;
     }
 
+    /* ***************************************************************
+    * Metodo: getIndiceAtual
+    * Funcao: Retorna indice atual.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public int getIndiceAtual() {
         return indiceAtual;
     }
 
-    /** Trecho em cujo ponto seguro o carro se encontra. */
+    /* ***************************************************************
+    * Metodo: getTrechoAtual
+    * Funcao: Retorna trecho atual.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Aresta getTrechoAtual() {
         return percurso.getAresta(indiceAtual);
     }
 
-    /** Trecho para o qual o carro ira no proximo movimento. */
+    /* ***************************************************************
+    * Metodo: getProximoTrecho
+    * Funcao: Retorna proximo trecho.
+    * Parametros: nenhum
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     public Aresta getProximoTrecho() {
         return percurso.getAresta(indiceAtual + 1);
     }
 
-    /**
-     * Prepara um movimento em duas partes:
-     * 1) ponto seguro do trecho atual -> cruzamento;
-     * 2) cruzamento -> ponto seguro do proximo trecho.
-     */
+    /* ***************************************************************
+    * Metodo: prepararMovimento
+    * Funcao: Calcula os pontos e angulos do proximo movimento.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     public void prepararMovimento() {
         Vertice inicioAtual = percurso.getVertice(indiceAtual);
         Vertice cruzamento = percurso.getVertice(indiceAtual + 1);
@@ -100,51 +140,122 @@ public class Carro {
         anguloSegundaMetade = angulo(xIntersecao, yIntersecao, xDestino, yDestino);
     }
 
+    /* ***************************************************************
+    * Metodo: avancarIndice
+    * Funcao: Executa a operacao avancar indice.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     public void avancarIndice() {
         indiceAtual = normalizar(indiceAtual + 1);
     }
 
+    /* ***************************************************************
+    * Metodo: getXOrigem
+    * Funcao: Retorna xorigem.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public double getXOrigem() {
         return xOrigem;
     }
 
+    /* ***************************************************************
+    * Metodo: getYOrigem
+    * Funcao: Retorna yorigem.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public double getYOrigem() {
         return yOrigem;
     }
 
+    /* ***************************************************************
+    * Metodo: getXIntersecao
+    * Funcao: Retorna xintersecao.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public double getXIntersecao() {
         return xIntersecao;
     }
 
+    /* ***************************************************************
+    * Metodo: getYIntersecao
+    * Funcao: Retorna yintersecao.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public double getYIntersecao() {
         return yIntersecao;
     }
 
+    /* ***************************************************************
+    * Metodo: getXDestino
+    * Funcao: Retorna xdestino.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public double getXDestino() {
         return xDestino;
     }
 
+    /* ***************************************************************
+    * Metodo: getYDestino
+    * Funcao: Retorna ydestino.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public double getYDestino() {
         return yDestino;
     }
 
+    /* ***************************************************************
+    * Metodo: getAnguloPrimeiraMetade
+    * Funcao: Retorna angulo primeira metade.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public double getAnguloPrimeiraMetade() {
         return anguloPrimeiraMetade;
     }
 
+    /* ***************************************************************
+    * Metodo: getAnguloSegundaMetade
+    * Funcao: Retorna angulo segunda metade.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public double getAnguloSegundaMetade() {
         return anguloSegundaMetade;
     }
 
-    /** Mantido para compatibilidade com codigo antigo. */
+    /* ***************************************************************
+    * Metodo: getAngulo
+    * Funcao: Retorna angulo.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public double getAngulo() {
         return anguloSegundaMetade;
     }
 
+    /* ***************************************************************
+    * Metodo: getDuracaoPassoMs
+    * Funcao: Retorna duracao passo ms.
+    * Parametros: nenhum
+    * Retorno: valor calculado
+    *************************************************************** */
     public long getDuracaoPassoMs() {
         return Math.max(2L, (long) (Constantes.PASSO_BASE_MS / velocidade));
     }
 
+    /* ***************************************************************
+    * Metodo: setVelocidade
+    * Funcao: Define velocidade.
+    * Parametros: velocidade parametro velocidade
+    * Retorno: sem retorno
+    *************************************************************** */
     public void setVelocidade(double velocidade) {
         this.velocidade = Math.max(
             Constantes.VELOCIDADE_MIN,
@@ -152,10 +263,22 @@ public class Carro {
         );
     }
 
+    /* ***************************************************************
+    * Metodo: isPausado
+    * Funcao: Indica pausado.
+    * Parametros: nenhum
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     public boolean isPausado() {
         return pausado;
     }
 
+    /* ***************************************************************
+    * Metodo: alternarPausa
+    * Funcao: Alterna pausa.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     public void alternarPausa() {
         synchronized (travaPausa) {
             pausado = !pausado;
@@ -165,6 +288,12 @@ public class Carro {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: aguardarSePausado
+    * Funcao: Bloqueia a thread enquanto o carro estiver pausado.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     public void aguardarSePausado() throws InterruptedException {
         synchronized (travaPausa) {
             while (pausado && ativo) {
@@ -173,18 +302,42 @@ public class Carro {
         }
     }
 
+    /* ***************************************************************
+    * Metodo: isPercursoVisivel
+    * Funcao: Indica percurso visivel.
+    * Parametros: nenhum
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     public boolean isPercursoVisivel() {
         return percursoVisivel;
     }
 
+    /* ***************************************************************
+    * Metodo: alternarPercursoVisivel
+    * Funcao: Alterna percurso visivel.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     public void alternarPercursoVisivel() {
         percursoVisivel = !percursoVisivel;
     }
 
+    /* ***************************************************************
+    * Metodo: isAtivo
+    * Funcao: Indica ativo.
+    * Parametros: nenhum
+    * Retorno: verdadeiro quando a condicao for atendida
+    *************************************************************** */
     public boolean isAtivo() {
         return ativo;
     }
 
+    /* ***************************************************************
+    * Metodo: desativar
+    * Funcao: Executa a operacao desativar.
+    * Parametros: nenhum
+    * Retorno: sem retorno
+    *************************************************************** */
     public void desativar() {
         ativo = false;
         synchronized (travaPausa) {
@@ -192,11 +345,12 @@ public class Carro {
         }
     }
 
-    /**
-     * Retorna um ponto um pouco a frente do meio do trecho, no sentido do
-     * movimento. Assim o carro para mais perto do proximo cruzamento sem
-     * ocupar a intersecao.
-     */
+    /* ***************************************************************
+    * Metodo: calcularPontoParada
+    * Funcao: Calcula ponto parada.
+    * Parametros: inicio parametro inicio; fim parametro fim
+    * Retorno: objeto ou colecao resultante
+    *************************************************************** */
     private double[] calcularPontoParada(Vertice inicio, Vertice fim) {
         double meioX = (inicio.getX() + fim.getX()) / 2.0;
         double meioY = (inicio.getY() + fim.getY()) / 2.0;
@@ -215,10 +369,22 @@ public class Carro {
         };
     }
 
+    /* ***************************************************************
+    * Metodo: angulo
+    * Funcao: Executa a operacao angulo.
+    * Parametros: x1 parametro x1; y1 parametro y1; x2 parametro x2; y2 parametro y2
+    * Retorno: valor calculado
+    *************************************************************** */
     private double angulo(double x1, double y1, double x2, double y2) {
         return Math.toDegrees(Math.atan2(y2 - y1, x2 - x1));
     }
 
+    /* ***************************************************************
+    * Metodo: normalizar
+    * Funcao: Normaliza .
+    * Parametros: indice parametro indice
+    * Retorno: valor calculado
+    *************************************************************** */
     private int normalizar(int indice) {
         int tamanho = percurso.getQuantidadeTrechos();
         int resultado = indice % tamanho;
