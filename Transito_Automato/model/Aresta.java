@@ -9,7 +9,7 @@
 *                    trecho fica aqui (nome e extremos); a informacao de
 *                    qual ZONA CRITICA (se houver) o trecho pertence, e
 *                    os pontos de entrada/saida da zona dentro do ciclo
-*                    de cada carro, ficam em model.Percurso - ja' que um
+*                    de cada carro, ficam em model.Percurso - ja que um
 *                    mesmo trecho pode ser o INICIO da zona para um
 *                    carro e o MEIO da zona para outro, dependendo de
 *                    onde cada percurso entra naquela regiao.
