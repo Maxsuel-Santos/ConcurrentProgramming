@@ -1,158 +1,172 @@
-/* *********************************************************************
-* Autor............: Maxsuel Aparecido Lima Santos
-* Matricula........: 202511587
-* Inicio...........: 23/06/2026
-* Ultima alteracao.: 28/06/2026
-* Nome.............: ThreadCarro.java
-* Funcao...........: Thread responsavel por mover um unico Carro ao
-*                    longo do seu Percurso, em loop infinito, respeitando
-*                    pausa/retomada e velocidade individuais.
-*
-*                    SINCRONIZACAO POR REGIAO CRITICA: ao se aproximar
-*                    de um trecho que e' ENTRADA de uma ou mais RCs, a
-*                    thread adquire os semaforos dessas RCs ANTES de
-*                    avancar. Ela so' libera cada semaforo ao concluir o
-*                    trecho que e' SAIDA daquela mesma RC. Assim a
-*                    verificacao acontece por regiao critica do arquivo,
-*                    nao por aresta individual.
-*
-*                    Quando o trecho nao pertence a nenhuma zona (uso
-*                    exclusivo daquele carro), nao ha' nenhuma espera: o
-*                    carro passa direto.
-************************************************************************ */
-
 package threads;
 
-import java.util.concurrent.Semaphore;
-import java.util.function.Consumer;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import model.Carro;
-import model.Percurso;
-import model.Vertice;
 import util.GerenciadorSemaforos;
 
+/**
+ * Thread de um carro usando janelas de semaforos.
+ *
+ * Os carros 1 a 7 preservam o protocolo da etapa anterior. O carro 8 percorre
+ * uma janela completa de P23_SA entre dois trechos privados, sem parar dentro
+ * de uma zona compartilhada.
+ */
 public class ThreadCarro extends Thread {
 
+    private static final int CARRO_8 = 8;
+
     private final Carro carro;
-    private final Percurso percurso;
-    private final GerenciadorSemaforos gerenciadorSemaforos;
-    private final Consumer<Carro> aoMover; // callback: avisa a UI que ha' um novo trecho (origem->destino) para animar
+    private final GerenciadorSemaforos semaforos;
+    private final MovimentoCarro movimento;
 
-    private final Map<String, Semaphore> regioesOcupadasAtualmente = new LinkedHashMap<>();
+    private volatile String estadoDiagnostico = "INICIANDO";
+    private volatile long movimentosConcluidos;
+    private volatile long janelasConcluidas;
+    private volatile long ultimoProgressoNanos = System.nanoTime();
+    private volatile long maiorEsperaReservaMs;
 
-    public ThreadCarro(Carro carro, GerenciadorSemaforos gerenciadorSemaforos, Consumer<Carro> aoMover) {
+    public ThreadCarro(Carro carro, GerenciadorSemaforos semaforos, MovimentoCarro movimento) {
         super("ThreadCarro-" + carro.getNumero());
         this.carro = carro;
-        this.percurso = carro.getPercurso();
-        this.gerenciadorSemaforos = gerenciadorSemaforos;
-        this.aoMover = aoMover;
-        setDaemon(true); // nao impede o encerramento da aplicacao
+        this.semaforos = semaforos;
+        this.movimento = movimento;
+        setDaemon(true);
     }
 
     @Override
     public void run() {
         try {
             while (carro.isAtivo() && !isInterrupted()) {
+                boolean emCorredor = semaforos.estaEmCorredorDeSentidoOposto(
+                    carro, carro.getIndiceAtual()
+                );
+                boolean pontoPrivadoC8 = carro.getNumero() == CARRO_8
+                    && semaforos.trechoPrivadoDoCarro8(carro, carro.getIndiceAtual());
 
-                int indiceAtual = carro.getIndiceCicloAtual();
-                Vertice destino = carro.getVerticeDestino();
+                if ((carro.getNumero() != CARRO_8 && !emCorredor) || pontoPrivadoC8) {
+                    estadoDiagnostico = carro.isPausado()
+                        ? "PAUSADO_EM_" + carro.getTrechoAtual().getNome()
+                        : "PRONTO_EM_" + carro.getTrechoAtual().getNome();
+                    carro.aguardarSePausado();
+                }
 
-                garantirRegioesDoTrechoAtualEProximo(indiceAtual);
-
-                if (!carro.isAtivo()) {
-                    liberarTodasAsRegioes();
+                if (!carro.isAtivo() || isInterrupted()) {
                     break;
                 }
 
-                moverParaVertice(destino);
+                Janela janela = calcularProximaJanela(emCorredor);
+                reservarJanela(janela);
 
-                carro.dormirComPausa(carro.getTempoPassoMs());
+                for (int destino : janela.indicesDestino) {
+                    if (!carro.isAtivo() || isInterrupted()) {
+                        throw new InterruptedException();
+                    }
 
-                liberarRegioesSeForSaida(indiceAtual);
+                    carro.prepararMovimento();
+                    estadoDiagnostico = "MOVENDO_" + carro.getTrechoAtual().getNome()
+                        + "_PARA_" + carro.getProximoTrecho().getNome();
+                    movimento.mover(carro, carro.getDuracaoPassoMs());
+                    carro.avancarIndice();
+                    movimentosConcluidos++;
+                    ultimoProgressoNanos = System.nanoTime();
+                    semaforos.registrarMovimentoConcluido(carro);
+                }
 
-                carro.avancarUmTrecho();
+                boolean continuaNoCorredor = semaforos.estaEmCorredorDeSentidoOposto(
+                    carro, carro.getIndiceAtual()
+                );
+                semaforos.finalizarJanela(carro, continuaNoCorredor);
+                janelasConcluidas++;
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            interrupt();
         } finally {
-            liberarTodasAsRegioes();
+            estadoDiagnostico = "FINALIZANDO";
+            semaforos.liberarCarro(carro.getNumero());
+            estadoDiagnostico = "FINALIZADA";
         }
     }
 
-    /* ***************************************************************
-    * Metodo: garantirRegioesDoTrechoAtualEProximo
-    * Funcao: Adquire todos os semaforos das RCs que protegem o trecho
-    *         atual e o proximo trecho antes de o carro sair do ponto em
-    *         que esta'. Esse lookahead evita que o carro avance ate' o
-    *         centro de um cruzamento para so' entao descobrir que deve
-    *         esperar: ele para no vertice anterior, preservando a
-    *         animacao reta original.
-    * Parametros: @param indice posicao atual do carro no ciclo
-    * Retorno: sem retorno
-    * Excecoes: InterruptedException se a espera for interrompida
-    *************************************************************** */
-    private void garantirRegioesDoTrechoAtualEProximo(int indice) throws InterruptedException {
-        Set<String> regioesNecessarias = new TreeSet<>();
-        regioesNecessarias.addAll(percurso.getRegioesDoTrecho(indice));
-        regioesNecessarias.addAll(percurso.getRegioesDoTrecho(indice + 1));
+    private Janela calcularProximaJanela(boolean emCorredor) {
+        int quantidade = carro.getPercurso().getQuantidadeTrechos();
+        int primeiro = normalizar(carro.getIndiceAtual() + 1, quantidade);
 
-        for (String nomeRegiao : regioesNecessarias) {
-            if (regioesOcupadasAtualmente.containsKey(nomeRegiao)) {
-                continue;
+        if (carro.getNumero() == CARRO_8) {
+            List<Integer> destinos = new ArrayList<>();
+            int indice = primeiro;
+            int limite = 0;
+            while (limite++ < quantidade) {
+                destinos.add(indice);
+                if (semaforos.trechoPrivadoDoCarro8(carro, indice)) {
+                    break;
+                }
+                indice = normalizar(indice + 1, quantidade);
             }
-
-            Semaphore semaforo = gerenciadorSemaforos.getSemaforo(nomeRegiao);
-            if (semaforo != null) {
-                semaforo.acquire();
-                regioesOcupadasAtualmente.put(nomeRegiao, semaforo);
+            if (destinos.isEmpty()
+                    || !semaforos.trechoPrivadoDoCarro8(
+                        carro, destinos.get(destinos.size() - 1))) {
+                throw new IllegalStateException("C8 nao encontrou o proximo ponto privado.");
             }
+            return new Janela(destinos, false);
         }
+
+        boolean primeiroNoCorredor = semaforos.estaEmCorredorDeSentidoOposto(
+            carro, primeiro
+        );
+
+        if (!emCorredor && !primeiroNoCorredor) {
+            return new Janela(Collections.singletonList(primeiro), false);
+        }
+
+        List<Integer> destinos = new ArrayList<>();
+        destinos.add(primeiro);
+        if (primeiroNoCorredor) {
+            int segundo = normalizar(primeiro + 1, quantidade);
+            destinos.add(segundo);
+        }
+        return new Janela(destinos, true);
     }
 
-    /* ***************************************************************
-    * Metodo: liberarRegioesSeForSaida
-    * Funcao: Libera todos os semaforos das RCs que terminam no indice
-    *         informado.
-    * Parametros: @param indice posicao do trecho que acabou de ser
-    *             concluido
-    * Retorno: sem retorno
-    *************************************************************** */
-    private void liberarRegioesSeForSaida(int indice) {
-        for (String nomeRegiao : percurso.getRegioesSaida(indice)) {
-            Semaphore semaforo = regioesOcupadasAtualmente.remove(nomeRegiao);
-            if (semaforo != null) {
-                semaforo.release();
-            }
+    private void reservarJanela(Janela janela) throws InterruptedException {
+        estadoDiagnostico = carro.getNumero() == CARRO_8
+            ? "AGUARDANDO_JANELA_CARRO_8_" + janela.indicesDestino
+            : janela.usaPortaria
+                ? "AGUARDANDO_CORREDOR_" + janela.indicesDestino
+                : "AGUARDANDO_RESERVA_" + janela.indicesDestino;
+
+        long inicioEspera = System.nanoTime();
+        if (janela.usaPortaria) {
+            semaforos.reservarJanelaDeCorredor(carro, janela.indicesDestino);
+        } else {
+            semaforos.reservarJanela(carro, janela.indicesDestino);
         }
+        maiorEsperaReservaMs = Math.max(
+            maiorEsperaReservaMs,
+            (System.nanoTime() - inicioEspera) / 1_000_000L
+        );
     }
 
-    private void liberarTodasAsRegioes() {
-        for (Semaphore semaforo : regioesOcupadasAtualmente.values()) {
-            semaforo.release();
-        }
-        regioesOcupadasAtualmente.clear();
+    private int normalizar(int indice, int quantidade) {
+        int resultado = indice % quantidade;
+        return resultado < 0 ? resultado + quantidade : resultado;
     }
 
-    /* ***************************************************************
-    * Metodo: moverParaVertice
-    * Funcao: Atualiza a posicao LOGICA do carro para o vertice destino
-    *         (origem/destino do trecho, usados para a interpolacao) e
-    *         notifica a UI via callback. A ThreadCarro NAO anima nada
-    *         na tela - ela so' marca onde o carro estava e onde deve
-    *         chegar; quem desenha a transicao suave entre esses dois
-    *         pontos, ao longo da duracao de getTempoPassoMs(), e' o
-    *         Controller (unico lugar que pode tocar em nodos JavaFX).
-    * Parametros: @param destino vertice de chegada do trecho atual
-    * Retorno: sem retorno
-    *************************************************************** */
-    private void moverParaVertice(Vertice destino) {
-        carro.setPosicaoAtual(destino.getX(), destino.getY());
-        if (aoMover != null) {
-            aoMover.accept(carro);
+    public long getMovimentosConcluidos() { return movimentosConcluidos; }
+    public long getJanelasConcluidas() { return janelasConcluidas; }
+    public long getUltimoProgressoNanos() { return ultimoProgressoNanos; }
+    public String getEstadoDiagnostico() { return estadoDiagnostico; }
+    public long getMaiorEsperaReservaMs() { return maiorEsperaReservaMs; }
+
+    private static final class Janela {
+        final List<Integer> indicesDestino;
+        final boolean usaPortaria;
+
+        Janela(List<Integer> indicesDestino, boolean usaPortaria) {
+            this.indicesDestino = indicesDestino;
+            this.usaPortaria = usaPortaria;
         }
     }
 }
