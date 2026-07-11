@@ -6,41 +6,33 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/style.css"
-            xmlns="http://javafx.com/javafx/8.0.0" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="controller.SimulacaoController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SimulacaoController">
    <children>
-      <ImageView fitHeight="745.0" fitWidth="1319.0" layoutY="-2.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="745.0" fitWidth="1319.0" layoutY="-6.0" pickOnBounds="true" preserveRatio="true">
          <image><Image url="@../img/background.png" /></image>
       </ImageView>
-      <ImageView fx:id="quadraCarro1" fitHeight="720.0" fitWidth="723.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="quadraCarro1" fitHeight="713.0" fitWidth="723.0" layoutX="5.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image><Image url="@../img/P05_SA.png" /></image>
       </ImageView>
-      <ImageView fx:id="quadraCarro2" fitHeight="720.0" fitWidth="723.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="quadraCarro2" fitHeight="720.0" fitWidth="723.0" layoutX="3.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image><Image url="@../img/P03_SA.png" /></image>
       </ImageView>
-      <ImageView fx:id="quadraCarro3" fitHeight="720.0" fitWidth="723.0" pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="quadraCarro3" fitHeight="720.0" fitWidth="723.0" layoutX="2.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true" visible="false"> 
          <image><Image url="@../img/P07_SH.png" /></image>
       </ImageView>
-      <ImageView fx:id="quadraCarro4" fitHeight="720.0" fitWidth="311.0" layoutX="4.0" layoutY="1.0"
-                 pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="quadraCarro4" fitHeight="720.0" fitWidth="311.0" layoutX="4.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image><Image url="@../img/P11_SA.png" /></image>
       </ImageView>
-      <ImageView fx:id="quadraCarro5" fitHeight="444.0" fitWidth="447.0" layoutX="280.0" layoutY="2.0"
-                 pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="quadraCarro5" fitHeight="444.0" fitWidth="447.0" layoutX="278.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image><Image url="@../img/P16_SA.png" /></image>
       </ImageView>
-      <ImageView fx:id="quadraCarro6" fitHeight="444.0" fitWidth="447.0" layoutX="280.0" layoutY="280.0"
-                 pickOnBounds="true" preserveRatio="true" visible="false">
+      <ImageView fx:id="quadraCarro6" fitHeight="444.0" fitWidth="447.0" layoutX="278.0" layoutY="291.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image><Image url="@../img/P18_SH.png" /></image>
       </ImageView>
-      <ImageView fx:id="quadraCarro7" fitHeight="720.0" fitWidth="723.0" pickOnBounds="true"
-                 preserveRatio="true" visible="false">
+      <ImageView fx:id="quadraCarro7" fitHeight="720.0" fitWidth="723.0" layoutX="4.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image><Image url="@../img/P20_SH.png" /></image>
       </ImageView>
-      <ImageView fx:id="quadraCarro8" fitHeight="720.0" fitWidth="723.0" pickOnBounds="true"
-                 preserveRatio="true" visible="false">
+      <ImageView fx:id="quadraCarro8" fitHeight="720.0" fitWidth="723.0" layoutX="2.0" pickOnBounds="true" preserveRatio="true" visible="false">
          <image><Image url="@../img/P23_SA.png" /></image>
       </ImageView>
 
@@ -69,96 +61,63 @@
          <image><Image url="@../img/carro8.png" /></image>
       </ImageView>
 
-      <Slider fx:id="sliderCarro1" layoutX="778.0" layoutY="69.0" max="3.0" min="0.25"
-              prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
-      <Slider fx:id="sliderCarro2" layoutX="1068.0" layoutY="69.0" max="3.0" min="0.25"
-              prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
-      <Slider fx:id="sliderCarro3" layoutX="778.0" layoutY="250.0" max="3.0" min="0.25"
-              prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
-      <Slider fx:id="sliderCarro4" layoutX="1068.0" layoutY="250.0" max="3.0" min="0.25"
-              prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
-      <Slider fx:id="sliderCarro5" layoutX="778.0" layoutY="432.0" max="3.0" min="0.25"
-              prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
-      <Slider fx:id="sliderCarro6" layoutX="1068.0" layoutY="432.0" max="3.0" min="0.25"
-              prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
-      <Slider fx:id="sliderCarro7" layoutX="778.0" layoutY="617.0" max="3.0" min="0.25"
-              prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
-      <Slider fx:id="sliderCarro8" layoutX="1068.0" layoutY="617.0" max="3.0" min="0.25"
-              prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro1" layoutX="778.0" layoutY="69.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro2" layoutX="1068.0" layoutY="69.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro3" layoutX="778.0" layoutY="250.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro4" layoutX="1068.0" layoutY="250.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro5" layoutX="778.0" layoutY="432.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro6" layoutX="1068.0" layoutY="432.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro7" layoutX="778.0" layoutY="617.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
+      <Slider fx:id="sliderCarro8" layoutX="1068.0" layoutY="617.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
 
-      <Button fx:id="btnShowRouteCar1" layoutX="856.0" layoutY="104.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar1" layoutX="914.0" layoutY="104.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar1" layoutX="856.0" layoutY="104.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar1" layoutX="914.0" layoutY="104.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar2" layoutX="1146.0" layoutY="104.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar2" layoutX="1204.0" layoutY="104.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar2" layoutX="1146.0" layoutY="104.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar2" layoutX="1204.0" layoutY="104.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar3" layoutX="856.0" layoutY="286.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar3" layoutX="914.0" layoutY="286.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar3" layoutX="856.0" layoutY="286.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar3" layoutX="914.0" layoutY="286.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar4" layoutX="1146.0" layoutY="286.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar4" layoutX="1204.0" layoutY="286.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar4" layoutX="1146.0" layoutY="286.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar4" layoutX="1204.0" layoutY="286.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar5" layoutX="856.0" layoutY="468.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar5" layoutX="914.0" layoutY="468.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar5" layoutX="856.0" layoutY="468.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar5" layoutX="914.0" layoutY="468.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar6" layoutX="1146.0" layoutY="468.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar6" layoutX="1204.0" layoutY="468.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar6" layoutX="1146.0" layoutY="468.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar6" layoutX="1204.0" layoutY="468.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar7" layoutX="856.0" layoutY="650.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar7" layoutX="914.0" layoutY="650.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
-      <Button fx:id="btnShowRouteCar8" layoutX="1146.0" layoutY="650.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar8" layoutX="1204.0" layoutY="650.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar7" layoutX="856.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar7" layoutX="914.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar8" layoutX="1146.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar8" layoutX="1204.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <ImageView fx:id="semaforoCarro1" fitHeight="35.0" fitWidth="35.0" layoutX="766.0" layoutY="23.0"
-                 pickOnBounds="false" preserveRatio="true">
+      <ImageView fx:id="semaforoCarro1" fitHeight="35.0" fitWidth="35.0" layoutX="766.0" layoutY="23.0" pickOnBounds="false" preserveRatio="true">
          <image><Image url="@../img/semaforo_bloqueado.png" /></image>
       </ImageView>
-      <ImageView fx:id="semaforoCarro2" fitHeight="35.0" fitWidth="35.0" layoutX="1063.0" layoutY="23.0"
-                 pickOnBounds="false" preserveRatio="true">
+      <ImageView fx:id="semaforoCarro2" fitHeight="35.0" fitWidth="35.0" layoutX="1063.0" layoutY="23.0" pickOnBounds="false" preserveRatio="true">
          <image><Image url="@../img/semaforo_bloqueado.png" /></image>
       </ImageView>
-      <ImageView fx:id="semaforoCarro3" fitHeight="35.0" fitWidth="35.0" layoutX="766.0" layoutY="207.0"
-                 pickOnBounds="false" preserveRatio="true">
+      <ImageView fx:id="semaforoCarro3" fitHeight="35.0" fitWidth="35.0" layoutX="766.0" layoutY="207.0" pickOnBounds="false" preserveRatio="true">
          <image><Image url="@../img/semaforo_bloqueado.png" /></image>
       </ImageView>
-      <ImageView fx:id="semaforoCarro4" fitHeight="35.0" fitWidth="35.0" layoutX="1063.0" layoutY="207.0"
-                 pickOnBounds="false" preserveRatio="true">
+      <ImageView fx:id="semaforoCarro4" fitHeight="35.0" fitWidth="35.0" layoutX="1063.0" layoutY="207.0" pickOnBounds="false" preserveRatio="true">
          <image><Image url="@../img/semaforo_bloqueado.png" /></image>
       </ImageView>
-      <ImageView fx:id="semaforoCarro5" fitHeight="35.0" fitWidth="35.0" layoutX="766.0" layoutY="386.0"
-                 pickOnBounds="false" preserveRatio="true">
+      <ImageView fx:id="semaforoCarro5" fitHeight="35.0" fitWidth="35.0" layoutX="766.0" layoutY="386.0" pickOnBounds="false" preserveRatio="true">
          <image><Image url="@../img/semaforo_bloqueado.png" /></image>
       </ImageView>
-      <ImageView fx:id="semaforoCarro6" fitHeight="35.0" fitWidth="35.0" layoutX="1063.0" layoutY="386.0"
-                 pickOnBounds="false" preserveRatio="true">
+      <ImageView fx:id="semaforoCarro6" fitHeight="35.0" fitWidth="35.0" layoutX="1063.0" layoutY="386.0" pickOnBounds="false" preserveRatio="true">
          <image><Image url="@../img/semaforo_bloqueado.png" /></image>
       </ImageView>
-      <ImageView fx:id="semaforoCarro7" fitHeight="35.0" fitWidth="35.0" layoutX="766.0" layoutY="570.0"
-                 pickOnBounds="false" preserveRatio="true">
+      <ImageView fx:id="semaforoCarro7" fitHeight="35.0" fitWidth="35.0" layoutX="766.0" layoutY="570.0" pickOnBounds="false" preserveRatio="true">
          <image><Image url="@../img/semaforo_bloqueado.png" /></image>
       </ImageView>
-      <ImageView fx:id="semaforoCarro8" fitHeight="35.0" fitWidth="35.0" layoutX="1063.0" layoutY="570.0"
-                 pickOnBounds="false" preserveRatio="true">
+      <ImageView fx:id="semaforoCarro8" fitHeight="35.0" fitWidth="35.0" layoutX="1063.0" layoutY="570.0" pickOnBounds="false" preserveRatio="true">
          <image><Image url="@../img/semaforo_bloqueado.png" /></image>
       </ImageView>
 
-      <Button fx:id="btnReset" layoutX="1213.0" layoutY="-1.0" mnemonicParsing="false"
-              prefHeight="35.0" prefWidth="62.0" styleClass="btn-reset-simulation" />
+      <Button fx:id="btnReset" layoutX="1213.0" layoutY="-1.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="62.0" styleClass="btn-reset-simulation" />
    </children>
 </AnchorPane>
