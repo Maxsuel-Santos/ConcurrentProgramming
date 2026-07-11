@@ -70,28 +70,28 @@
       <Slider fx:id="sliderCarro7" layoutX="778.0" layoutY="617.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
       <Slider fx:id="sliderCarro8" layoutX="1068.0" layoutY="617.0" max="3.0" min="0.25" prefHeight="24.0" prefWidth="198.0" styleClass="slider-img" value="1.0" />
 
-      <Button fx:id="btnShowRouteCar1" layoutX="856.0" layoutY="104.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar1" layoutX="914.0" layoutY="104.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar1" layoutX="856.0" layoutY="100.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar1" layoutX="914.0" layoutY="100.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar2" layoutX="1146.0" layoutY="104.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar2" layoutX="1204.0" layoutY="104.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar2" layoutX="1146.0" layoutY="100.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar2" layoutX="1204.0" layoutY="100.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar3" layoutX="856.0" layoutY="286.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar3" layoutX="914.0" layoutY="286.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar3" layoutX="856.0" layoutY="282.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar3" layoutX="914.0" layoutY="282.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar4" layoutX="1146.0" layoutY="286.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar4" layoutX="1204.0" layoutY="286.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar4" layoutX="1146.0" layoutY="282.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar4" layoutX="1204.0" layoutY="282.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar5" layoutX="856.0" layoutY="468.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar5" layoutX="914.0" layoutY="468.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar5" layoutX="856.0" layoutY="464.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar5" layoutX="914.0" layoutY="464.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar6" layoutX="1146.0" layoutY="468.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar6" layoutX="1204.0" layoutY="468.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar6" layoutX="1146.0" layoutY="464.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar6" layoutX="1204.0" layoutY="464.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
-      <Button fx:id="btnShowRouteCar7" layoutX="856.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar7" layoutX="914.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
-      <Button fx:id="btnShowRouteCar8" layoutX="1146.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
-      <Button fx:id="btnPauseCar8" layoutX="1204.0" layoutY="650.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar7" layoutX="856.0" layoutY="646.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar7" layoutX="914.0" layoutY="646.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
+      <Button fx:id="btnShowRouteCar8" layoutX="1146.0" layoutY="646.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-show-route-car" />
+      <Button fx:id="btnPauseCar8" layoutX="1204.0" layoutY="646.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="49.0" styleClass="btn-pause-car" />
 
       <ImageView fx:id="semaforoCarro1" fitHeight="35.0" fitWidth="35.0" layoutX="766.0" layoutY="23.0" pickOnBounds="false" preserveRatio="true">
          <image><Image url="@../img/semaforo_bloqueado.png" /></image>
