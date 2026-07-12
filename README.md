@@ -48,7 +48,7 @@ Simula vários carros executados por threads em percursos que possuem trechos e 
 
 ## Execução
 
-Com **Java** e **JavaFX** configurados, acesse a pasta do projeto desejado e execute:
+Com **Java 8** e **JavaFX** configurados, acesse a pasta do projeto desejado e execute:
 
 ```bash
 javac Principal.java
@@ -57,4 +57,4 @@ java Principal
 
 ## Disciplina
 
-Projetos da disciplina **Programação Concorrente — 2026.1**, ministrada pelo professor **Marlos André Marques Simões de Oliveira**.
+Projetos da disciplina **Programação Concorrente - 2026.1**, ministrada pelo professor **Marlos André Marques Simões de Oliveira**.
