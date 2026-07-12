@@ -32,25 +32,25 @@ import model.Vertice;
 *************************************************************** */
 public class GerenciadorSemaforos {
 
-    private static final int CARROS_BASE = 7;
     private static final int CARRO_8 = 8;
     private static final String PREFIXO_SEGMENTO = "SEG-";
     private static final String PREFIXO_CRUZAMENTO = "CRUZ-";
-    private static final String PORTARIA_CORREDORES = "PORTARIA-CORREDORES";
+    private static final String PREFIXO_CORREDOR = "COR-";
 
     private final Set<String> zonasCriticas;
-    private final Set<String> zonasAtivasBase;
     private final Set<String> zonasConflitoCarro8;
     private final Set<String> segmentosOpostosTodos;
-    private final Map<Integer, Set<String>> segmentosInsegurosBase;
+    private final Map<Integer, Set<String>> segmentosInseguros;
+    private final Map<Integer, Map<String, Set<String>>> portariasPorSegmento;
+    private final Set<String> portariasCorredores;
 
     private final Map<String, Semaphore> semaforos = new LinkedHashMap<>();
     private final Semaphore portariaReservas = new Semaphore(1, true);
     private final Map<Integer, LinkedHashSet<String>> reservasPorCarro = new LinkedHashMap<>();
     private final LinkedHashMap<Integer, List<String>> pedidosPendentes = new LinkedHashMap<>();
-
-    private Set<String> janelaCarro8Aguardando = Collections.emptySet();
-    private Set<String> janelaCarro8Ativa = Collections.emptySet();
+    private final Map<Integer, Carro> carrosRegistrados = new LinkedHashMap<>();
+    private final Map<Integer, Integer> indicesEstaveis = new LinkedHashMap<>();
+    private final Map<Integer, Integer> destinosPlanejados = new LinkedHashMap<>();
 
     private volatile long reservasConcedidas;
     private volatile long tentativasNegadas;
@@ -63,28 +63,34 @@ public class GerenciadorSemaforos {
     *************************************************************** */
     public GerenciadorSemaforos(Grid grid) {
         Percurso[] todos = criarPercursos(grid, Constantes.N_CARROS);
-        Percurso[] base = criarPercursos(grid, CARROS_BASE);
 
         this.zonasCriticas = Collections.unmodifiableSet(calcularZonasCriticas(todos));
-        this.zonasAtivasBase = Collections.unmodifiableSet(calcularZonasCriticas(base));
         this.zonasConflitoCarro8 = Collections.unmodifiableSet(
             calcularZonasConflitoComCarro8(todos)
         );
-        this.segmentosInsegurosBase = calcularSegmentosInseguros(base);
+        this.segmentosInseguros = calcularSegmentosInseguros(todos);
+        this.portariasPorSegmento = calcularPortariasPorSegmento(todos);
 
-        Map<Integer, Set<String>> opostosTodos = calcularSegmentosInseguros(todos);
+        Set<String> todasPortarias = new LinkedHashSet<>();
+        for (Map<String, Set<String>> porSegmento : portariasPorSegmento.values()) {
+            for (Set<String> portarias : porSegmento.values()) {
+                todasPortarias.addAll(portarias);
+            }
+        }
+        this.portariasCorredores = Collections.unmodifiableSet(todasPortarias);
+
         Set<String> uniao = new LinkedHashSet<>();
-        for (Set<String> segmentos : opostosTodos.values()) {
+        for (Set<String> segmentos : segmentosInseguros.values()) {
             uniao.addAll(segmentos);
         }
         this.segmentosOpostosTodos = Collections.unmodifiableSet(uniao);
 
-        Set<String> gerenciadas = new LinkedHashSet<>(zonasAtivasBase);
-        gerenciadas.addAll(zonasConflitoCarro8);
-        for (String zona : gerenciadas) {
+        for (String zona : zonasCriticas) {
             semaforos.put(zona, new Semaphore(1, true));
         }
-        semaforos.put(PORTARIA_CORREDORES, new Semaphore(1, true));
+        for (String portaria : portariasCorredores) {
+            semaforos.put(portaria, new Semaphore(1, true));
+        }
     }
 
     /* ***************************************************************
@@ -114,210 +120,134 @@ public class GerenciadorSemaforos {
     * Retorno: sem retorno
     *************************************************************** */
     public void registrarMovimentoConcluido(Carro carro) {
-        // Usado apenas como ponto de instrumentacao pelos testes.
+        portariaReservas.acquireUninterruptibly();
+        try {
+            indicesEstaveis.put(carro.getNumero(), carro.getIndiceAtual());
+            destinosPlanejados.remove(carro.getNumero());
+        } finally {
+            portariaReservas.release();
+        }
     }
 
     /* ***************************************************************
     * Metodo: registrarPosicaoInicial
-    * Funcao: Registra posicao inicial.
+    * Funcao: Reserva o segmento fisico onde o carro inicia parado.
     * Parametros: carro parametro carro
     * Retorno: sem retorno
     *************************************************************** */
     public void registrarPosicaoInicial(Carro carro) throws InterruptedException {
-        if (carro.getNumero() == CARRO_8) {
-            return;
+        portariaReservas.acquire();
+        try {
+            carrosRegistrados.put(carro.getNumero(), carro);
+            indicesEstaveis.put(carro.getNumero(), carro.getIndiceAtual());
+            destinosPlanejados.remove(carro.getNumero());
+        } finally {
+            portariaReservas.release();
         }
         atualizarReservaAteConseguir(
-            carro.getNumero(), zonasDaParadaBase(carro.getTrechoAtual())
+            carro.getNumero(), zonasDaParada(carro.getTrechoAtual())
         );
     }
 
     /* ***************************************************************
     * Metodo: reservarJanela
-    * Funcao: Reserva janela.
+    * Funcao: Reserva atomicamente somente as zonas fisicas da janela.
     * Parametros: carro parametro carro; indicesDestino parametro indicesDestino
     * Retorno: sem retorno
     *************************************************************** */
     public void reservarJanela(Carro carro, List<Integer> indicesDestino)
             throws InterruptedException {
-        if (carro.getNumero() == CARRO_8) {
-            reservarJanelaDoCarro8(carro, indicesDestino);
+        if (indicesDestino == null || indicesDestino.isEmpty()) {
             return;
         }
-        atualizarReservaAteConseguir(
-            carro.getNumero(), zonasDaJanelaBase(carro, indicesDestino)
+        atualizarMovimentoAteConseguir(
+            carro,
+            indicesDestino.get(0),
+            zonasDaJanela(carro, Collections.singletonList(indicesDestino.get(0)))
         );
     }
 
     /* ***************************************************************
     * Metodo: reservarJanelaDeCorredor
-    * Funcao: Reserva janela de corredor.
+    * Funcao: Mantido por compatibilidade; usa a reserva local da janela.
     * Parametros: carro parametro carro; indicesDestino parametro indicesDestino
     * Retorno: sem retorno
     *************************************************************** */
     public void reservarJanelaDeCorredor(Carro carro, List<Integer> indicesDestino)
             throws InterruptedException {
-        if (carro.getNumero() == CARRO_8) {
-            reservarJanelaDoCarro8(carro, indicesDestino);
+        if (indicesDestino == null || indicesDestino.isEmpty()) {
             return;
         }
-        List<String> desejadas = zonasDaJanelaBase(carro, indicesDestino);
-        desejadas.add(PORTARIA_CORREDORES);
-        atualizarReservaAteConseguir(carro.getNumero(), desejadas);
+        List<String> desejadas = new ArrayList<>(
+            zonasDaJanela(carro, Collections.singletonList(indicesDestino.get(0)))
+        );
+        desejadas.addAll(portariasDaJanela(carro, indicesDestino));
+        atualizarMovimentoAteConseguir(carro, indicesDestino.get(0), desejadas);
+    }
+
+    /* ***************************************************************
+    * Metodo: avancarNaJanela
+    * Funcao: Reserva apenas o proximo movimento e conserva as portarias locais.
+    * Parametros: carro carro movimentado; indiceDestino proximo trecho
+    * Retorno: sem retorno
+    *************************************************************** */
+    public void avancarNaJanela(Carro carro, int indiceDestino)
+            throws InterruptedException {
+        List<String> desejadas = new ArrayList<>(
+            zonasDaJanela(carro, Collections.singletonList(indiceDestino))
+        );
+        desejadas.addAll(portariasReservadas(carro.getNumero()));
+        atualizarMovimentoAteConseguir(carro, indiceDestino, desejadas);
     }
 
     /* ***************************************************************
     * Metodo: tentarReservarJanela
-    * Funcao: Executa a operacao tentar reservar janela.
+    * Funcao: Tenta reservar atomicamente as zonas fisicas da janela.
     * Parametros: carro parametro carro; indicesDestino parametro indicesDestino
     * Retorno: verdadeiro quando a condicao for atendida
     *************************************************************** */
     public boolean tentarReservarJanela(Carro carro, List<Integer> indicesDestino)
             throws InterruptedException {
-        if (carro.getNumero() == CARRO_8) {
-            return false;
+        if (indicesDestino == null || indicesDestino.isEmpty()) {
+            return true;
         }
-        return tentarAtualizarReserva(
-            carro.getNumero(), zonasDaJanelaBase(carro, indicesDestino)
+        return tentarAtualizarMovimento(
+            carro,
+            indicesDestino.get(0),
+            zonasDaJanela(carro, Collections.singletonList(indicesDestino.get(0)))
         );
     }
 
     /* ***************************************************************
     * Metodo: finalizarJanela
-    * Funcao: Finaliza janela.
-    * Parametros: carro parametro carro; manterPortaria parametro manterPortaria
+    * Funcao: Libera a janela e mantem apenas o segmento onde o carro parou.
+    * Parametros: carro parametro carro; manterPortaria parametro ignorado
     * Retorno: sem retorno
     *************************************************************** */
     public void finalizarJanela(Carro carro, boolean manterPortaria) {
-        if (carro.getNumero() == CARRO_8) {
-            liberarJanelaDoCarro8();
-            return;
-        }
-        List<String> desejadas = new ArrayList<>(zonasDaParadaBase(carro.getTrechoAtual()));
-        if (manterPortaria) {
-            desejadas.add(PORTARIA_CORREDORES);
-        }
+        atualizarSomenteLiberando(
+            carro.getNumero(), zonasDaParada(carro.getTrechoAtual())
+        );
+    }
+
+    /* ***************************************************************
+    * Metodo: consolidarParadaIntermediaria
+    * Funcao: Libera o trecho e o cruzamento ja ultrapassados, mantendo
+    *         apenas o trecho atual e as portarias locais do corredor.
+    * Parametros: carro carro que concluiu um movimento
+    * Retorno: sem retorno
+    *************************************************************** */
+    public void consolidarParadaIntermediaria(Carro carro) {
+        List<String> desejadas = new ArrayList<>(
+            zonasDaParada(carro.getTrechoAtual())
+        );
+        desejadas.addAll(portariasReservadas(carro.getNumero()));
         atualizarSomenteLiberando(carro.getNumero(), desejadas);
     }
 
     /* ***************************************************************
-    * Metodo: reservarJanelaDoCarro8
-    * Funcao: Reserva janela do carro8.
-    * Parametros: carro parametro carro; indicesDestino parametro indicesDestino
-    * Retorno: sem retorno
-    *************************************************************** */
-    private void reservarJanelaDoCarro8(Carro carro, List<Integer> indicesDestino)
-            throws InterruptedException {
-        List<String> zonasFisicas = zonasDaJanelaCompleta(carro, indicesDestino);
-        List<String> desejadas = new ArrayList<>();
-        for (String zona : zonasFisicas) {
-            if (zonasConflitoCarro8.contains(zona)) {
-                desejadas.add(zona);
-            }
-        }
-        desejadas = ordenarSemRepetir(desejadas);
-
-        portariaReservas.acquire();
-        try {
-            janelaCarro8Aguardando = new LinkedHashSet<>(desejadas);
-        } finally {
-            portariaReservas.release();
-        }
-
-        List<String> adquiridas = new ArrayList<>();
-        try {
-            long espera = 1L;
-            long inicioCiclo = System.nanoTime();
-            while (true) {
-                portariaReservas.acquire();
-                try {
-                    adquiridas.clear();
-                    boolean conseguiu = true;
-                    for (String zona : desejadas) {
-                        Semaphore semaforo = semaforos.get(zona);
-                        if (semaforo != null && !semaforo.tryAcquire()) {
-                            conseguiu = false;
-                            break;
-                        }
-                        if (semaforo != null) {
-                            adquiridas.add(zona);
-                        }
-                    }
-                    if (conseguiu) {
-                        janelaCarro8Ativa = new LinkedHashSet<>(desejadas);
-                        janelaCarro8Aguardando = Collections.emptySet();
-                        reservasConcedidas++;
-                        return;
-                    }
-                    liberar(adquiridas);
-                    adquiridas.clear();
-                    tentativasNegadas++;
-                } finally {
-                    portariaReservas.release();
-                }
-
-                long aguardandoMs = (System.nanoTime() - inicioCiclo) / 1_000_000L;
-                if (aguardandoMs >= 120L) {
-                    portariaReservas.acquire();
-                    try {
-                        janelaCarro8Aguardando = Collections.emptySet();
-                    } finally {
-                        portariaReservas.release();
-                    }
-                    Thread.sleep(25L);
-                    portariaReservas.acquire();
-                    try {
-                        janelaCarro8Aguardando = new LinkedHashSet<>(desejadas);
-                    } finally {
-                        portariaReservas.release();
-                    }
-                    inicioCiclo = System.nanoTime();
-                    espera = 1L;
-                } else {
-                    Thread.sleep(espera);
-                    if (espera < 10L) {
-                        espera++;
-                    }
-                }
-            }
-        } catch (InterruptedException e) {
-            portariaReservas.acquireUninterruptibly();
-            try {
-                if (!adquiridas.isEmpty()) {
-                    liberar(adquiridas);
-                }
-                janelaCarro8Aguardando = Collections.emptySet();
-            } finally {
-                portariaReservas.release();
-            }
-            throw e;
-        }
-    }
-
-    /* ***************************************************************
-    * Metodo: liberarJanelaDoCarro8
-    * Funcao: Libera janela do carro8.
-    * Parametros: nenhum
-    * Retorno: sem retorno
-    *************************************************************** */
-    private void liberarJanelaDoCarro8() {
-        portariaReservas.acquireUninterruptibly();
-        try {
-            if (!janelaCarro8Ativa.isEmpty()) {
-                List<String> zonas = new ArrayList<>(janelaCarro8Ativa);
-                Collections.sort(zonas);
-                liberar(zonas);
-            }
-            janelaCarro8Ativa = Collections.emptySet();
-            janelaCarro8Aguardando = Collections.emptySet();
-        } finally {
-            portariaReservas.release();
-        }
-    }
-
-    /* ***************************************************************
     * Metodo: liberarCarro
-    * Funcao: Libera carro.
+    * Funcao: Libera todas as zonas ainda reservadas pelo carro.
     * Parametros: numeroCarro parametro numeroCarro
     * Retorno: sem retorno
     *************************************************************** */
@@ -326,14 +256,14 @@ public class GerenciadorSemaforos {
         try {
             LinkedHashSet<String> atuais = reservasPorCarro.remove(numeroCarro);
             pedidosPendentes.remove(numeroCarro);
+            carrosRegistrados.remove(numeroCarro);
+            indicesEstaveis.remove(numeroCarro);
+            destinosPlanejados.remove(numeroCarro);
             if (atuais != null) {
                 liberar(new ArrayList<>(atuais));
             }
         } finally {
             portariaReservas.release();
-        }
-        if (numeroCarro == CARRO_8) {
-            liberarJanelaDoCarro8();
         }
     }
 
@@ -344,9 +274,6 @@ public class GerenciadorSemaforos {
     * Retorno: verdadeiro quando a condicao for atendida
     *************************************************************** */
     public boolean paradaSegura(Carro carro, int indiceTrecho) {
-        if (carro.getNumero() == CARRO_8) {
-            return zonasDoMeioTrecho(carro.getPercurso().getAresta(indiceTrecho)).isEmpty();
-        }
         return !estaEmCorredorDeSentidoOposto(carro, indiceTrecho);
     }
 
@@ -357,11 +284,8 @@ public class GerenciadorSemaforos {
     * Retorno: verdadeiro quando a condicao for atendida
     *************************************************************** */
     public boolean estaEmCorredorDeSentidoOposto(Carro carro, int indiceTrecho) {
-        if (carro.getNumero() == CARRO_8) {
-            return false;
-        }
         String zona = nomeSegmento(carro.getPercurso().getAresta(indiceTrecho));
-        Set<String> inseguros = segmentosInsegurosBase.get(carro.getNumero());
+        Set<String> inseguros = segmentosInseguros.get(carro.getNumero());
         return inseguros != null && inseguros.contains(zona);
     }
 
@@ -454,6 +378,14 @@ public class GerenciadorSemaforos {
     * Retorno: objeto ou colecao resultante
     *************************************************************** */
     public Set<String> getSegmentosSentidoOposto() { return segmentosOpostosTodos; }
+
+    /* ***************************************************************
+    * Metodo: getPortariasCorredores
+    * Funcao: Retorna as portarias locais usadas nos corredores opostos.
+    * Parametros: nenhum
+    * Retorno: conjunto imutavel com os nomes das portarias
+    *************************************************************** */
+    public Set<String> getPortariasCorredores() { return portariasCorredores; }
     /* ***************************************************************
     * Metodo: getZonasConflitoCarro8
     * Funcao: Retorna zonas conflito carro8.
@@ -472,7 +404,8 @@ public class GerenciadorSemaforos {
         portariaReservas.acquireUninterruptibly();
         try {
             if (!reservasPorCarro.isEmpty() || !pedidosPendentes.isEmpty()
-                    || !janelaCarro8Aguardando.isEmpty() || !janelaCarro8Ativa.isEmpty()) {
+                    || !carrosRegistrados.isEmpty() || !indicesEstaveis.isEmpty()
+                    || !destinosPlanejados.isEmpty()) {
                 return false;
             }
             for (Semaphore semaforo : semaforos.values()) {
@@ -518,8 +451,8 @@ public class GerenciadorSemaforos {
             }
             return "reservas=" + reservasPorCarro
                 + " pendentes=" + pedidosPendentes
-                + " c8Esperando=" + janelaCarro8Aguardando
-                + " c8Ativa=" + janelaCarro8Ativa;
+                + " estaveis=" + indicesEstaveis
+                + " planejados=" + destinosPlanejados;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return "diagnostico interrompido; reservasConcedidas=" + reservasConcedidas
@@ -537,6 +470,42 @@ public class GerenciadorSemaforos {
     * Parametros: carro parametro carro; desejadas parametro desejadas
     * Retorno: sem retorno
     *************************************************************** */
+    private void atualizarMovimentoAteConseguir(
+            Carro carro, int indiceDestino, List<String> desejadas)
+            throws InterruptedException {
+        long espera = 1L;
+        while (!tentarAtualizarMovimento(carro, indiceDestino, desejadas)) {
+            Thread.sleep(espera);
+            if (espera < 10L) {
+                espera++;
+            }
+        }
+    }
+
+    private boolean tentarAtualizarMovimento(
+            Carro carro, int indiceDestino, List<String> desejadas)
+            throws InterruptedException {
+        portariaReservas.acquire();
+        try {
+            if (!estadoSeguroAposMovimento(carro, indiceDestino, desejadas)) {
+                pedidosPendentes.put(
+                    carro.getNumero(), ordenarSemRepetir(desejadas)
+                );
+                tentativasNegadas++;
+                return false;
+            }
+            boolean concedida = tentarAtualizarReservaComPortariaAdquirida(
+                carro.getNumero(), desejadas
+            );
+            if (concedida) {
+                destinosPlanejados.put(carro.getNumero(), indiceDestino);
+            }
+            return concedida;
+        } finally {
+            portariaReservas.release();
+        }
+    }
+
     private void atualizarReservaAteConseguir(int carro, List<String> desejadas)
             throws InterruptedException {
         long espera = 1L;
@@ -558,66 +527,55 @@ public class GerenciadorSemaforos {
             throws InterruptedException {
         portariaReservas.acquire();
         try {
-            List<String> ordenadas = ordenarSemRepetir(desejadas);
-            LinkedHashSet<String> atuais = reservasPorCarro.get(carro);
-            if (atuais == null) {
-                atuais = new LinkedHashSet<>();
-            }
-
-            Set<String> restritas = !janelaCarro8Ativa.isEmpty()
-                ? janelaCarro8Ativa : janelaCarro8Aguardando;
-            boolean dentroDaJanela = compartilha(atuais, restritas);
-            boolean querEntrarNaJanela = false;
-            for (String zona : ordenadas) {
-                if (restritas.contains(zona) && !atuais.contains(zona)) {
-                    querEntrarNaJanela = true;
-                    break;
-                }
-            }
-
-            pedidosPendentes.put(carro, ordenadas);
-            if (!restritas.isEmpty() && !dentroDaJanela && querEntrarNaJanela) {
-                tentativasNegadas++;
-                return false;
-            }
-
-            if (existePedidoAnteriorPronto(carro)) {
-                tentativasNegadas++;
-                return false;
-            }
-
-            List<String> novas = diferenca(ordenadas, atuais);
-            List<String> abandonar = diferenca(
-                new ArrayList<>(atuais), new LinkedHashSet<>(ordenadas)
-            );
-
-            List<String> adquiridas = new ArrayList<>();
-            for (String zona : novas) {
-                Semaphore semaforo = semaforos.get(zona);
-                if (semaforo == null) {
-                    continue;
-                }
-                if (!semaforo.tryAcquire()) {
-                    liberar(adquiridas);
-                    adquiridas.clear();
-                    tentativasNegadas++;
-                    return false;
-                }
-                adquiridas.add(zona);
-            }
-
-            liberar(abandonar);
-            if (ordenadas.isEmpty()) {
-                reservasPorCarro.remove(carro);
-            } else {
-                reservasPorCarro.put(carro, new LinkedHashSet<>(ordenadas));
-            }
-            pedidosPendentes.remove(carro);
-            reservasConcedidas++;
-            return true;
+            return tentarAtualizarReservaComPortariaAdquirida(carro, desejadas);
         } finally {
             portariaReservas.release();
         }
+    }
+
+    private boolean tentarAtualizarReservaComPortariaAdquirida(
+            int carro, List<String> desejadas) {
+        List<String> ordenadas = ordenarSemRepetir(desejadas);
+        LinkedHashSet<String> atuais = reservasPorCarro.get(carro);
+        if (atuais == null) {
+            atuais = new LinkedHashSet<>();
+        }
+
+        pedidosPendentes.put(carro, ordenadas);
+
+        if (existePedidoAnteriorPronto(carro, ordenadas)) {
+            tentativasNegadas++;
+            return false;
+        }
+
+        List<String> novas = diferenca(ordenadas, atuais);
+        List<String> abandonar = diferenca(
+            new ArrayList<>(atuais), new LinkedHashSet<>(ordenadas)
+        );
+
+        List<String> adquiridas = new ArrayList<>();
+        for (String zona : novas) {
+            Semaphore semaforo = semaforos.get(zona);
+            if (semaforo == null) {
+                continue;
+            }
+            if (!semaforo.tryAcquire()) {
+                liberar(adquiridas);
+                tentativasNegadas++;
+                return false;
+            }
+            adquiridas.add(zona);
+        }
+
+        liberar(abandonar);
+        if (ordenadas.isEmpty()) {
+            reservasPorCarro.remove(carro);
+        } else {
+            reservasPorCarro.put(carro, new LinkedHashSet<>(ordenadas));
+        }
+        pedidosPendentes.remove(carro);
+        reservasConcedidas++;
+        return true;
     }
 
     /* ***************************************************************
@@ -664,27 +622,317 @@ public class GerenciadorSemaforos {
     }
 
     /* ***************************************************************
-    * Metodo: zonasDaParadaBase
+    * Metodo: zonasDaParada
     * Funcao: Executa a operacao zonas da parada base.
     * Parametros: trecho parametro trecho
     * Retorno: objeto ou colecao resultante
     *************************************************************** */
-    private List<String> zonasDaParadaBase(Aresta trecho) {
+    private boolean estadoSeguroAposMovimento(
+            Carro solicitante, int indiceDestino, List<String> desejadasSolicitante) {
+        Map<Integer, Integer> posicoes = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Carro> entrada : carrosRegistrados.entrySet()) {
+            int numero = entrada.getKey();
+            Integer planejado = destinosPlanejados.get(numero);
+            Integer estavel = indicesEstaveis.get(numero);
+            posicoes.put(numero, planejado != null
+                ? planejado : (estavel != null ? estavel : entrada.getValue().getIndiceAtual()));
+        }
+        posicoes.put(solicitante.getNumero(), indiceDestino);
+
+        Map<String, Integer> ocupantes = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Integer> entrada : posicoes.entrySet()) {
+            Carro carro = carrosRegistrados.get(entrada.getKey());
+            if (carro == null) {
+                continue;
+            }
+            String segmento = nomeSegmento(
+                carro.getPercurso().getAresta(entrada.getValue())
+            );
+            if (zonasCriticas.contains(segmento)) {
+                ocupantes.put(segmento, entrada.getKey());
+            }
+        }
+
+        for (Map.Entry<Integer, LinkedHashSet<String>> entrada : reservasPorCarro.entrySet()) {
+            Integer posicao = posicoes.get(entrada.getKey());
+            Carro carro = carrosRegistrados.get(entrada.getKey());
+            if (posicao == null || carro == null || paradaSegura(carro, posicao)) {
+                continue;
+            }
+            for (String zona : entrada.getValue()) {
+                if (zona.startsWith(PREFIXO_CORREDOR)) {
+                    ocupantes.put(zona, entrada.getKey());
+                }
+            }
+        }
+        if (!paradaSegura(solicitante, indiceDestino)) {
+            for (String zona : desejadasSolicitante) {
+                if (zona.startsWith(PREFIXO_CORREDOR)) {
+                    ocupantes.put(zona, solicitante.getNumero());
+                }
+            }
+        }
+
+        Map<Integer, Set<Integer>> esperas = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Integer> entrada : posicoes.entrySet()) {
+            int numero = entrada.getKey();
+            Carro carro = carrosRegistrados.get(numero);
+            if (carro == null) {
+                continue;
+            }
+            Set<Integer> bloqueadores = new LinkedHashSet<>();
+            for (String zona : recursosDoProximoMovimento(carro, entrada.getValue())) {
+                Integer ocupante = ocupantes.get(zona);
+                if (ocupante != null && ocupante != numero) {
+                    bloqueadores.add(ocupante);
+                }
+            }
+            esperas.put(numero, bloqueadores);
+        }
+        return !possuiCicloDeEspera(esperas);
+    }
+
+    private List<String> recursosDoProximoMovimento(Carro carro, int indiceAtual) {
+        Percurso percurso = carro.getPercurso();
+        int quantidade = percurso.getQuantidadeTrechos();
+        int proximo = normalizarIndice(indiceAtual + 1, quantidade);
+        List<String> recursos = new ArrayList<>();
+        adicionarSeGerenciada(recursos, nomeSegmento(percurso.getAresta(proximo)));
+
+        if (paradaSegura(carro, indiceAtual)
+                && !paradaSegura(carro, proximo)) {
+            List<Integer> janela = indicesAteParadaSegura(carro, indiceAtual);
+            recursos.addAll(portariasDaJanela(carro, indiceAtual, janela));
+        } else if (!paradaSegura(carro, indiceAtual)) {
+            LinkedHashSet<String> atuais = reservasPorCarro.get(carro.getNumero());
+            if (atuais != null) {
+                for (String zona : atuais) {
+                    if (zona.startsWith(PREFIXO_CORREDOR)) {
+                        recursos.add(zona);
+                    }
+                }
+            }
+        }
+        return ordenarSemRepetir(recursos);
+    }
+
+    private List<Integer> indicesAteParadaSegura(Carro carro, int indiceAtual) {
+        int quantidade = carro.getPercurso().getQuantidadeTrechos();
+        List<Integer> resultado = new ArrayList<>();
+        int indice = normalizarIndice(indiceAtual + 1, quantidade);
+        for (int passos = 0; passos < quantidade; passos++) {
+            resultado.add(indice);
+            if (paradaSegura(carro, indice)) {
+                break;
+            }
+            indice = normalizarIndice(indice + 1, quantidade);
+        }
+        return resultado;
+    }
+
+    private boolean possuiCicloDeEspera(Map<Integer, Set<Integer>> esperas) {
+        Set<Integer> visitados = new HashSet<>();
+        Set<Integer> pilha = new HashSet<>();
+        for (Integer carro : esperas.keySet()) {
+            if (visitarEspera(carro, esperas, visitados, pilha)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean visitarEspera(
+            Integer carro,
+            Map<Integer, Set<Integer>> esperas,
+            Set<Integer> visitados,
+            Set<Integer> pilha) {
+        if (pilha.contains(carro)) {
+            return true;
+        }
+        if (!visitados.add(carro)) {
+            return false;
+        }
+        pilha.add(carro);
+        Set<Integer> proximos = esperas.get(carro);
+        if (proximos != null) {
+            for (Integer proximo : proximos) {
+                if (visitarEspera(proximo, esperas, visitados, pilha)) {
+                    return true;
+                }
+            }
+        }
+        pilha.remove(carro);
+        return false;
+    }
+
+    private int normalizarIndice(int indice, int quantidade) {
+        int resultado = indice % quantidade;
+        return resultado < 0 ? resultado + quantidade : resultado;
+    }
+
+    private List<String> portariasReservadas(int carro) {
+        portariaReservas.acquireUninterruptibly();
+        try {
+            LinkedHashSet<String> atuais = reservasPorCarro.get(carro);
+            List<String> resultado = new ArrayList<>();
+            if (atuais != null) {
+                for (String zona : atuais) {
+                    if (zona.startsWith(PREFIXO_CORREDOR)) {
+                        resultado.add(zona);
+                    }
+                }
+            }
+            return resultado;
+        } finally {
+            portariaReservas.release();
+        }
+    }
+
+    private List<String> portariasDaJanela(Carro carro, List<Integer> indicesDestino) {
+        return portariasDaJanela(carro, carro.getIndiceAtual(), indicesDestino);
+    }
+
+    private List<String> portariasDaJanela(
+            Carro carro, int indiceAtual, List<Integer> indicesDestino) {
+        Set<String> resultado = new LinkedHashSet<>();
+        Map<String, Set<String>> porSegmento = portariasPorSegmento.get(carro.getNumero());
+        if (porSegmento == null) {
+            return Collections.emptyList();
+        }
+
+        String atual = nomeSegmento(carro.getPercurso().getAresta(indiceAtual));
+        Set<String> portariasAtuais = porSegmento.get(atual);
+        if (portariasAtuais != null) {
+            resultado.addAll(portariasAtuais);
+        }
+        for (int indice : indicesDestino) {
+            String segmento = nomeSegmento(carro.getPercurso().getAresta(indice));
+            Set<String> portarias = porSegmento.get(segmento);
+            if (portarias != null) {
+                resultado.addAll(portarias);
+            }
+        }
+        List<String> ordenadas = new ArrayList<>(resultado);
+        Collections.sort(ordenadas);
+        return ordenadas;
+    }
+
+    private Map<Integer, Map<String, Set<String>>> calcularPortariasPorSegmento(
+            Percurso[] percursos) {
+        Map<Integer, Map<String, Set<String>>> resultado = new LinkedHashMap<>();
+        for (int i = 0; i < percursos.length; i++) {
+            resultado.put(i + 1, new LinkedHashMap<>());
+        }
+
+        for (int i = 0; i < percursos.length; i++) {
+            for (int j = i + 1; j < percursos.length; j++) {
+                Set<String> opostos = segmentosOpostosDoPar(percursos[i], percursos[j]);
+                List<Set<String>> componentes = componentesConexos(opostos, percursos[i]);
+                int numeroComponente = 1;
+                for (Set<String> componente : componentes) {
+                    String portaria = PREFIXO_CORREDOR + "C" + (i + 1)
+                        + "-C" + (j + 1) + "-" + numeroComponente++;
+                    registrarPortaria(resultado.get(i + 1), componente, portaria);
+                    registrarPortaria(resultado.get(j + 1), componente, portaria);
+                }
+            }
+        }
+        return resultado;
+    }
+
+    private Set<String> segmentosOpostosDoPar(Percurso a, Percurso b) {
+        Map<String, String> direcoesA = direcoesDoPercurso(a);
+        Map<String, String> direcoesB = direcoesDoPercurso(b);
+        Set<String> resultado = new LinkedHashSet<>();
+        for (Map.Entry<String, String> entrada : direcoesA.entrySet()) {
+            String direcaoB = direcoesB.get(entrada.getKey());
+            if (direcaoB != null && !direcaoB.equals(entrada.getValue())) {
+                resultado.add(entrada.getKey());
+            }
+        }
+        return resultado;
+    }
+
+    private Map<String, String> direcoesDoPercurso(Percurso percurso) {
+        Map<String, String> resultado = new LinkedHashMap<>();
+        for (int i = 0; i < percurso.getQuantidadeTrechos(); i++) {
+            String segmento = nomeSegmento(percurso.getAresta(i));
+            resultado.put(segmento,
+                percurso.getVertice(i).chave() + ">" + percurso.getVertice(i + 1).chave());
+        }
+        return resultado;
+    }
+
+    private List<Set<String>> componentesConexos(Set<String> segmentos, Percurso referencia) {
+        List<Set<String>> resultado = new ArrayList<>();
+        Set<String> restantes = new LinkedHashSet<>(segmentos);
+        while (!restantes.isEmpty()) {
+            String primeiro = restantes.iterator().next();
+            restantes.remove(primeiro);
+            Set<String> componente = new LinkedHashSet<>();
+            List<String> fila = new ArrayList<>();
+            fila.add(primeiro);
+            for (int posicao = 0; posicao < fila.size(); posicao++) {
+                String atual = fila.get(posicao);
+                componente.add(atual);
+                List<String> adicionar = new ArrayList<>();
+                for (String candidato : restantes) {
+                    if (segmentosAdjacentes(atual, candidato, referencia)) {
+                        adicionar.add(candidato);
+                    }
+                }
+                restantes.removeAll(adicionar);
+                fila.addAll(adicionar);
+            }
+            resultado.add(componente);
+        }
+        return resultado;
+    }
+
+    private boolean segmentosAdjacentes(String nomeA, String nomeB, Percurso referencia) {
+        Aresta a = encontrarAresta(nomeA, referencia);
+        Aresta b = encontrarAresta(nomeB, referencia);
+        return a.getOrigem().equals(b.getOrigem())
+            || a.getOrigem().equals(b.getDestino())
+            || a.getDestino().equals(b.getOrigem())
+            || a.getDestino().equals(b.getDestino());
+    }
+
+    private Aresta encontrarAresta(String nomeZona, Percurso referencia) {
+        String nome = nomeZona.startsWith(PREFIXO_SEGMENTO)
+            ? nomeZona.substring(PREFIXO_SEGMENTO.length()) : nomeZona;
+        for (int i = 0; i < referencia.getQuantidadeTrechos(); i++) {
+            Aresta aresta = referencia.getAresta(i);
+            if (aresta.getNome().equals(nome)) {
+                return aresta;
+            }
+        }
+        throw new IllegalArgumentException("Trecho ausente no percurso: " + nomeZona);
+    }
+
+    private void registrarPortaria(Map<String, Set<String>> mapa,
+            Set<String> segmentos, String portaria) {
+        for (String segmento : segmentos) {
+            mapa.computeIfAbsent(segmento, chave -> new LinkedHashSet<>()).add(portaria);
+        }
+    }
+
+    private List<String> zonasDaParada(Aresta trecho) {
         List<String> zonas = new ArrayList<>();
         String zona = nomeSegmento(trecho);
-        if (zonasAtivasBase.contains(zona) || zonasConflitoCarro8.contains(zona)) {
+        if (zonasCriticas.contains(zona)) {
             zonas.add(zona);
         }
         return zonas;
     }
 
     /* ***************************************************************
-    * Metodo: zonasDaJanelaBase
+    * Metodo: zonasDaJanela
     * Funcao: Executa a operacao zonas da janela base.
     * Parametros: carro parametro carro; indicesDestino parametro indicesDestino
     * Retorno: objeto ou colecao resultante
     *************************************************************** */
-    private List<String> zonasDaJanelaBase(Carro carro, List<Integer> indicesDestino) {
+    private List<String> zonasDaJanela(Carro carro, List<Integer> indicesDestino) {
         List<String> zonas = new ArrayList<>();
         Percurso percurso = carro.getPercurso();
         int atual = carro.getIndiceAtual();
@@ -724,7 +972,7 @@ public class GerenciadorSemaforos {
     * Retorno: sem retorno
     *************************************************************** */
     private void adicionarSeGerenciada(List<String> zonas, String zona) {
-        if (zonasAtivasBase.contains(zona) || zonasConflitoCarro8.contains(zona)) {
+        if (zonasCriticas.contains(zona)) {
             zonas.add(zona);
         }
     }
@@ -735,10 +983,16 @@ public class GerenciadorSemaforos {
     * Parametros: carroAtual parametro carroAtual
     * Retorno: verdadeiro quando a condicao for atendida
     *************************************************************** */
-    private boolean existePedidoAnteriorPronto(int carroAtual) {
+    private boolean existePedidoAnteriorPronto(
+            int carroAtual, List<String> pedidoAtual) {
+        Set<String> zonasAtuais = new LinkedHashSet<>(pedidoAtual);
         for (Map.Entry<Integer, List<String>> entrada : pedidosPendentes.entrySet()) {
             if (entrada.getKey() == carroAtual) {
                 return false;
+            }
+            Set<String> zonasAnteriores = new LinkedHashSet<>(entrada.getValue());
+            if (!compartilha(zonasAtuais, zonasAnteriores)) {
+                continue;
             }
             if (pedidoPronto(entrada.getKey(), entrada.getValue())) {
                 return true;
@@ -758,16 +1012,6 @@ public class GerenciadorSemaforos {
         if (atuais == null) {
             atuais = Collections.emptySet();
         }
-        Set<String> restritas = !janelaCarro8Ativa.isEmpty()
-            ? janelaCarro8Ativa : janelaCarro8Aguardando;
-        if (!restritas.isEmpty() && !compartilha(atuais, restritas)) {
-            for (String zona : desejadas) {
-                if (restritas.contains(zona) && !atuais.contains(zona)) {
-                    return false;
-                }
-            }
-        }
-
         for (String zona : desejadas) {
             if (atuais.contains(zona)) {
                 continue;

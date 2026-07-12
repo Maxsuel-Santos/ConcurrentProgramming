@@ -2,7 +2,7 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 22/06/2026
-* Ultima alteracao.: 10/07/2026
+* Ultima alteracao.: 12/07/2026
 * Nome.............: Principal.java
 * Funcao...........: Ponto de entrada da aplicacao JavaFX.
 *                    Carrega a tela inicial (TelaInicial.fxml) e
@@ -34,11 +34,6 @@ public class Principal extends Application {
 
   private static Clip musicaFundoWav;
 
-  /*
-   * Estas referencias garantem que "javac Principal.java" tambem compile
-   * os controllers usados apenas via FXML. Sem isso, o FXMLLoader pode
-   * falhar em tempo de execucao com ClassNotFoundException.
-   */
   @SuppressWarnings("unused")
   private static final Class<?>[] CONTROLLERS_FXML = {
       TelaInicialController.class,

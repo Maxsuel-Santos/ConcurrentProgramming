@@ -2,14 +2,13 @@
 * Autor............: Maxsuel Aparecido Lima Santos
 * Matricula........: 202511587
 * Inicio...........: 25/06/2026
-* Ultima alteracao.: 11/07/2026
+* Ultima alteracao.: 12/07/2026
 * Nome.............: ThreadCarro.java
 * Funcao...........: Executa o protocolo concorrente de movimento de um carro.
 ************************************************************************ */
 package threads;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import model.Carro;
@@ -20,8 +19,6 @@ import util.GerenciadorSemaforos;
 * Funcao: Executa o protocolo concorrente de movimento de um carro.
 *************************************************************** */
 public class ThreadCarro extends Thread {
-
-    private static final int CARRO_8 = 8;
 
     private final Carro carro;
     private final GerenciadorSemaforos semaforos;
@@ -57,13 +54,11 @@ public class ThreadCarro extends Thread {
     public void run() {
         try {
             while (carro.isAtivo() && !isInterrupted()) {
-                boolean emCorredor = semaforos.estaEmCorredorDeSentidoOposto(
+                boolean pontoSeguro = semaforos.paradaSegura(
                     carro, carro.getIndiceAtual()
                 );
-                boolean pontoPrivadoC8 = carro.getNumero() == CARRO_8
-                    && semaforos.trechoPrivadoDoCarro8(carro, carro.getIndiceAtual());
 
-                if ((carro.getNumero() != CARRO_8 && !emCorredor) || pontoPrivadoC8) {
+                if (pontoSeguro) {
                     estadoDiagnostico = carro.isPausado()
                         ? "PAUSADO_EM_" + carro.getTrechoAtual().getNome()
                         : "PRONTO_EM_" + carro.getTrechoAtual().getNome();
@@ -74,10 +69,10 @@ public class ThreadCarro extends Thread {
                     break;
                 }
 
-                Janela janela = calcularProximaJanela(emCorredor);
+                Janela janela = calcularProximaJanela();
                 reservarJanela(janela);
 
-                for (int destino : janela.indicesDestino) {
+                for (int posicao = 0; posicao < janela.indicesDestino.size(); posicao++) {
                     if (!carro.isAtivo() || isInterrupted()) {
                         throw new InterruptedException();
                     }
@@ -90,12 +85,19 @@ public class ThreadCarro extends Thread {
                     movimentosConcluidos++;
                     ultimoProgressoNanos = System.nanoTime();
                     semaforos.registrarMovimentoConcluido(carro);
+                    semaforos.consolidarParadaIntermediaria(carro);
+
+                    if (posicao + 1 < janela.indicesDestino.size()) {
+                        List<Integer> restantes = new ArrayList<>(
+                            janela.indicesDestino.subList(
+                                posicao + 1, janela.indicesDestino.size()
+                            )
+                        );
+                        semaforos.avancarNaJanela(carro, restantes.get(0));
+                    }
                 }
 
-                boolean continuaNoCorredor = semaforos.estaEmCorredorDeSentidoOposto(
-                    carro, carro.getIndiceAtual()
-                );
-                semaforos.finalizarJanela(carro, continuaNoCorredor);
+                semaforos.finalizarJanela(carro, false);
                 janelasConcluidas++;
             }
         } catch (InterruptedException e) {
@@ -113,44 +115,22 @@ public class ThreadCarro extends Thread {
     * Parametros: emCorredor parametro emCorredor
     * Retorno: objeto ou colecao resultante
     *************************************************************** */
-    private Janela calcularProximaJanela(boolean emCorredor) {
+    private Janela calcularProximaJanela() {
         int quantidade = carro.getPercurso().getQuantidadeTrechos();
-        int primeiro = normalizar(carro.getIndiceAtual() + 1, quantidade);
-
-        if (carro.getNumero() == CARRO_8) {
-            List<Integer> destinos = new ArrayList<>();
-            int indice = primeiro;
-            int limite = 0;
-            while (limite++ < quantidade) {
-                destinos.add(indice);
-                if (semaforos.trechoPrivadoDoCarro8(carro, indice)) {
-                    break;
-                }
-                indice = normalizar(indice + 1, quantidade);
-            }
-            if (destinos.isEmpty()
-                    || !semaforos.trechoPrivadoDoCarro8(
-                        carro, destinos.get(destinos.size() - 1))) {
-                throw new IllegalStateException("C8 nao encontrou o proximo ponto privado.");
-            }
-            return new Janela(destinos, false);
-        }
-
-        boolean primeiroNoCorredor = semaforos.estaEmCorredorDeSentidoOposto(
-            carro, primeiro
-        );
-
-        if (!emCorredor && !primeiroNoCorredor) {
-            return new Janela(Collections.singletonList(primeiro), false);
-        }
-
         List<Integer> destinos = new ArrayList<>();
-        destinos.add(primeiro);
-        if (primeiroNoCorredor) {
-            int segundo = normalizar(primeiro + 1, quantidade);
-            destinos.add(segundo);
+        int indice = normalizar(carro.getIndiceAtual() + 1, quantidade);
+
+        for (int passos = 0; passos < quantidade; passos++) {
+            destinos.add(indice);
+            if (semaforos.paradaSegura(carro, indice)) {
+                return new Janela(destinos);
+            }
+            indice = normalizar(indice + 1, quantidade);
         }
-        return new Janela(destinos, true);
+
+        throw new IllegalStateException(
+            "Carro " + carro.getNumero() + " nao encontrou ponto seguro."
+        );
     }
 
     /* ***************************************************************
@@ -160,18 +140,10 @@ public class ThreadCarro extends Thread {
     * Retorno: sem retorno
     *************************************************************** */
     private void reservarJanela(Janela janela) throws InterruptedException {
-        estadoDiagnostico = carro.getNumero() == CARRO_8
-            ? "AGUARDANDO_JANELA_CARRO_8_" + janela.indicesDestino
-            : janela.usaPortaria
-                ? "AGUARDANDO_CORREDOR_" + janela.indicesDestino
-                : "AGUARDANDO_RESERVA_" + janela.indicesDestino;
+        estadoDiagnostico = "AGUARDANDO_RESERVA_" + janela.indicesDestino;
 
         long inicioEspera = System.nanoTime();
-        if (janela.usaPortaria) {
-            semaforos.reservarJanelaDeCorredor(carro, janela.indicesDestino);
-        } else {
-            semaforos.reservarJanela(carro, janela.indicesDestino);
-        }
+        semaforos.reservarJanelaDeCorredor(carro, janela.indicesDestino);
         maiorEsperaReservaMs = Math.max(
             maiorEsperaReservaMs,
             (System.nanoTime() - inicioEspera) / 1_000_000L
@@ -231,17 +203,15 @@ public class ThreadCarro extends Thread {
     *************************************************************** */
     private static final class Janela {
         final List<Integer> indicesDestino;
-        final boolean usaPortaria;
 
         /* ***************************************************************
         * Metodo: Janela
-        * Funcao: Inicializa uma nova instancia de Janela.
-        * Parametros: indicesDestino parametro indicesDestino; usaPortaria parametro usaPortaria
+        * Funcao: Agrupa os trechos percorridos ate o proximo ponto seguro.
+        * Parametros: indicesDestino indices dos trechos de destino
         * Retorno: sem retorno
         *************************************************************** */
-        Janela(List<Integer> indicesDestino, boolean usaPortaria) {
+        Janela(List<Integer> indicesDestino) {
             this.indicesDestino = indicesDestino;
-            this.usaPortaria = usaPortaria;
         }
     }
 }
